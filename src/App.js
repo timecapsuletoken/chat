@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import Navbar from './components/Navbar';
@@ -16,6 +16,7 @@ import './App.css';
 
 function App() {
   const [account, setAccount] = useState(null);
+  const navigate = useNavigate();
 
   const connectWallet = async ( providerType) => {
     console.log("Provider Type:", providerType); // Diagnostic log
@@ -75,11 +76,15 @@ function App() {
    // Disconnect the wallet
    const disconnectWallet = () => {
     setAccount(null);
+    // Clear local session and any cached provider data
+    if (window.localStorage) {
+      window.localStorage.clear();
+    }
+    navigate('/login'); // Redirect to login page on disconnect
   };
 
 
   return (
-    <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={
@@ -94,17 +99,16 @@ function App() {
           <Route path="/login" element={
             <>
               <LoginNavbar />
-              <LoginPage connectWallet={connectWallet} />
+              <LoginPage account={account} connectWallet={connectWallet} />
             </>
           } />
           <Route path="/home" element={
             <>
-              <HomePage account={account} connectWallet={connectWallet} disconnectWallet={disconnectWallet} />
+              <HomePage account={account} disconnectWallet={disconnectWallet} />
             </>
           } />
         </Routes>
       </div>
-    </Router>
   );
 }
 

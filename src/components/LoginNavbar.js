@@ -1,11 +1,11 @@
 import React from 'react';
-import '../assets/css/LoginPage.css';
+import '../assets/css/LoginNavbar.css';
 import TCALogo from '../assets/images/logos/logo.png';
 
-const Navbar = ({ onConnect }) => {
+const LoginNavbar = ({ onConnect }) => {
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
+    <nav className="login-navbar">
+      <div className="login-navbar-left">
         <img src={TCALogo} alt="Logo" className="logo" />
         <span className="app-name">TimeCapsule</span>
         <span className="beta-tag">Beta</span>
@@ -17,4 +17,4 @@ const Navbar = ({ onConnect }) => {
   );
 };
 
-export default Navbar;
+export default LoginNavbar;
