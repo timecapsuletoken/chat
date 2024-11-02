@@ -9,6 +9,7 @@ const LoginPage = ({ connectWallet, account }) => {
 
   useEffect(() => {
     if (account) {
+      localStorage.setItem('connectedAccount', account);
       navigate('/home'); // Redirect to /home when account is connected
     }
   }, [account, navigate]);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
@@ -17,6 +17,14 @@ import './App.css';
 function App() {
   const [account, setAccount] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedAccount = localStorage.getItem('connectedAccount');
+    if (savedAccount) {
+      setAccount(savedAccount); // Replace `setAccount` with your actual function or state setter
+    }
+  }, []);
+  
 
   const connectWallet = async ( providerType) => {
     console.log("Provider Type:", providerType); // Diagnostic log
@@ -79,6 +87,7 @@ function App() {
     // Clear local session and any cached provider data
     if (window.localStorage) {
       window.localStorage.clear();
+      localStorage.removeItem('connectedAccount');
     }
     navigate('/login'); // Redirect to login page on disconnect
   };
