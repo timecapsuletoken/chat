@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
 import LoginNavbar from './components/LoginNavbar';
 import HomePage from './pages/HomePage';
+import ChatPage from './pages/ChatPage';
 
 
 import './App.css';
@@ -21,7 +22,7 @@ function App() {
   useEffect(() => {
     const savedAccount = localStorage.getItem('connectedAccount');
     if (savedAccount) {
-      setAccount(savedAccount); // Replace `setAccount` with your actual function or state setter
+      setAccount(savedAccount);
     }
   }, []);
   
@@ -84,13 +85,11 @@ function App() {
    // Disconnect the wallet
    const disconnectWallet = () => {
     setAccount(null);
-    // Clear local session and any cached provider data
     if (window.localStorage) {
-      window.localStorage.clear();
-      localStorage.removeItem('connectedAccount');
+      localStorage.removeItem('connectedAccount'); // Only remove connection-related data
     }
     navigate('/login'); // Redirect to login page on disconnect
-  };
+    };
 
 
   return (
@@ -116,6 +115,10 @@ function App() {
               <HomePage account={account} disconnectWallet={disconnectWallet} />
             </>
           } />
+          <Route
+           path="/chat/:address"
+           element={<ChatPage account={account} />}
+          />
         </Routes>
       </div>
   );
