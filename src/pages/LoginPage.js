@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AnimatedBackground } from 'animated-backgrounds';
 import '../assets/css/LoginPage.css';
 import metamaskIcon from '../assets/images/logos/metamask.svg';
 import coinbaseIcon from '../assets/images/logos/coinbase.svg';
@@ -16,11 +17,10 @@ const LoginPage = ({ connectWallet, account }) => {
 
   return (
     <div className="login-container">
+    <AnimatedBackground animationName="quantumField" style={{ position: 'absolute', width: '100%', height: '100%', zIndex: -1 }} />
       <div className="header">
-        <h2>Login to Blockscan Chat</h2>
+        <h2>Login to TimeCapsule Chat</h2>
         <p>Connect with your web3 based wallet and sign-in</p>
-        {/* Display the connected account address or a placeholder */}
-        <span>{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Not Connect'}</span>
       </div>
       <div className="wallet-options">
         <button onClick={() => connectWallet('MetaMask')} className="wallet-option">
