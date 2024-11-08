@@ -1,6 +1,7 @@
 import React from 'react';
 import '../assets/css/LoginNavbar.css';
 import TCALogo from '../assets/images/logos/logo.png';
+import { FaArrowLeft } from "react-icons/fa";
 
 const LoginNavbar = ({ onConnect }) => {
   return (
@@ -11,7 +12,7 @@ const LoginNavbar = ({ onConnect }) => {
         <span className="beta-tag">Beta</span>
       </div>
       <a className="connect-button" href='/'>
-      ← Home
+      <span><FaArrowLeft /></span> Home
       </a>
     </nav>
   );

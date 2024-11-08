@@ -21,7 +21,7 @@ const Footer = () => {
               </div>
             </div>
             <div className="footer-bottom">
-              <p>TimeCapsule © 2024 | Made with ❤️ by <a className="grdnt2" href="https://TimeCapsuleToken.com">TimeCapsule</a></p>
+              <p>2024 © Chat dApp Made by <a className="grdnt2" href="https://TimeCapsuleToken.com">TimeCapsule</a></p>
               <nav>
                 <a href="https://www.timecapsuletoken.com/contact">Contact</a> | 
                 <a href="/faq">FAQ</a> | 

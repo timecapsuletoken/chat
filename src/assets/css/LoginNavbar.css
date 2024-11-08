@@ -30,6 +30,9 @@
   }
   
   .connect-button {
+    display: inline-flex;
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally if needed */
     background-color: #20d0e3;
     color: #333;
     padding: 8px 15px;
@@ -37,5 +40,12 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 1em;
+    text-decoration: none; /* Remove underline if using <a> tag */
   }
+
+  .connect-button span {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px; /* Adds space between icon and text */
+}
   

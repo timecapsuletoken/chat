@@ -11,7 +11,7 @@ const Navbar = ({ onConnect }) => {
         <span className="beta-tag">Beta</span>
       </div>
       <a className="connect-button" href='/login'>
-        Connect Wallet
+        Connect
       </a>
     </nav>
   );
