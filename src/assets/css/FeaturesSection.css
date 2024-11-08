@@ -1,12 +1,41 @@
+.features-section-wrapper {
+  position: relative;
+  overflow: hidden; /* Ensures background doesn't overflow */
+}
+
 .features-section {
-    text-align: center;
-    padding: 40px;
-    background-color: #1c1c1c;
-  }
+  position: relative;
+  text-align: center;
+  padding: 100px 20px 100px 20px;
+  background-color: rgba(28, 28, 28, 0.8); /* Transparent background for effect */
+  z-index: 1; /* Ensures content layers over animated background */
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      to bottom,
+      rgba(28, 28, 28, 1) 0%,   /* Solid color at top */
+      rgba(28, 28, 28, 0) 15%,  /* Fade out to transparent */
+      rgba(28, 28, 28, 0) 85%,  /* Transparent section */
+      rgba(28, 28, 28, 1) 100%  /* Fade back to solid at bottom */
+  );
+  z-index: -1; /* Layer above background but below content */
+}
   
   .features-section h2 {
     font-size: 2rem;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+  }
+
+  .features-subtitle {
+    font-size: 18px;
+    color: #aaa;
+    margin-bottom: 40px;
   }
   
   .features-grid {
@@ -21,7 +50,7 @@
     padding: 20px;
     border-radius: 10px;
     text-align: left;
-    background-color: #1c1c1c;
+    background-color: #1c1c1c66;
   }
   
   .feature-icon {

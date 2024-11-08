@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/FeaturesSection.css';
+import { AnimatedBackground } from 'animated-backgrounds';
 
 const features = [
   {
@@ -48,17 +49,25 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <div className="features-section">
-      <h2>Features</h2>
-      <div className="features-grid">
-        {features.map((feature, index) => (
-          <div key={index} className="feature-card">
-            <span className="feature-icon">{feature.icon}</span>
-            <h3>{feature.title} {feature.label && <span className="feature-label">{feature.label}</span>}</h3>
-            <p>{feature.description}</p>
-          </div>
-        ))}
-      </div>
+    <div className="features-section-wrapper" style={{ position: 'relative' }}>
+      <AnimatedBackground 
+        animationName="geometricShapes" 
+        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1 }} 
+      />
+      <div className="gradient-overlay" />
+      <section className="features-section">
+        <h2>Features</h2>
+        <p className="features-subtitle">Our curated list for most frequently asked questions.</p>
+        <div className="features-grid">
+          {features.map((feature, index) => (
+            <div key={index} className="feature-card">
+              <span className="feature-icon">{feature.icon}</span>
+              <h3>{feature.title} {feature.label && <span className="feature-label">{feature.label}</span>}</h3>
+              <p>{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

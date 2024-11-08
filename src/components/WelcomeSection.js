@@ -1,4 +1,5 @@
 import React from 'react';
+import { Typewriter } from 'react-simple-typewriter';
 import '../assets/css/WelcomeSection.css';
 
 const WelcomeSection = () => {
@@ -11,7 +12,31 @@ const WelcomeSection = () => {
           <div className="orb light_blue"></div>
           <div className="blurred-layer"></div>
       </div>
-      <h1 className="main-heading"><span className='grdnt0'>Wallet-to-Wallet</span> <br /> <span className="grdnt1">Messaging Made Easy</span></h1>
+      <h1 className="main-heading">
+        <span className='grdnt0'>
+        <Typewriter
+          words={['Wallet-to-Wallet', 'Messaging Made Easy']}
+          loop={true}
+          cursor
+          cursorStyle="_"
+          typeSpeed={70}
+          deleteSpeed={50}
+          delaySpeed={2000}
+        />
+        </span> 
+        <br /> 
+        <span className="grdnt1">
+          <Typewriter
+            words={['Messaging Made Easy', 'Wallet-to-Wallet']}
+            loop={true}
+            cursor
+            cursorStyle="_"
+            typeSpeed={70}
+            deleteSpeed={50}
+            delaySpeed={2000}
+          />
+        </span>
+      </h1>
       <p className="description">
         TimeCapsule Chat is a simple platform for verified messaging from wallet owner-to-owner for outreach and social purposes.
       </p>

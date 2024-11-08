@@ -1,8 +1,14 @@
+.footer-section-wrapper {
+  position: relative;
+  overflow: hidden; /* Ensures background doesn't overflow */
+}
+
 .footer-container {
-  background-color: #333;
-  padding: 40px 20px;
-  color: #fff;
+  position: relative;
   text-align: center;
+  padding: 100px 20px 100px 20px;
+  background-color: rgba(28, 28, 28, 0.8); /* Transparent background for effect */
+  z-index: 1; /* Ensures content layers over animated background */
 }
 
 .footer-content {
@@ -56,4 +62,12 @@
 
 .footer-bottom nav a:hover {
   color: #fff;
+}
+
+.grdnt2 {
+  background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
