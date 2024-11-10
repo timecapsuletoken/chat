@@ -85,6 +85,18 @@
   .emoji-icon {
     margin-right: 10px;
     cursor: pointer;
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 9px;
+  }
+
+  /* Position the emoji picker container */
+  .emoji-picker-container {
+    position: absolute;
+    bottom: 60px; /* Adjust based on chat input position */
+    left: 20px; /* Position it near the emoji icon */
+    z-index: 2000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   .chat-input {

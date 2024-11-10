@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
+import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
 import '../assets/css/ChatPage.css';
 import { IoChatboxSharp } from "react-icons/io5";
 
@@ -9,6 +10,7 @@ const ChatPage = ({ account }) => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const chatAddress = params.get('chatwith');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to control emoji picker visibility
 
   useEffect(() => {
     if (!chatAddress) {
@@ -21,13 +23,23 @@ const ChatPage = ({ account }) => {
     setMessage('');
   };
 
+  const toggleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  };
+
+  // Updated emoji selection handler
+  const onEmojiClick = (emojiObject) => {
+    setMessage(prevMessage => prevMessage + emojiObject.emoji);
+    setShowEmojiPicker(false);
+  };  
+
   return (
     <div className="chat-box">
       <div className="chat-header">
         <div className="chat-address-info">
-            <IoChatboxSharp />
+            <IoChatboxSharp className="chat-message-icon"/>
           <p className="chat-address">
-            {chatAddress ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : 'No Address'}
+            {chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}
             <br /> 
             <span className="status">offline</span>
           </p>
@@ -38,7 +50,12 @@ const ChatPage = ({ account }) => {
         <p className="start-chat-message">... Your new conversation starts here ...</p>
       </div>
       <div className="chat-input-container">
-        <FaSmile className="emoji-icon" />
+      <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} />
+        {showEmojiPicker && (
+          <div className="emoji-picker-container">
+            <EmojiPicker onEmojiClick={onEmojiClick} />
+          </div>
+        )}
         <input
           type="text"
           className="chat-input"

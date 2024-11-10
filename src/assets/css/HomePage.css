@@ -1,27 +1,161 @@
-/* Base styles */
-.home-container {
+  /* Base styles */
+  .home-container {
     display: flex;
     flex-direction: row;
     height: 100vh;
     background-color: #333;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    width: 100%; /* Ensure the container takes full width */
+  
   }
   
-  .sidebar {
-    flex: 0 0 300px;
-    background-color: #1c1c1c;
-    border-right: 1px solid #1c1c1c;
-    padding: 20px;
+  /* Header for mobile button positioning */
+  .home-header {
+    width: auto;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+  }
+
+  /* Sidebar styling, visible with transform */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #1c1c1c;
+    color: #fff;
+    z-index: 100;
+    overflow-y: auto;
+    transform: translateX(0); /* Visible by default on larger screens */
+    transition: transform 0.3s ease-in-out;
+    padding: 10px;
+    }
+
+  /* Show Menu button only on mobile */
+  .sidebar-toggle {
+    display: none; /* Hide by default */
+  }
+
+  .sidebar-toggle span {
+    margin: 0 0px 0 5px;
+  }
+
+  .chat-address-info .chat-message-icon {
+    padding: 10px;
+    border: solid 1px;
+    border-radius: 8px;
+    margin: 10px;
+    font-size: 25px;
+  }
+
+  /* Specific icon buttons (home, message, etc.) inside the sidebar */
+  .wallet-controls .sidebar-icon {
+    margin-bottom: 10px; /* Spacing between icons */
+    background-color: #444; /* Darker shade for consistency */
+  }
+
+  /* Toggle button inside sidebar */
+  .sidebar-icon .sidebar-toggle-inside {
+    background-color: #007bff !important;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 auto; /* Center within the icon box */
+  }
+
+  .sidebar-icon > .sidebar-toggle-inside {
+    background-color: inherit; /* Inherit background color from .sidebar-icon */
   }
   
+  .sidebar-icon.sidebar-toggle-container.open {
+    background-color: #007bff; /* New color when containing sidebar-toggle-inside */
+  }
+
+  .sidebar-icon .sidebar-toggle-inside.open {
+    background-color: #007bff !important; /* New color when the sidebar is open */
+  }
+  
+  /* Sidebar icon styling */
+  .sidebar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333;
+    width: 50px; /* Fixed width and height for uniform boxes */
+    height: 50px;
+    border-radius: 12px; /* Rounded corners */
+    color: #fff;
+    font-size: 24px; /* Larger icon size */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for 3D effect */
+    margin: 5px 5px;
+  }
+
+  .sidebar-icon:hover {
+    background-color: #007bff; /* Highlight on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+  }
+
+  .sidebar-icon.waddr {
+    width: 100% !important;
+    background-color: transparent !important;
+    box-shadow: none;
+  }
+
+  .sidebar-icon button,
+  .sidebar-icon a {
+    color: inherit;
+    background: none;
+    border: none;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  /* Add padding for text and icons */
+  .sidebar-content p {
+    font-size: 16px;
+    margin: 0;
+    color: #ccc;
+    text-align: center;
+  }
+
+  .sidebar-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+ 
   .wallet-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
+    justify-content: center;
+    background-color: #333;
+    padding: 10px;
+    width: 90%;
+    border-radius: 12px;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 24px;
   }
   
   .wallet-header p {
@@ -36,7 +170,6 @@
     font-size: 18px;
     cursor: pointer;
     color: #fff;
-    margin-left: 8px;
   }
 
   .wallet-controls a {
@@ -45,7 +178,6 @@
     font-size: 18px;
     cursor: pointer;
     color: #fff;
-    margin-left: 8px;
   }
   
   .search-bar {
@@ -122,6 +254,7 @@
   .main-content {
     flex: 1;
     padding: 40px;
+    margin-left: 270px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -178,15 +311,53 @@
     .home-container {
       flex-direction: column;
     }
-  
+
+    .dropdown-menu {
+      max-width: 200px; /* Larger width on bigger screens */
+      left: auto;
+      right: 0; 
+    }
+
     .sidebar {
+      transform: translateX(-100%); /* Hidden off-screen on mobile */
+    }
+    
+    .sidebar-toggle {
+      background-color: rgba(255, 255, 255, 0.1); /* Subtle background */
+      color: white;
+      border: none;
+      border-radius: 8px; /* Rounded corners */
       width: 100%;
-      flex: initial;
-      padding: 15px;
+      height: 40px;
+      margin: 0 0 20px 0;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 102;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    
+     /* Hover effect for better interactivity */
+    .sidebar-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.2); /* Slightly darker on hover */
+    }
+
+    /* Active state to simulate a "pressed" effect */
+    .sidebar-toggle:active {
+      background-color: rgba(255, 255, 255, 0.3); /* Darker background when pressed */
+      transform: scale(0.95); /* Slightly shrink on click */
+    }
+
+    /* Show sidebar when it's open */
+    .home-container .sidebar-open {
+      transform: translateX(0);
     }
   
     .main-content {
       padding: 20px;
+      margin-left: 0px;
     }
   
     .welcome-card,
@@ -247,20 +418,23 @@
   
   .dropdown-container {
     position: relative;
-    display: inline-block; /* Ensures the dropdown stays with the button */
+    width: 100%;
 }
 
 .dropdown-menu {
-    position: absolute;
-    top: 100%; /* Positions it right below the button */
-    left: 0; /* Aligns it to the left of the container */
-    background-color: #333;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    min-width: 160px; /* Optional: Adjusts width */
+  position: absolute; /* Positioned within .dropdown-container */
+  top: 100%; /* Positioned directly below the toggle button */
+  left: 0;
+  background-color: #333;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 160px;
+  max-width: 90%; /* Limits width on smaller screens */
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .dropdown-item {
@@ -269,6 +443,7 @@
     align-items: center;
     color: #fff;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .dropdown-item:hover {
@@ -279,28 +454,34 @@
     margin-right: 8px;
 }
 
+/* Prevent scrolling in sidebar when dropdown is open */
+.no-scroll {
+  overflow-y: visible !important;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000; /* Higher than sidebar and other elements */
 }
 
 .modal-content {
   background-color: #333;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%; /* Responsive width */
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
   position: relative;
+  z-index: 2001; /* Ensures it stays above the overlay */
 }
 
 .modal-header {
