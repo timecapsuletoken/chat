@@ -35,7 +35,9 @@ function App() {
         if (window.ethereum && window.ethereum.isMetaMask) {
           provider = new ethers.providers.Web3Provider(window.ethereum);
           try {
+            await provider.send("wallet_requestPermissions", [{ eth_accounts: {} }]);
             await provider.send("eth_requestAccounts", []);
+    
             console.log("MetaMask connected");
       
             // Check and switch to BSC
