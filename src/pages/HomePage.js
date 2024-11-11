@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../assets/css/HomePage.css';
-import { FaPowerOff, FaWallet, FaCogs, FaInfoCircle, FaQuestionCircle, FaTimes, FaBars } from 'react-icons/fa';
+import { FaPowerOff, FaWallet, FaCogs, FaInfoCircle, FaQuestionCircle, FaTimes, FaBars, FaExternalLinkAlt } from 'react-icons/fa';
 import { CiMenuKebab } from "react-icons/ci";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { MdHome } from "react-icons/md";
@@ -10,8 +10,18 @@ import { IoClose } from 'react-icons/io5';
 import ChatPage from './ChatPage';
 import { QRCodeCanvas } from 'qrcode.react';
 import { IoChatboxSharp } from "react-icons/io5";
+import { RiBnbLine } from "react-icons/ri";
+import TCACoin from '../assets/images/logos/logo.png';
 
+// Binance Smart Chain provider and TCA token setup
 const bscProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
+const TCA_TOKEN_ADDRESS = '0x31aab810b51f499340fc1e1b08716d2bc92c7a56';
+const BEP20_ABI = [
+  "function balanceOf(address owner) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
+const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
+
 
 const HomePage = ({ account, disconnectWallet }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,7 +34,8 @@ const HomePage = ({ account, disconnectWallet }) => {
   const [chats, setChats] = useState([]);
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false); // State for wallet modal
   const [balance, setBalance] = useState(0); // Placeholder balance
-  const [txnCount, setTxnCount] = useState(0); // Placeholder txn count
+  const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const savedAccount = localStorage.getItem('connectedAccount');
@@ -67,7 +78,19 @@ const HomePage = ({ account, disconnectWallet }) => {
         console.error('Error fetching BNB balance:', error);
         return null;
       }
-    };    
+    };
+
+    // Function to fetch TCA token balance
+    const getTcaBalance = async (address) => {
+      try {
+        const balance = await tcaTokenContract.balanceOf(address);
+        const decimals = await tcaTokenContract.decimals();
+        return ethers.utils.formatUnits(balance, decimals); // Convert balance to readable format
+      } catch (error) {
+        console.error('Error fetching TCA token balance:', error);
+        return null;
+      }
+    };
   
     // Simulate fetching wallet balance and transaction count
     // Updated fetchBalanceAndTxns function
@@ -76,8 +99,11 @@ const HomePage = ({ account, disconnectWallet }) => {
         if (account) {
           const fetchedBalance = await getBnbBalance(account);
           setBalance(fetchedBalance);
-          // Replace with actual transaction count fetching if needed
-          setTxnCount(0); // Placeholder transaction count
+
+          // Fetch TCA balance
+          const tcaTokenBalance = await getTcaBalance(account);
+          setTcaBalance(tcaTokenBalance);
+
         }
       } catch (error) {
         console.error("Failed to fetch wallet data:", error);
@@ -123,8 +149,18 @@ const HomePage = ({ account, disconnectWallet }) => {
   return (
     <div className="home-container">
         <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
-            <div className="wallet-header">
-              <div className="sidebar-icon waddr" onClick={openWalletModal}>
+            <div 
+              className="wallet-header"
+              style={{
+                background: isHovered ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : '#333'
+              }}
+            >
+              <div 
+                className="sidebar-icon waddr"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onClick={openWalletModal}
+              >
                 <p><FaWallet /> <span className="wallet-addr">{account ? `| ${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}</span></p>
               </div>
             </div>
@@ -241,18 +277,23 @@ const HomePage = ({ account, disconnectWallet }) => {
               <h2>My Profile</h2>
               <button className="wallet-close-button" onClick={closeWalletModal}>×</button>
             </div>
-            <div className="wallet-details">
+            <div className="wallet-details wallet-addr-details">
               <p><strong>Address</strong></p>
-              <p className="wallet-address"><FaWallet /> {account}</p>
+              <p className="wallet-address">
+                <a href={`https://bscscan.com/address/${account}`} target="_blank" rel="noopener noreferrer" className="grdntclr">
+                  {account}
+                </a>
+                <FaExternalLinkAlt className="wallet-address-extlink" />
+              </p>
             </div>
             <div className="wallet-stats">
               <div className="wallet-balance">
-                <p>Balance</p>
-                <span>{balance} BNB</span>
+                <p>BNB Balance</p>
+                <span className="coins-data">{balance} <RiBnbLine className="bnb-coin-logo"/></span>
               </div>
               <div className="wallet-txns">
-                <p>Txns Sent</p>
-                <span>{txnCount}</span>
+                <p>TCA Balance</p>
+                <span className="coins-data">{tcaBalance} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
               </div>
             </div>
             <div className="qr-code-section">

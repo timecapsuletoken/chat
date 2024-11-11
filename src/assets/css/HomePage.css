@@ -21,6 +21,20 @@
     justify-content: center;
   }
 
+  .grdntclr {
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .wallet-address-extlink {
+    color: #fff;
+    font-size: 16px;
+    margin: 3px 5px 0px 5px;
+  }
+
   /* Sidebar styling, visible with transform */
   .sidebar {
     position: fixed;
@@ -70,7 +84,7 @@
 
   /* Toggle button inside sidebar */
   .sidebar-icon .sidebar-toggle-inside {
-    background-color: #007bff !important;
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3) !important;
     color: white;
     border: none;
     border-radius: 50%;
@@ -89,11 +103,11 @@
   }
   
   .sidebar-icon.sidebar-toggle-container.open {
-    background-color: #007bff; /* New color when containing sidebar-toggle-inside */
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3); /* New color when containing sidebar-toggle-inside */
   }
 
   .sidebar-icon .sidebar-toggle-inside.open {
-    background-color: #007bff !important; /* New color when the sidebar is open */
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3) !important; /* New color when the sidebar is open */
   }
   
   /* Sidebar icon styling */
@@ -114,7 +128,7 @@
   }
 
   .sidebar-icon:hover {
-    background-color: #007bff; /* Highlight on hover */
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3); /* Highlight on hover */
     transform: translateY(-2px); /* Slight lift on hover */
   }
 
@@ -122,6 +136,10 @@
     width: 100% !important;
     background-color: transparent !important;
     box-shadow: none;
+  }
+
+  .sidebar-icon:hover.waddr {
+    background: transparent;
   }
 
   .sidebar-icon button,
@@ -218,37 +236,96 @@
     justify-content: space-between;
     align-items: center;
     font-size: 1.5em;
-    margin-bottom: 20px;
   }
   
   .wallet-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     background: none;
     border: none;
     font-size: 1.5em;
     cursor: pointer;
+    color: #fff;
   }
   
   .wallet-details, .wallet-stats, .qr-code-section {
-    margin-bottom: 15px;
+    margin-bottom: 0px;
+  }
+
+  .wallet-addr-details {
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
   }
   
   .wallet-address {
-    color: #007bff;
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
     font-size: 1.1em;
     word-break: break-all;
+    margin: 0px;
   }
   
   .wallet-stats {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
-    margin-top: 10px;
+    margin-top: 0px;
   }
   
   .wallet-balance, .wallet-txns {
     width: 45%;
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 20px 5px 20px 5px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tca-coin-logo {
+    width: 20px; /* Set your desired width */
+    height: 20px; /* Set your desired height */
+    margin-left: 5px;
+  }  
+
+  .bnb-coin-logo {
+    fill: #f1b909;
+    margin-left: 5px;
+  }
+
+  span.coins-data {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .qr-code-section {
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
   }
   
   .qr-code-section p {
@@ -381,8 +458,8 @@
   }
   
   .start-conversation-btn {
-    background-color: #007bff;
-    color: #fff;
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+    color: #1c1c1c;
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
@@ -597,6 +674,7 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
+  color: #fff;
 }
 
 .modal-input {
@@ -609,8 +687,8 @@
 }
 
 .start-chat-button {
-  background-color: #007bff !important;
-  color: #fff;
+  background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3) !important;
+  color: #1c1c1c;
   padding: 10px 20px;
   border: none;
   border-radius: 8px;

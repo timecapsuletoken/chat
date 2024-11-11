@@ -108,7 +108,7 @@
   }
   
   .send-message-btn {
-    background-color: #007bff;
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3); /* Highlight on hover */
     border: none;
     border-radius: 4px;
     color: white;
