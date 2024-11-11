@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../assets/css/HomePage.css';
 import { FaPowerOff, FaWallet, FaCogs, FaInfoCircle, FaQuestionCircle, FaTimes, FaBars } from 'react-icons/fa';
@@ -7,7 +8,10 @@ import { LuMessageSquarePlus } from "react-icons/lu";
 import { MdHome } from "react-icons/md";
 import { IoClose } from 'react-icons/io5';
 import ChatPage from './ChatPage';
+import { QRCodeCanvas } from 'qrcode.react';
 import { IoChatboxSharp } from "react-icons/io5";
+
+const bscProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
 
 const HomePage = ({ account, disconnectWallet }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,6 +22,9 @@ const HomePage = ({ account, disconnectWallet }) => {
   const [chatAddress, setChatAddress] = useState('');
   const currentChat = searchParams.get('chatwith');
   const [chats, setChats] = useState([]);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false); // State for wallet modal
+  const [balance, setBalance] = useState(0); // Placeholder balance
+  const [txnCount, setTxnCount] = useState(0); // Placeholder txn count
 
   useEffect(() => {
     const savedAccount = localStorage.getItem('connectedAccount');
@@ -39,6 +46,44 @@ const HomePage = ({ account, disconnectWallet }) => {
       setShowModal(false);
   };
 
+    // Function to toggle wallet modal visibility
+    const openWalletModal = () => {
+      fetchBalanceAndTxns();
+      setIsWalletModalOpen(true);
+    };
+  
+    const closeWalletModal = () => setIsWalletModalOpen(false);
+
+    const getBnbBalance = async (address) => {
+      try {
+        // Fetch the balance (in Wei)
+        const balanceWei = await bscProvider.getBalance(address);
+        
+        // Convert the balance from Wei to BNB
+        const balanceBnb = ethers.utils.formatEther(balanceWei);
+        
+        return balanceBnb;
+      } catch (error) {
+        console.error('Error fetching BNB balance:', error);
+        return null;
+      }
+    };    
+  
+    // Simulate fetching wallet balance and transaction count
+    // Updated fetchBalanceAndTxns function
+    const fetchBalanceAndTxns = async () => {
+      try {
+        if (account) {
+          const fetchedBalance = await getBnbBalance(account);
+          setBalance(fetchedBalance);
+          // Replace with actual transaction count fetching if needed
+          setTxnCount(0); // Placeholder transaction count
+        }
+      } catch (error) {
+        console.error("Failed to fetch wallet data:", error);
+      }
+    };
+
   const toggleDropdown = () => {
     setShowDropdown(prevState => !prevState);
   };
@@ -46,6 +91,13 @@ const HomePage = ({ account, disconnectWallet }) => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
     console.log("Sidebar state:", !isSidebarOpen); // Log state to check toggle
+  };
+
+   // Function to close sidebar
+   const closeSidebar = () => {
+    if (window.innerWidth <= 768) { // Check if on mobile
+      setIsSidebarOpen(false);
+    }
   };
 
   const handleStartChat = () => {
@@ -72,7 +124,7 @@ const HomePage = ({ account, disconnectWallet }) => {
     <div className="home-container">
         <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
             <div className="wallet-header">
-              <div className="sidebar-icon waddr">
+              <div className="sidebar-icon waddr" onClick={openWalletModal}>
                 <p><FaWallet /> <span className="wallet-addr">{account ? `| ${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}</span></p>
               </div>
             </div>
@@ -127,10 +179,13 @@ const HomePage = ({ account, disconnectWallet }) => {
                   <div 
                     key={index}
                     className="chat-item"
-                    onClick={() => handleChatItemClick(address)}
+                    onClick={() => {
+                      handleChatItemClick(address); // Handle chat item click
+                      closeSidebar(); // Close the sidebar on mobile
+                    }}
                   >
-                    <IoChatboxSharp />
-                    <span>New Chat</span>
+                    <IoChatboxSharp className="chat-message-icon"/>
+                    
                     <p className="chat-address-sidebar">
                       {address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address}
                     </p>
@@ -154,28 +209,60 @@ const HomePage = ({ account, disconnectWallet }) => {
             </div>
         </div>
         {showModal && (
-                  <div className="modal-overlay" onClick={handleCloseModal}>
-                      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                          <div className="modal-header">
-                              <h2>Start New Chat</h2>
-                              <button className="close-button" onClick={handleCloseModal}>
-                                  <IoClose />
-                              </button>
-                          </div>
-                          <p>Enter an address (or .bnb name) to start a new chat</p>
-                          <input 
-                            type="text"
-                            placeholder="e.g. 0x... or name.bnb"
-                            className="modal-input"
-                            value={chatAddress}
-                            onChange={(e) => setChatAddress(e.target.value)}                          
-                          />
-                          <button className="start-chat-button" onClick={handleStartChat}>
-                              <LuMessageSquarePlus /> Start Chatting
-                          </button>
-                      </div>
+          <div className="modal-overlay" onClick={handleCloseModal}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header">
+                      <h2>Start New Chat</h2>
+                      <button className="close-button" onClick={handleCloseModal}>
+                          <IoClose />
+                      </button>
                   </div>
-                )}
+                  <p>Enter an address (or .bnb name) to start a new chat</p>
+                  <input 
+                    type="text"
+                    placeholder="e.g. 0x... or name.bnb"
+                    className="modal-input"
+                    value={chatAddress}
+                    onChange={(e) => setChatAddress(e.target.value)}                          
+                  />
+                  <button className="start-chat-button" onClick={() => {
+                      handleStartChat(); // Handle chat item click
+                      closeSidebar(); // Close the sidebar on mobile
+                    }}>
+                      <LuMessageSquarePlus /> Start Chatting
+                  </button>
+              </div>
+          </div>
+        )}
+      {isWalletModalOpen && (
+        <div className="wallet-modal-overlay" onClick={closeWalletModal}>
+          <div className="wallet-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="wallet-modal-header">
+              <h2>My Profile</h2>
+              <button className="wallet-close-button" onClick={closeWalletModal}>×</button>
+            </div>
+            <div className="wallet-details">
+              <p><strong>Address</strong></p>
+              <p className="wallet-address"><FaWallet /> {account}</p>
+            </div>
+            <div className="wallet-stats">
+              <div className="wallet-balance">
+                <p>Balance</p>
+                <span>{balance} BNB</span>
+              </div>
+              <div className="wallet-txns">
+                <p>Txns Sent</p>
+                <span>{txnCount}</span>
+              </div>
+            </div>
+            <div className="qr-code-section">
+              <p><strong>Your QR Code address</strong></p>
+              <p>(Safe to share with your contacts)</p>
+              <QRCodeCanvas value={account} size={128} />
+            </div>
+          </div>
+        </div>
+      )}
       <div className="main-content">
       {!isSidebarOpen && (
           <button className="sidebar-toggle" onClick={toggleSidebar}>
@@ -188,7 +275,7 @@ const HomePage = ({ account, disconnectWallet }) => {
           <>
             <div className="welcome-card">
               <h2>Welcome to <span className="logo-text">TimeCapsule Chat</span> <span className="beta-tag">Beta</span></h2>
-              <p>Built for Etherscan users, Blockscan Chat is a messaging platform for users to simply and instantly message each other, wallet-to-wallet.</p>
+              <p>Built for users that Value their Privacy, TimeCapsule Chat is a messaging platform for users to simply and instantly message each other, wallet-to-wallet.</p>
               <a href="/faqs" className="faq-link">Check out our FAQs for more details.</a>
             </div>
             <div className="important-card">

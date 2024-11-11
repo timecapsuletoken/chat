@@ -54,6 +54,14 @@
     font-size: 25px;
   }
 
+  .chat-item .chat-message-icon {
+    padding: 5px;
+    border: solid 1px;
+    border-radius: 8px;
+    margin: 5px;
+    font-size: 12px;
+  }
+
   /* Specific icon buttons (home, message, etc.) inside the sidebar */
   .wallet-controls .sidebar-icon {
     margin-bottom: 10px; /* Spacing between icons */
@@ -143,6 +151,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: row;
+    margin: 10px 0 0 0;
   }
  
   .wallet-header {
@@ -179,7 +188,74 @@
     cursor: pointer;
     color: #fff;
   }
+
+  .wallet-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
   
+  .wallet-modal-content {
+    background-color: #333;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+  }
+  
+  .wallet-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+  
+  .wallet-close-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+  
+  .wallet-details, .wallet-stats, .qr-code-section {
+    margin-bottom: 15px;
+  }
+  
+  .wallet-address {
+    color: #007bff;
+    font-size: 1.1em;
+    word-break: break-all;
+  }
+  
+  .wallet-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    margin-top: 10px;
+  }
+  
+  .wallet-balance, .wallet-txns {
+    width: 45%;
+  }
+  
+  .qr-code-section p {
+    margin: 5px 0;
+    font-size: 0.9em;
+  }  
+
   .search-bar {
     width: 100%;
     padding: 8px 10px;
@@ -192,7 +268,7 @@
     font-size: 14px;
     width: 100%;
     color: #666;
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -208,16 +284,25 @@
     align-items: center;
     padding: 10px;
     border-radius: 8px;
-    background-color: #f0f0f0; /* Light background for chat items */
+    background-color: #333333;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 100%;
+    width: 90%;
     justify-content: space-between;
-    border-bottom: 1px solid #ccc;
+    border: 1px solid #333;
   }
 
   .chat-item:hover {
     background-color: #e0e0e0; /* Slightly darker on hover */
+    color: #333333;
+  }
+
+  .chat-item p {
+    color: #ccc;
+  }
+
+  .chat-item:hover p {
+    color: #333333;
   }
 
   .delete-icon {
@@ -393,6 +478,16 @@
       font-size: 14px;
       padding: 10px;
     }
+    
+    .modal-content {
+      padding: 15px; /* Reduce padding for smaller screens */
+      max-width: 80% !important; /* Allow it to take up more space on mobile */
+    }
+
+    .wallet-modal-content {
+      max-width: 80% !important;
+    }
+
   }
 
   .disconnect-button {
@@ -476,8 +571,9 @@
   background-color: #333;
   padding: 20px;
   border-radius: 8px;
-  width: 90%; /* Responsive width */
+  width: 100%; /* Responsive width */
   max-width: 400px;
+  min-width: 300px; /* Ensure it doesn't get too narrow on mobile */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
   position: relative;
