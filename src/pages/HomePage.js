@@ -36,9 +36,41 @@ const HomePage = ({ account, disconnectWallet }) => {
   const [balance, setBalance] = useState(0); // Placeholder balance
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
   const [isHovered, setIsHovered] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [soundAlertsEnabled, setSoundAlertsEnabled] = useState(false);
+  const [desktopNotificationsEnabled, setDesktopNotificationsEnabled] = useState(false);
+  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
+  const [blockedAddresses, setBlockedAddresses] = useState([]); // List of blocked addresses
+
+  const toggleSettingsModal = () => {
+    setIsSettingsModalOpen(!isSettingsModalOpen);
+  };
+
+  const handleToggleNotifications = () => setNotificationsEnabled(!notificationsEnabled);
+  const handleToggleSoundAlerts = () => setSoundAlertsEnabled(!soundAlertsEnabled);
+  const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled(!desktopNotificationsEnabled);
+  const handleToggleOnlineStatus = () => setShowOnlineStatus(!showOnlineStatus);
+
+  const handleBlockAddress = (address) => {
+    if (!blockedAddresses.includes(address)) {
+      setBlockedAddresses([...blockedAddresses, address]);
+    }
+  };
+
+  const handleUnblockAddress = (address) => {
+    setBlockedAddresses(blockedAddresses.filter(a => a !== address));
+  };
 
   useEffect(() => {
     const savedAccount = localStorage.getItem('connectedAccount');
+    const savedSettings = JSON.parse(localStorage.getItem('userSettings')) || {};
+    setNotificationsEnabled(savedSettings.notificationsEnabled || false);
+    setSoundAlertsEnabled(savedSettings.soundAlertsEnabled || false);
+    setDesktopNotificationsEnabled(savedSettings.desktopNotificationsEnabled || false);
+    setShowOnlineStatus(savedSettings.showOnlineStatus || true);
+    setBlockedAddresses(savedSettings.blockedAddresses || []);
+
     if (!account && !savedAccount) {
       setChats([]);
       navigate('/login');
@@ -48,6 +80,18 @@ const HomePage = ({ account, disconnectWallet }) => {
     setChats(savedChats);
   
   }, [account, navigate]);
+
+  useEffect(() => {
+    const userSettings = {
+      notificationsEnabled,
+      soundAlertsEnabled,
+      desktopNotificationsEnabled,
+      showOnlineStatus,
+      blockedAddresses
+    };
+    localStorage.setItem('userSettings', JSON.stringify(userSettings));
+  }, [notificationsEnabled, soundAlertsEnabled, desktopNotificationsEnabled, showOnlineStatus, blockedAddresses]);
+
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -187,7 +231,7 @@ const HomePage = ({ account, disconnectWallet }) => {
                   <div className="dropdown-container">
                     {showDropdown && (
                         <div className="dropdown-menu">
-                          <div className="dropdown-item">
+                          <div className="dropdown-item" onClick={toggleSettingsModal}>
                               <FaCogs className="dropdown-icon" />
                               <span>Settings</span>
                           </div>
@@ -301,6 +345,71 @@ const HomePage = ({ account, disconnectWallet }) => {
               <p>(Safe to share with your contacts)</p>
               <QRCodeCanvas value={account} size={128} />
             </div>
+          </div>
+        </div>
+      )}
+      {/* Settings Modal */}
+      {isSettingsModalOpen && (
+        <div className="modal-overlay" onClick={toggleSettingsModal}>
+          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Settings</h2>
+            <button className="close-button" onClick={toggleSettingsModal}>×</button>
+
+            <h3>Notification Settings</h3>
+            <label>
+              <input 
+                type="checkbox" 
+                checked={notificationsEnabled} 
+                onChange={handleToggleNotifications} 
+              />
+              Enable Notifications
+            </label>
+            <label>
+              <input 
+                type="checkbox" 
+                checked={soundAlertsEnabled} 
+                onChange={handleToggleSoundAlerts} 
+              />
+              Enable Sound Alerts
+            </label>
+            <label>
+              <input 
+                type="checkbox" 
+                checked={desktopNotificationsEnabled} 
+                onChange={handleToggleDesktopNotifications} 
+              />
+              Enable Desktop Notifications
+            </label>
+
+            <h3>Privacy Settings</h3>
+            <label>
+              <input 
+                type="checkbox" 
+                checked={showOnlineStatus} 
+                onChange={handleToggleOnlineStatus} 
+              />
+              Show Online Status
+            </label>
+
+            <h4>Blocked Addresses</h4>
+            <ul>
+              {blockedAddresses.map(address => (
+                <li key={address}>
+                  {address}
+                  <button onClick={() => handleUnblockAddress(address)}>Unblock</button>
+                </li>
+              ))}
+            </ul>
+            <input 
+              type="text" 
+              placeholder="Enter address to block" 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleBlockAddress(e.target.value);
+                  e.target.value = '';
+                }
+              }}
+            />
           </div>
         </div>
       )}

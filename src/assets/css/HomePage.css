@@ -21,6 +21,39 @@
     justify-content: center;
   }
 
+  .settings-modal-content {
+    background-color: #333;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  .settings-modal-content h2 {
+    margin-top: 0;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  h3, h4 {
+    margin-top: 20px;
+  }
+
   .grdntclr {
     background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
     background-clip: text;

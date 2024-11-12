@@ -11,8 +11,8 @@ const FAQSection = () => {
             <p className="faq-subtitle">Our curated list for most frequently asked questions.</p>
             
             <div className="faq-item">
-              <h3>What is Blockscan Chat?</h3>
-              <p>Made by the Etherscan Team, Blockscan Chat introduces Signing in with Web3 and a messaging platform for wallet-to-wallet messages.</p>
+              <h3>What is TimeCapsule Chat?</h3>
+              <p>Made by the Etherscan Team, TimeCapsule Chat introduces Signing in with Web3 and a messaging platform for wallet-to-wallet messages.</p>
             </div>
 
             <div className="faq-item">
@@ -22,11 +22,11 @@ const FAQSection = () => {
 
             <div className="faq-item">
               <h3>Will I get a reply back?</h3>
-              <p>Reply depends on whether the recipient uses Blockscan Chat to respond. No guarantee.</p>
+              <p>Reply depends on whether the recipient uses TimeCapsule Chat to respond. No guarantee.</p>
             </div>
 
             <div className="faq-item">
-              <h3>Is Blockscan Chat end-to-end encrypted?</h3>
+              <h3>Is TimeCapsule Chat end-to-end encrypted?</h3>
               <p>Messages are encrypted once both addresses sign in, except for addresses with an API key and Safe multisig addresses.</p>
             </div>
             
