@@ -163,18 +163,20 @@
 
   /* Button to open Blocked Addresses modal */
   .manage-blocked-btn {
-    background-color: #20b2aa;
+    width: 100%;
+    height: 70px;
+    background-color: #1c1c1c;
+    border: solid 1px #4b4b4b;
     color: #fff;
-    border: none;
     padding: 8px 15px;
     font-size: 1rem;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
   }
 
   .manage-blocked-btn:hover {
-    background-color: #17a598;
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3) !important;
+    transition: background-color 0.3s, transform 0.2s;
   }
 
   /* Blocked Addresses Modal Content */
@@ -274,8 +276,8 @@
 }
 
 .save-blocked-btn {
-  background-color: #20b2aa;
-  color: #fff;
+  background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+  color: #1c1c1c;
   border: none;
   padding: 10px 20px;
   font-size: 1rem;
@@ -285,7 +287,8 @@
 }
 
 .save-blocked-btn:hover {
-  background-color: #17a598;
+  background: #ce00fc;
+  color: #fff;
 }
 
 /* No Blocked Addresses Message */
@@ -312,22 +315,6 @@
 
   .blocked-modal-content .close-button:hover {
     color: #f44336;
-  }
-
-  /* Save Changes Button */
-  .save-blocked-btn {
-    background-color: #20b2aa;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-  }
-
-  .save-blocked-btn:hover {
-    background-color: #17a598;
   }
   
   label {

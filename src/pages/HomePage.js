@@ -48,6 +48,33 @@ const HomePage = ({ account, disconnectWallet }) => {
 
   const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
 
+  const fetchChats = useCallback(() => {
+    if (account) {
+      console.log("Fetching chats for account:", account);
+  
+      // Attempt to fetch chats with retry
+      const attemptFetch = (retry = 0) => {
+        const loadedChats = [];
+        gun.get(account).get('chats').map().once((address) => {
+          if (address) {
+            loadedChats.push(address);
+          }
+        });
+  
+        // Check if data was fetched; retry if needed
+        if (loadedChats.length > 0 || retry >= 3) {
+          setChats([...new Set(loadedChats)]); // Update state and remove duplicates
+          console.log("Loaded chats from Gun:", loadedChats);
+        } else {
+          console.log(`Retrying fetch for chats, attempt ${retry + 1}...`);
+          setTimeout(() => attemptFetch(retry + 1), 1000); // Retry after 1 second
+        }
+      };
+  
+      attemptFetch(); // Start initial fetch attempt
+    }
+  }, [account]);  
+  
   const fetchSettings = useCallback(() => {
     if (account) {
       console.log("Fetching settings for account:", account);
@@ -162,12 +189,10 @@ const HomePage = ({ account, disconnectWallet }) => {
     if (account)
     {
       fetchSettings();
+      fetchChats(); // Fetch chats from Gun when account changes
     }
-
-    const savedChats = JSON.parse(localStorage.getItem(`chats_${account}`)) || [];
-    setChats(savedChats);
     
-  }, [account, navigate, fetchSettings]);
+  }, [account, navigate, fetchSettings, fetchChats]);
 
   const toggleBlockedModal = () => {
     console.log("Blocked addresses before saving:", blockedAddresses);
@@ -254,23 +279,45 @@ const HomePage = ({ account, disconnectWallet }) => {
 
   const handleStartChat = () => {
     if (chatAddress.trim()) {
-      const updatedChats = [...new Set([...chats, chatAddress])]; // Avoid duplicate addresses
-      setChats(updatedChats);
-      localStorage.setItem(`chats_${account}`, JSON.stringify(updatedChats)); // Save with account context
-      setSearchParams({ chatwith: chatAddress });
+      const trimmedAddress = chatAddress.trim();
+  
+      // Save chat address in Gun under the account node
+      gun.get(account).get('chats').set(trimmedAddress, (ack) => {
+        if (ack.err) {
+          console.error("Failed to save chat address:", ack.err);
+        } else {
+          console.log("Chat address saved successfully:", trimmedAddress);
+          setChats((prevChats) => [...new Set([...prevChats, trimmedAddress])]); // Update local state without duplicates
+        }
+      });
+  
+      setSearchParams({ chatwith: trimmedAddress });
       setShowModal(false);
     }
-  };
+  };  
 
   const handleChatItemClick = (chatAddress) => {
     setSearchParams({ chatwith: chatAddress });
   };
 
   const handleDeleteChat = (chatToDelete) => {
+    // Remove from local state
     const updatedChats = chats.filter((chat) => chat !== chatToDelete);
     setChats(updatedChats);
-    localStorage.setItem(`chats_${account}`, JSON.stringify(updatedChats)); // Save updated list
-    };  
+  
+    // Remove from Gun
+    gun.get(account).get('chats').map().once((data, key) => {
+      if (data === chatToDelete) {
+        gun.get(account).get('chats').get(key).put(null, (ack) => {
+          if (ack.err) {
+            console.error("Failed to delete chat:", ack.err);
+          } else {
+            console.log("Chat deleted successfully:", chatToDelete);
+          }
+        });
+      }
+    });
+  };    
 
   return (
     <div className="home-container">
