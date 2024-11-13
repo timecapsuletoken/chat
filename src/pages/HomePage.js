@@ -28,34 +28,58 @@ const HomePage = ({ account, disconnectWallet }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar visibility
   const [chatAddress, setChatAddress] = useState('');
   const currentChat = searchParams.get('chatwith');
   const [chats, setChats] = useState([]);
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false); // State for wallet modal
   const [balance, setBalance] = useState(0); // Placeholder balance
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
   const [isHovered, setIsHovered] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false); // State for wallet modal
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [soundAlertsEnabled, setSoundAlertsEnabled] = useState(false);
   const [desktopNotificationsEnabled, setDesktopNotificationsEnabled] = useState(false);
   const [blockedAddresses, setBlockedAddresses] = useState([]);
 
   const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
+
   const fetchSettings = useCallback(() => {
     if (account) {
-      gun.get(account).once((data) => {
-        if (data) {
-          setNotificationsEnabled(data.notificationsEnabled || false);
-          setSoundAlertsEnabled(data.soundAlertsEnabled || false);
-          setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
-          setBlockedAddresses(data.blockedAddresses ? Object.keys(data.blockedAddresses) : []);
-        }
-      });
+      console.log("Fetching settings for account:", account);
+  
+      // Attempt to fetch data with a retry mechanism
+      const attemptFetch = (retry = 0) => {
+        gun.get(account).once((data) => {
+          if (data && Object.keys(data).length > 1) {
+            console.log("Fetched data from Gun:", data);
+  
+            setNotificationsEnabled(data.notificationsEnabled || false);
+            setSoundAlertsEnabled(data.soundAlertsEnabled || false);
+            setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
+  
+            const blockedArray = data.blockedAddresses ? Object.keys(data.blockedAddresses) : [];
+            console.log("Blocked addresses loaded:", blockedArray);
+            setBlockedAddresses(blockedArray);
+          } else {
+            console.log("No data found for this account in Gun.");
+  
+            // Retry fetching if data is empty, up to 3 attempts
+            if (retry < 3) {
+              console.log(`Retrying fetch attempt ${retry + 1}...`);
+              setTimeout(() => attemptFetch(retry + 1), 1000); // Retry after 1 second
+            }
+          }
+        });
+      };
+  
+      attemptFetch();
     }
-  }, [account]);
+  }, [account]);  
 
   const handleSaveSettings = () => {
     const settings = {
@@ -63,10 +87,13 @@ const HomePage = ({ account, disconnectWallet }) => {
       soundAlertsEnabled,
       desktopNotificationsEnabled,
       blockedAddresses: blockedAddresses.reduce((acc, addr) => {
-        acc[addr] = true;
+        acc[addr] = true; // Convert array to object for Gun
         return acc;
       }, {}),
     };
+  
+    console.log("Attempting to save settings:", settings);
+  
     gun.get(account).put(settings, (ack) => {
       if (ack.err) {
         console.error("Failed to save settings:", ack.err);
@@ -74,51 +101,46 @@ const HomePage = ({ account, disconnectWallet }) => {
         console.log("Settings saved successfully:", settings);
       }
     });
-  };
+  };  
 
   const handleToggleNotifications = () => setNotificationsEnabled((prev) => !prev);
   const handleToggleSoundAlerts = () => setSoundAlertsEnabled((prev) => !prev);
   const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev);
 
   const handleBlockAddress = (address) => {
-    if (!blockedAddresses.includes(address)) {
-      setBlockedAddresses([...blockedAddresses, address]);
+    if (address && !blockedAddresses.includes(address)) {
+      const updatedBlockedAddresses = [...blockedAddresses, address];
+      setBlockedAddresses(updatedBlockedAddresses);
     }
   };
-
+  
   const handleUnblockAddress = (address) => {
-    setBlockedAddresses(blockedAddresses.filter(a => a !== address));
-  };
+    const updatedBlockedAddresses = blockedAddresses.filter(a => a !== address);
+    setBlockedAddresses(updatedBlockedAddresses);
+  };  
 
   useEffect(() => {
     const savedAccount = localStorage.getItem('connectedAccount');
-    const savedSettings = JSON.parse(localStorage.getItem('userSettings')) || {};
-    setNotificationsEnabled(savedSettings.notificationsEnabled || false);
-    setSoundAlertsEnabled(savedSettings.soundAlertsEnabled || false);
-    setDesktopNotificationsEnabled(savedSettings.desktopNotificationsEnabled || false);
-    setBlockedAddresses(savedSettings.blockedAddresses || []);
 
     if (!account && !savedAccount) {
       setChats([]);
       navigate('/login');
     } 
     
+    if (account)
+    {
+      fetchSettings();
+    }
+
     const savedChats = JSON.parse(localStorage.getItem(`chats_${account}`)) || [];
     setChats(savedChats);
-    fetchSettings();
-  
+    
   }, [account, navigate, fetchSettings]);
 
-  useEffect(() => {
-    const userSettings = {
-      notificationsEnabled,
-      soundAlertsEnabled,
-      desktopNotificationsEnabled,
-      blockedAddresses
-    };
-    localStorage.setItem('userSettings', JSON.stringify(userSettings));
-  }, [notificationsEnabled, soundAlertsEnabled, desktopNotificationsEnabled, blockedAddresses]);
-
+  const toggleBlockedModal = () => {
+    setIsBlockedModalOpen(!isBlockedModalOpen);
+    setIsSettingsModalOpen(false);
+  };  
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -414,29 +436,67 @@ const HomePage = ({ account, disconnectWallet }) => {
               </div>
               <div className="privacy_settings">
                 <h3>Privacy Settings</h3>
-                <h4>Blocked Addresses</h4>
-                <ul>
-                  {blockedAddresses.map(address => (
-                    <li key={address}>
-                      {address}
-                      <button onClick={() => handleUnblockAddress(address)}>Unblock</button>
-                    </li>
-                  ))}
-                </ul>
-                <input 
-                  type="text" 
-                  placeholder="Enter address to block" 
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleBlockAddress(e.target.value);
-                      e.target.value = '';
-                    }
-                  }}
-                />
+                <button className="manage-blocked-btn" onClick={toggleBlockedModal}>
+                  Manage Blocked Addresses
+                </button>
               </div>
               <div className="save_settings_btn">
-                <button onClick={handleSaveSettings}>Save Settings</button>
+                <button onClick={() => {
+                  handleSaveSettings();
+                  //toggleSettingsModal();
+                }}>Save Settings</button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {isBlockedModalOpen && (
+        <div className="modal-overlay" onClick={toggleBlockedModal}>
+          <div className="blocked-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Blocked Addresses</h2>
+              <button className="close-button" onClick={toggleBlockedModal}>×</button>
+            </div>
+
+            <div className="blocked-list">
+              <ul>
+                {blockedAddresses.length > 0 ? (
+                  blockedAddresses.map(address => (
+                    <li key={address}>
+                      <span className="blocked-address">{address}</span>
+                      <button className="unblock-button" onClick={() => handleUnblockAddress(address)}>
+                        Unblock
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <p className="no-blocked-addresses">No addresses are currently blocked.</p>
+                )}
+              </ul>
+            </div>
+
+            <div className="block-input-container">
+              <input 
+                type="text" 
+                placeholder="Enter address to block" 
+                className="block-input"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleBlockAddress(e.target.value);
+                    e.target.value = '';
+                  }
+                }}
+              />
+              <button className="add-block-button" onClick={() => handleBlockAddress(document.querySelector('.block-input').value)}>
+                Block Address
+              </button>
+            </div>
+
+            <div className="modal-footer">
+              <button className="save-blocked-btn" onClick={() => {
+                handleSaveSettings();
+                toggleBlockedModal();
+              }}>Save Changes</button>
             </div>
           </div>
         </div>

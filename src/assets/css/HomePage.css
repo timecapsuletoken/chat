@@ -160,6 +160,173 @@
     font-size: 1.5em;
     cursor: pointer;
   }
+
+  /* Button to open Blocked Addresses modal */
+  .manage-blocked-btn {
+    background-color: #20b2aa;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .manage-blocked-btn:hover {
+    background-color: #17a598;
+  }
+
+  /* Blocked Addresses Modal Content */
+  .blocked-modal-content {
+    background-color: #333;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    position: relative;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Blocked Addresses List */
+.blocked-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+.blocked-list ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.blocked-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 8px 10px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+
+.blocked-address {
+  font-size: 0.9rem;
+  color: #333;
+  word-break: break-all;
+}
+
+.unblock-button {
+  background-color: #ff6b6b;
+  border: none;
+  color: #fff;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.unblock-button:hover {
+  background-color: #ff4a4a;
+}
+
+/* Block Input and Add Button */
+.block-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.block-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.block-input:focus {
+  border-color: #20b2aa;
+}
+
+.add-block-button {
+  background-color: #20b2aa;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-block-button:hover {
+  background-color: #17a598;
+}
+
+/* Save Button */
+.modal-footer {
+  text-align: center;
+}
+
+.save-blocked-btn {
+  background-color: #20b2aa;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-blocked-btn:hover {
+  background-color: #17a598;
+}
+
+/* No Blocked Addresses Message */
+.no-blocked-addresses {
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+}
+
+
+  /* Close Button */
+  .blocked-modal-content .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #555;
+  }
+
+  .blocked-modal-content .close-button:hover {
+    color: #f44336;
+  }
+
+  /* Save Changes Button */
+  .save-blocked-btn {
+    background-color: #20b2aa;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+
+  .save-blocked-btn:hover {
+    background-color: #17a598;
+  }
   
   label {
     display: block;
@@ -791,6 +958,10 @@
   justify-content: center;
   align-items: center;
   z-index: 2000; /* Higher than sidebar and other elements */
+}
+
+.blocked-modal-content {
+  z-index: 1001; /* Ensure it's above the overlay */
 }
 
 .modal-content {
