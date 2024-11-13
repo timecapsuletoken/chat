@@ -31,14 +31,130 @@
     position: relative;
   }
   
-  .settings-modal-content h2 {
+  /* Notification */
+  .notification_settings {
+    padding-top: 10px;
     margin-top: 0;
   }
+
+  .privacy_settings {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  /* Labels and Checkboxes */
+  .settings-modal-content label {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #ddd;
+    border-bottom: solid 1px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    cursor: pointer;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+  }
+
+  .settings-modal-content label span {
+    font-size: 13px;
+    margin: 5px 0px;
+  }
+
+  .settings-modal-content label input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+
+  /* Blocked Addresses */
+  .privacy_settings ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 10px 0;
+  }
+
+  .privacy_settings li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #ddd;
+    background-color: #f7f7f7;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+  }
+
+  .privacy_settings li button {
+    background-color: #ff6b6b;
+    border: none;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .privacy_settings li button:hover {
+    background-color: #ff4a4a;
+  }
+
+  /* Input for Blocking Addresses */
+  .privacy_settings input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+    outline: none;
+  }
+
+  .privacy_settings input[type="text"]:focus {
+    border-color: #20b2aa;
+  }
+
+  /* Save Button */
+  .save_settings_btn {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .save_settings_btn button {
+    background-color: #20b2aa;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .save_settings_btn button:hover {
+    background-color: #17a598;
+  }
   
+  .settings-title {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin-left: 20px;
+    background: none;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
   .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 0px;
+    right: 0px;
+    margin-right: 10px;
     background: none;
     border: none;
     font-size: 1.5em;

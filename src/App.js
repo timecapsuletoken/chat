@@ -24,7 +24,6 @@ function App() {
     }
   }, []);
   
-
   const connectWallet = async ( providerType) => {
     console.log("Provider Type:", providerType); // Diagnostic log
   
@@ -51,7 +50,14 @@ function App() {
               console.log("Switched to Binance Smart Chain");
             }
           } catch (error) {
-            console.error("MetaMask connection error:", error);
+            if (error.code === 4001) {
+              // User rejected the request
+              console.log("User rejected the MetaMask connection request");
+              return;
+            } else {
+              console.error("MetaMask connection error:", error);
+              return;
+            }
           }
         } else {
           alert("Please install MetaMask to connect your wallet.");

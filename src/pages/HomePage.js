@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../assets/css/HomePage.css';
@@ -11,6 +11,7 @@ import ChatPage from './ChatPage';
 import { QRCodeCanvas } from 'qrcode.react';
 import { IoChatboxSharp } from "react-icons/io5";
 import { RiBnbLine } from "react-icons/ri";
+import gun from '../utils/gunSetup';
 import TCACoin from '../assets/images/logos/logo.png';
 
 // Binance Smart Chain provider and TCA token setup
@@ -40,17 +41,44 @@ const HomePage = ({ account, disconnectWallet }) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [soundAlertsEnabled, setSoundAlertsEnabled] = useState(false);
   const [desktopNotificationsEnabled, setDesktopNotificationsEnabled] = useState(false);
-  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
-  const [blockedAddresses, setBlockedAddresses] = useState([]); // List of blocked addresses
+  const [blockedAddresses, setBlockedAddresses] = useState([]);
 
-  const toggleSettingsModal = () => {
-    setIsSettingsModalOpen(!isSettingsModalOpen);
+  const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
+  const fetchSettings = useCallback(() => {
+    if (account) {
+      gun.get(account).once((data) => {
+        if (data) {
+          setNotificationsEnabled(data.notificationsEnabled || false);
+          setSoundAlertsEnabled(data.soundAlertsEnabled || false);
+          setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
+          setBlockedAddresses(data.blockedAddresses ? Object.keys(data.blockedAddresses) : []);
+        }
+      });
+    }
+  }, [account]);
+
+  const handleSaveSettings = () => {
+    const settings = {
+      notificationsEnabled,
+      soundAlertsEnabled,
+      desktopNotificationsEnabled,
+      blockedAddresses: blockedAddresses.reduce((acc, addr) => {
+        acc[addr] = true;
+        return acc;
+      }, {}),
+    };
+    gun.get(account).put(settings, (ack) => {
+      if (ack.err) {
+        console.error("Failed to save settings:", ack.err);
+      } else {
+        console.log("Settings saved successfully:", settings);
+      }
+    });
   };
 
-  const handleToggleNotifications = () => setNotificationsEnabled(!notificationsEnabled);
-  const handleToggleSoundAlerts = () => setSoundAlertsEnabled(!soundAlertsEnabled);
-  const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled(!desktopNotificationsEnabled);
-  const handleToggleOnlineStatus = () => setShowOnlineStatus(!showOnlineStatus);
+  const handleToggleNotifications = () => setNotificationsEnabled((prev) => !prev);
+  const handleToggleSoundAlerts = () => setSoundAlertsEnabled((prev) => !prev);
+  const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev);
 
   const handleBlockAddress = (address) => {
     if (!blockedAddresses.includes(address)) {
@@ -68,7 +96,6 @@ const HomePage = ({ account, disconnectWallet }) => {
     setNotificationsEnabled(savedSettings.notificationsEnabled || false);
     setSoundAlertsEnabled(savedSettings.soundAlertsEnabled || false);
     setDesktopNotificationsEnabled(savedSettings.desktopNotificationsEnabled || false);
-    setShowOnlineStatus(savedSettings.showOnlineStatus || true);
     setBlockedAddresses(savedSettings.blockedAddresses || []);
 
     if (!account && !savedAccount) {
@@ -78,19 +105,19 @@ const HomePage = ({ account, disconnectWallet }) => {
     
     const savedChats = JSON.parse(localStorage.getItem(`chats_${account}`)) || [];
     setChats(savedChats);
+    fetchSettings();
   
-  }, [account, navigate]);
+  }, [account, navigate, fetchSettings]);
 
   useEffect(() => {
     const userSettings = {
       notificationsEnabled,
       soundAlertsEnabled,
       desktopNotificationsEnabled,
-      showOnlineStatus,
       blockedAddresses
     };
     localStorage.setItem('userSettings', JSON.stringify(userSettings));
-  }, [notificationsEnabled, soundAlertsEnabled, desktopNotificationsEnabled, showOnlineStatus, blockedAddresses]);
+  }, [notificationsEnabled, soundAlertsEnabled, desktopNotificationsEnabled, blockedAddresses]);
 
 
   const handleOpenModal = () => {
@@ -352,64 +379,65 @@ const HomePage = ({ account, disconnectWallet }) => {
       {isSettingsModalOpen && (
         <div className="modal-overlay" onClick={toggleSettingsModal}>
           <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Settings</h2>
+            <h2 className="settings-title">Settings</h2>
             <button className="close-button" onClick={toggleSettingsModal}>×</button>
-
-            <h3>Notification Settings</h3>
-            <label>
-              <input 
-                type="checkbox" 
-                checked={notificationsEnabled} 
-                onChange={handleToggleNotifications} 
-              />
-              Enable Notifications
-            </label>
-            <label>
-              <input 
-                type="checkbox" 
-                checked={soundAlertsEnabled} 
-                onChange={handleToggleSoundAlerts} 
-              />
-              Enable Sound Alerts
-            </label>
-            <label>
-              <input 
-                type="checkbox" 
-                checked={desktopNotificationsEnabled} 
-                onChange={handleToggleDesktopNotifications} 
-              />
-              Enable Desktop Notifications
-            </label>
-
-            <h3>Privacy Settings</h3>
-            <label>
-              <input 
-                type="checkbox" 
-                checked={showOnlineStatus} 
-                onChange={handleToggleOnlineStatus} 
-              />
-              Show Online Status
-            </label>
-
-            <h4>Blocked Addresses</h4>
-            <ul>
-              {blockedAddresses.map(address => (
-                <li key={address}>
-                  {address}
-                  <button onClick={() => handleUnblockAddress(address)}>Unblock</button>
-                </li>
-              ))}
-            </ul>
-            <input 
-              type="text" 
-              placeholder="Enter address to block" 
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleBlockAddress(e.target.value);
-                  e.target.value = '';
-                }
-              }}
-            />
+            <div className="settings-sections">
+              <div className="notification_settings">
+                <h3>Notification Settings</h3>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    checked={notificationsEnabled} 
+                    onChange={handleToggleNotifications} 
+                  />
+                  Enable Notifications
+                  <span>When "Unchecked", you won't receive notifications. (Note: Chrome's Autoplay Policy blocks sound notifications until you have interacted with the page via a click, tap, etc.)</span>
+                </label>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    checked={soundAlertsEnabled} 
+                    onChange={handleToggleSoundAlerts} 
+                  />
+                  Enable Sound Alerts
+                  <span>By subscribing to Progressive Web APP (PWA) notifications, you will receive notifications even when the app is closed. Note: this feature only applies for Android devices.</span>
+                </label>
+                <label>
+                  <input 
+                    type="checkbox" 
+                    checked={desktopNotificationsEnabled} 
+                    onChange={handleToggleDesktopNotifications} 
+                  />
+                  Enable Desktop Notifications
+                  <span>Only accept new chat conversations from wallets which have sent at least one transaction on Ethereum (applicable before the start of a new conversation)</span>
+                </label>
+              </div>
+              <div className="privacy_settings">
+                <h3>Privacy Settings</h3>
+                <h4>Blocked Addresses</h4>
+                <ul>
+                  {blockedAddresses.map(address => (
+                    <li key={address}>
+                      {address}
+                      <button onClick={() => handleUnblockAddress(address)}>Unblock</button>
+                    </li>
+                  ))}
+                </ul>
+                <input 
+                  type="text" 
+                  placeholder="Enter address to block" 
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleBlockAddress(e.target.value);
+                      e.target.value = '';
+                    }
+                  }}
+                />
+              </div>
+              <div className="save_settings_btn">
+                <button onClick={handleSaveSettings}>Save Settings</button>
+              </div>
+            </div>
           </div>
         </div>
       )}
