@@ -62,11 +62,21 @@ const HomePage = ({ account, disconnectWallet }) => {
             setSoundAlertsEnabled(data.soundAlertsEnabled || false);
             setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
   
-            const blockedArray = data.blockedAddresses ? Object.keys(data.blockedAddresses) : [];
-            console.log("Blocked addresses loaded:", blockedArray);
-            setBlockedAddresses(blockedArray);
+            const addresses = [];
+            gun.get(account).get('blockedAddresses').map().once((address) => {
+              if (address && address !== true) { // Exclude empty or invalid entries
+                addresses.push(address);
+              }
+            });
+            setBlockedAddresses(addresses);
+            console.log("Blocked addresses loaded:", addresses);
+
           } else {
             console.log("No data found for this account in Gun.");
+            setNotificationsEnabled(false);
+            setSoundAlertsEnabled(false);
+            setDesktopNotificationsEnabled(false);
+            setBlockedAddresses([]);
   
             // Retry fetching if data is empty, up to 3 attempts
             if (retry < 3) {
@@ -87,9 +97,9 @@ const HomePage = ({ account, disconnectWallet }) => {
       soundAlertsEnabled,
       desktopNotificationsEnabled,
       blockedAddresses: blockedAddresses.reduce((acc, addr) => {
-        acc[addr] = true; // Convert array to object for Gun
+        acc[addr] = true; // Convert each address in the array to a key in an object
         return acc;
-      }, {}),
+      }, {}),  
     };
   
     console.log("Attempting to save settings:", settings);
@@ -97,8 +107,10 @@ const HomePage = ({ account, disconnectWallet }) => {
     gun.get(account).put(settings, (ack) => {
       if (ack.err) {
         console.error("Failed to save settings:", ack.err);
-      } else {
+      } else if (ack.ok) {
         console.log("Settings saved successfully:", settings);
+      } else {
+        console.log("No error, but save status is ambiguous. Ack received:", ack);
       }
     });
   };  
@@ -108,15 +120,39 @@ const HomePage = ({ account, disconnectWallet }) => {
   const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev);
 
   const handleBlockAddress = (address) => {
-    if (address && !blockedAddresses.includes(address)) {
-      const updatedBlockedAddresses = [...blockedAddresses, address];
-      setBlockedAddresses(updatedBlockedAddresses);
+    const trimmedAddress = address.trim();
+    if (trimmedAddress && trimmedAddress !== '#' && !blockedAddresses.includes(trimmedAddress)) {
+      // Update both the Gun database and local state
+      gun.get(account).get('blockedAddresses').set(trimmedAddress, (ack) => {
+        if (ack.err) {
+          console.error("Failed to save blocked address:", ack.err);
+        } else {
+          setBlockedAddresses([...blockedAddresses, trimmedAddress]); // Update local state
+          console.log("Blocked address saved successfully:", trimmedAddress);
+        }
+      });
+    } else {
+      console.warn("Invalid or duplicate address:", address);
     }
-  };
+  };  
   
   const handleUnblockAddress = (address) => {
+    // Remove from local state
     const updatedBlockedAddresses = blockedAddresses.filter(a => a !== address);
     setBlockedAddresses(updatedBlockedAddresses);
+  
+    // Remove from Gun
+    gun.get(account).get('blockedAddresses').map().once((data, key) => {
+      if (data === address) {
+        gun.get(account).get('blockedAddresses').get(key).put(null, (ack) => {
+          if (ack.err) {
+            console.error("Failed to unblock address:", ack.err);
+          } else {
+            console.log("Address unblocked successfully:", address);
+          }
+        });
+      }
+    });
   };  
 
   useEffect(() => {
@@ -138,6 +174,7 @@ const HomePage = ({ account, disconnectWallet }) => {
   }, [account, navigate, fetchSettings]);
 
   const toggleBlockedModal = () => {
+    console.log("Blocked addresses before saving:", blockedAddresses);
     setIsBlockedModalOpen(!isBlockedModalOpen);
     setIsSettingsModalOpen(false);
   };  
@@ -461,16 +498,21 @@ const HomePage = ({ account, disconnectWallet }) => {
             <div className="blocked-list">
               <ul>
                 {blockedAddresses.length > 0 ? (
-                  blockedAddresses.map(address => (
-                    <li key={address}>
-                      <span className="blocked-address">{address}</span>
-                      <button className="unblock-button" onClick={() => handleUnblockAddress(address)}>
-                        Unblock
-                      </button>
-                    </li>
-                  ))
+                  blockedAddresses
+                    .filter(address => address) // Filter out any empty or invalid entries
+                    .map(address => (
+                      <li key={address}>
+                        <span className="blocked-address">{address}</span>
+                        <button
+                          className="unblock-button"
+                          onClick={() => handleUnblockAddress(address)}
+                        >
+                          Unblock
+                        </button>
+                      </li>
+                    ))
                 ) : (
-                  <p className="no-blocked-addresses">No addresses are currently blocked.</p>
+                  <li className="no-blocked-addresses">No addresses are currently blocked.</li>
                 )}
               </ul>
             </div>

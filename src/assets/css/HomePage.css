@@ -290,11 +290,13 @@
 
 /* No Blocked Addresses Message */
 .no-blocked-addresses {
-  font-size: 0.9rem;
   color: #888;
+  font-style: italic;
+  padding: 8px 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
   text-align: center;
 }
-
 
   /* Close Button */
   .blocked-modal-content .close-button {
