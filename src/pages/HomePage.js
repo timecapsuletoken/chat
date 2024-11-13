@@ -96,10 +96,6 @@ const HomePage = ({ account, disconnectWallet }) => {
       notificationsEnabled,
       soundAlertsEnabled,
       desktopNotificationsEnabled,
-      blockedAddresses: blockedAddresses.reduce((acc, addr) => {
-        acc[addr] = true; // Convert each address in the array to a key in an object
-        return acc;
-      }, {}),  
     };
   
     console.log("Attempting to save settings:", settings);
