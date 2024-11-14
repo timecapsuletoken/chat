@@ -1,4 +1,4 @@
-.chat-box {
+  .chat-box {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -41,11 +41,196 @@
   }
   
   .chat-options {
-    border: none;
+    position: relative; 
+    color: #fff;  
+  }  
+
+  .chat-options-popup {
+    position: absolute;
+    top: 30px; /* Adjust this to control the vertical distance from the button */
+    left: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 1000;
+    width: 150px;
+  }
+  
+  .chat-options-popup button {
+    width: 100%;
+    padding: 10px;
     background: none;
-    font-size: 18px;
+    border: none;
+    text-align: left;
     cursor: pointer;
   }
+  
+  .chat-options-popup button:hover {
+    background-color: #f1f1f1;
+  }  
+
+  .wallet-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333;
+    padding: 10px;
+    width: 90%;
+    border-radius: 12px;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+  }
+  
+  .wallet-header p {
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .wallet-controls button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .wallet-controls a {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  .wallet-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .wallet-modal-content {
+    background-color: #333;
+    border-radius: 8px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+  }
+  
+  .wallet-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.5em;
+  }
+  
+  .wallet-close-button button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #fff;
+  }
+  
+  .wallet-details, .wallet-stats, .qr-code-section {
+    margin-bottom: 0px;
+  }
+
+  .wallet-addr-details {
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .wallet-address {
+    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-size: 1.1em;
+    word-break: break-all;
+    margin: 0px;
+  }
+  
+  .wallet-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    margin-top: 0px;
+  }
+  
+  .wallet-balance, .wallet-txns {
+    width: 45%;
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 20px 5px 20px 5px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .tca-coin-logo {
+    width: 20px; /* Set your desired width */
+    height: 20px; /* Set your desired height */
+    margin-left: 5px;
+  }  
+
+  .bnb-coin-logo {
+    fill: #f1b909;
+    margin-left: 5px;
+  }
+
+  span.coins-data {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .qr-code-section {
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .qr-code-section p {
+    margin: 5px 0;
+    font-size: 0.9em;
+  }  
+
   
   .chat-body {
     flex: 1;

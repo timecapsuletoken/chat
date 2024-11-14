@@ -23,7 +23,6 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-
 const HomePage = ({ account, disconnectWallet }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -198,6 +197,10 @@ const HomePage = ({ account, disconnectWallet }) => {
     console.log("Blocked addresses before saving:", blockedAddresses);
     setIsBlockedModalOpen(!isBlockedModalOpen);
     setIsSettingsModalOpen(false);
+    // Fetch or refresh blocked addresses when opening the modal
+    if (!isBlockedModalOpen) {
+      fetchSettings(); // Fetch the latest blocked addresses
+    }
   };  
 
   const handleOpenModal = () => {
@@ -593,7 +596,13 @@ const HomePage = ({ account, disconnectWallet }) => {
           </button>
         )}
       {currentChat ? (
-          <ChatPage account={account} />
+          <ChatPage 
+            account={account}
+            toggleBlockedModal={toggleBlockedModal}
+            handleDeleteChat={handleDeleteChat}
+            openWalletModal={openWalletModal}
+            setChatAddress={setChatAddress}
+          />
         ) : (
           <>
             <div className="welcome-card">
