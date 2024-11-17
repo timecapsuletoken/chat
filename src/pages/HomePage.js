@@ -12,6 +12,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { IoChatboxSharp } from "react-icons/io5";
 import { RiBnbLine } from "react-icons/ri";
 import gun from '../utils/gunSetup';
+import { Typewriter } from 'react-simple-typewriter';
 import TCACoin from '../assets/images/logos/logo.png';
 
 // Binance Smart Chain provider and TCA token setup
@@ -73,6 +74,18 @@ const HomePage = ({ account, disconnectWallet }) => {
       attemptFetch(); // Start initial fetch attempt
     }
   }, [account]);  
+
+  const formatNumber = (number) => {
+    if (number >= 1e9) {
+      return (number / 1e9).toFixed(2) + 'B'; // Billions
+    } else if (number >= 1e6) {
+      return (number / 1e6).toFixed(2) + 'M'; // Millions
+    } else if (number >= 1e3) {
+      return (number / 1e3).toFixed(2) + 'K'; // Thousands
+    } else {
+      return number.toFixed(2); // Smaller numbers
+    }
+  };  
   
   const fetchSettings = useCallback(() => {
     if (account) {
@@ -211,58 +224,62 @@ const HomePage = ({ account, disconnectWallet }) => {
       setShowModal(false);
   };
 
-    // Function to toggle wallet modal visibility
-    const openWalletModal = () => {
-      fetchBalanceAndTxns();
-      setIsWalletModalOpen(true);
-    };
+  // Function to toggle wallet modal visibility
+  const openWalletModal = () => {
+    fetchBalanceAndTxns();
+    setIsWalletModalOpen(true);
+  };
+
+  const closeWalletModal = () => setIsWalletModalOpen(false);
+
+  const getBnbBalance = async (address) => {
+    try {
+      // Fetch the balance (in Wei)
+      const balanceWei = await bscProvider.getBalance(address);
+      
+      // Convert the balance from Wei to BNB
+      const balanceBnb = ethers.utils.formatEther(balanceWei);
+      
+      return balanceBnb;
+    } catch (error) {
+      console.error('Error fetching BNB balance:', error);
+      return null;
+    }
+  };
+
+  // Function to fetch TCA token balance
+  const getTcaBalance = async (address) => {
+    try {
+      const balance = await tcaTokenContract.balanceOf(address);
+      const decimals = await tcaTokenContract.decimals();
+      return ethers.utils.formatUnits(balance, decimals); // Convert balance to readable format
+    } catch (error) {
+      console.error('Error fetching TCA token balance:', error);
+      return null;
+    }
+  };
+
+  // Updated fetchBalanceAndTxns function
+  const fetchBalanceAndTxns = async () => {
+    try {
+      if (account) {
+        const fetchedBalance = await getBnbBalance(account);
+        const tcaTokenBalance = await getTcaBalance(account);
   
-    const closeWalletModal = () => setIsWalletModalOpen(false);
-
-    const getBnbBalance = async (address) => {
-      try {
-        // Fetch the balance (in Wei)
-        const balanceWei = await bscProvider.getBalance(address);
-        
-        // Convert the balance from Wei to BNB
-        const balanceBnb = ethers.utils.formatEther(balanceWei);
-        
-        return balanceBnb;
-      } catch (error) {
-        console.error('Error fetching BNB balance:', error);
-        return null;
-      }
-    };
-
-    // Function to fetch TCA token balance
-    const getTcaBalance = async (address) => {
-      try {
-        const balance = await tcaTokenContract.balanceOf(address);
-        const decimals = await tcaTokenContract.decimals();
-        return ethers.utils.formatUnits(balance, decimals); // Convert balance to readable format
-      } catch (error) {
-        console.error('Error fetching TCA token balance:', error);
-        return null;
-      }
-    };
+        const balance = parseFloat(fetchedBalance);
+        const tcaBalance = parseFloat(tcaTokenBalance);
   
-    // Simulate fetching wallet balance and transaction count
-    // Updated fetchBalanceAndTxns function
-    const fetchBalanceAndTxns = async () => {
-      try {
-        if (account) {
-          const fetchedBalance = await getBnbBalance(account);
-          setBalance(fetchedBalance);
-
-          // Fetch TCA balance
-          const tcaTokenBalance = await getTcaBalance(account);
-          setTcaBalance(tcaTokenBalance);
-
-        }
-      } catch (error) {
-        console.error("Failed to fetch wallet data:", error);
+        // Update state in HomePage
+        setBalance(balance);
+        setTcaBalance(tcaBalance);
+  
+        return { balance, tcaBalance }; // Return both balances as an object
       }
-    };
+    } catch (error) {
+      console.error("Failed to fetch wallet data:", error);
+      return { balance: 0, tcaBalance: 0 }; // Return defaults on error
+    }
+  };    
 
   const toggleDropdown = () => {
     setShowDropdown(prevState => !prevState);
@@ -342,7 +359,7 @@ const HomePage = ({ account, disconnectWallet }) => {
             </div>
             <div className="sidebar-content">
               {isSidebarOpen && (
-              <div className="sidebar-icon" style={{ backgroundColor: isSidebarOpen ? '#007bff' : 'inherit' }}>
+              <div className="sidebar-icon" style={{ background: isSidebarOpen ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : 'inherit' }}>
                 <button 
                   className={`sidebar-toggle-inside ${isSidebarOpen ? 'open' : ''}`} 
                   onClick={toggleSidebar}
@@ -362,6 +379,8 @@ const HomePage = ({ account, disconnectWallet }) => {
                   </div>
                   <div className="dropdown-container">
                     {showDropdown && (
+                      <>
+                        <div className="dropdown-overlay" onClick={() => setShowDropdown(false)}></div>                
                         <div className="dropdown-menu">
                           <div className="dropdown-item" onClick={toggleSettingsModal}>
                               <FaCogs className="dropdown-icon" />
@@ -382,8 +401,9 @@ const HomePage = ({ account, disconnectWallet }) => {
                             }}><FaPowerOff /> <span>Logout</span></button>
                           </div>
                         </div>
+                      </>
                     )}
-                </div>
+                  </div>
               </div>
             <div className="chat-list">
               {chats.length > 0 ? (
@@ -464,12 +484,12 @@ const HomePage = ({ account, disconnectWallet }) => {
             </div>
             <div className="wallet-stats">
               <div className="wallet-balance">
-                <p>BNB Balance</p>
-                <span className="coins-data">{balance} <RiBnbLine className="bnb-coin-logo"/></span>
+                <p>BNB Balance:</p>
+                <span className="coins-data">{formatNumber(balance)} <RiBnbLine className="bnb-coin-logo"/></span>
               </div>
               <div className="wallet-txns">
-                <p>TCA Balance</p>
-                <span className="coins-data">{tcaBalance} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
+                <p>TCA Balance:</p>
+                <span className="coins-data">{formatNumber(tcaBalance)} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
               </div>
             </div>
             <div className="qr-code-section">
@@ -602,13 +622,24 @@ const HomePage = ({ account, disconnectWallet }) => {
             handleDeleteChat={handleDeleteChat}
             openWalletModal={openWalletModal}
             setChatAddress={setChatAddress}
+            formatNumber={formatNumber}
           />
         ) : (
           <>
             <div className="welcome-card">
-              <h2>Welcome to <span className="logo-text">TimeCapsule Chat</span> <span className="beta-tag">Beta</span></h2>
+              <h2>Welcome to <br />
+                <span className="logo-text">
+                <Typewriter
+                  words={['TimeCapsule Chat', 'Wallet-to-Wallet']}
+                  loop={true}
+                  cursor
+                  cursorStyle="|"
+                  typeSpeed={70}
+                  deleteSpeed={50}
+                  delaySpeed={2000}
+                />
+                </span> <span className="beta-tag">Beta</span></h2>
               <p>Built for users that Value their Privacy, TimeCapsule Chat is a messaging platform for users to simply and instantly message each other, wallet-to-wallet.</p>
-              <a href="/faqs" className="faq-link">Check out our FAQs for more details.</a>
             </div>
             <div className="important-card">
               <h3>❗ Important!</h3>

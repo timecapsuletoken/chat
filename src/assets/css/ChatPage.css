@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: calc(100% - 50px); /* Adjust based on header/footer or container heights */
+    height: 100vh;
     max-height: 100vh; /* Limit to viewport height on desktop */
     border-radius: 8px;
     padding: 10px;
@@ -10,6 +10,7 @@
   }
   
   .chat-header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -41,29 +42,43 @@
   }
   
   .chat-options {
-    position: relative; 
-    color: #fff;  
+    font-size: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; 
+    height: 40px; 
+    border: none;
+    color: #fff;
+    background: none;
+    cursor: pointer;
+    z-index: 100;
   }  
 
   .chat-options-popup {
-    position: absolute;
-    top: 30px; /* Adjust this to control the vertical distance from the button */
-    left: 0;
-    background-color: #fff;
+    position: absolute; /* Position relative to the button */
+    top: 100%; /* Align directly below the button */
+    right: 0; /* Align to the left edge of the button */
+    float: right;
+    margin-top: 5px; /* Add a small gap between the button and the popup */
+    background-color: #fff; /* Background for the dropdown */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 5px;
-    overflow: hidden;
     z-index: 1000;
-    width: 150px;
+    width: 150px; /* Set a fixed width for the popup */
+    overflow: hidden;
   }
   
   .chat-options-popup button {
     width: 100%;
     padding: 10px;
-    background: none;
     border: none;
+    background: none;
     text-align: left;
     cursor: pointer;
+    font-size: 14px;
+    color: #333;
   }
   
   .chat-options-popup button:hover {
@@ -134,6 +149,10 @@
     justify-content: space-between;
     align-items: center;
     font-size: 1.5em;
+  }
+
+  .wallet-modal-header h2 {
+    margin-top: 0;
   }
   
   .wallet-close-button button {
@@ -244,7 +263,7 @@
   
   .start-chat-message {
     font-style: italic;
-    color: #555;
+    color: #fff;
   }
   
   .chat-encryption-warning {
@@ -317,3 +336,8 @@
     font-weight: bold;
   }
   
+  @media (max-width: 768px) {
+    .chat-box {
+      height: calc(100% - 50px); /* Adjust based on header/footer or container heights */
+    }
+  }

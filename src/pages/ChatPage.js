@@ -6,7 +6,7 @@ import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
 import '../assets/css/ChatPage.css';
 import { IoChatboxSharp } from "react-icons/io5";
-import { CiMenuKebab } from "react-icons/ci";
+import { IoOptionsOutline } from "react-icons/io5";
 import TCACoin from '../assets/images/logos/logo.png';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -21,7 +21,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletModal, setChatAddress }) => {
+const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletModal, setChatAddress, formatNumber }) => {
   const [message, setMessage] = useState('');
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -89,11 +89,11 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
     try {
       if (chatAddress) {
         const fetchedBalance = await getBnbBalance(chatAddress);
-        setBalance(fetchedBalance);
+        setBalance(parseFloat(fetchedBalance));
 
         // Fetch TCA balance
         const tcaTokenBalance = await getTcaBalance(chatAddress);
-        setTcaBalance(tcaTokenBalance);
+        setTcaBalance(parseFloat(tcaTokenBalance));
 
       }
     } catch (error) {
@@ -121,9 +121,20 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
             <span className="status">offline</span>
           </p>
         </div>
-        <button className="chat-options" onClick={toggleChatOptions}><CiMenuKebab /></button>
+        <button
+          className="chat-options"
+          onClick={() => toggleChatOptions((prev) => !prev)}
+          onBlur={() => toggleChatOptions(false)} // Close on blur
+          tabIndex="0" // Make the button focusable
+        >
+          <IoOptionsOutline />
+        </button>
         {showChatOptions && (
-          <div className="chat-options-popup">
+          <div 
+            className="chat-options-popup"
+            onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing when clicking inside
+            tabIndex="0"
+          >
             <button onClick={() => {
               setChatAddress(chatAddress); // Pre-fill the chat address
               // Automatically block the chat address by saving to Gun.js
@@ -147,7 +158,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
         )}
       </div>
       <div className="chat-body">
-        <p className="start-chat-message">... Your new conversation starts here ...</p>
+        <p className="start-chat-message">... Your new conversation is empty ...</p>
       </div>
       <div className="chat-input-container">
       <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} />
@@ -189,12 +200,12 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
               </div>
               <div className="wallet-stats">
                 <div className="wallet-balance">
-                  <p>BNB Balance</p>
-                  <span className="coins-data">{balance} <RiBnbLine className="bnb-coin-logo"/></span>
+                  <p>BNB Balance:</p>
+                  <span className="coins-data">{formatNumber(balance)} <RiBnbLine className="bnb-coin-logo"/></span>
                 </div>
                 <div className="wallet-txns">
-                  <p>TCA Balance</p>
-                  <span className="coins-data">{tcaBalance} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
+                  <p>TCA Balance:</p>
+                  <span className="coins-data">{formatNumber(tcaBalance)} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
                 </div>
               </div>
               <div className="qr-code-section">
