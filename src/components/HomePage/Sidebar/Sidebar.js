@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Skeleton from '@mui/material/Skeleton';
 import { FaWallet, FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff, FaTimes } from 'react-icons/fa';
 import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
@@ -26,6 +27,18 @@ const Sidebar = ({
   toggleSettingsModal,
   closeSidebar,
 }) => {
+  
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate a loading delay for demo purposes
+    const timer = setTimeout(() => {
+      setIsLoading(false); // Set loading to false when data is ready
+    }, 6000); // Adjust delay as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
       <div
@@ -111,7 +124,16 @@ const Sidebar = ({
         </div>
       </div>
       <div className="chat-list">
-        {chats.length > 0 ? (
+        {isLoading ? (
+          // Display skeleton placeholders while loading
+          <>
+            {[...Array(1)].map((_, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                <Skeleton variant="rounded" width={210} height={60} />
+              </div>
+            ))}
+          </>
+        ) : chats.length > 0 ? (
           chats.map((address, index) => (
             <div
               key={index}
