@@ -2,7 +2,10 @@
 import Gun from 'gun';
 
 const gun = Gun({
-  peers: ['https://gun-manhattan.herokuapp.com/gun'], // Use a public relay peer for testing
+  peers: [
+    'https://gun-manhattan.herokuapp.com/gun',
+    //'http://localhost:8765/gun',
+  ],
 });
 
 export default gun;

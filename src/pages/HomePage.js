@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import '../assets/css/HomePage.css';
+import gun from '../utils/gunSetup';
 
 import AboutModal from '../components/HomePage/Modals/AboutModal';
 import HelpModal from '../components/HomePage/Modals/HelpModal';
@@ -14,7 +14,7 @@ import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import WelcomePage from '../components/HomePage/WelcomePage';
 import ChatWrapper from '../components/HomePage/ChatWrapper';
 
-import gun from '../utils/gunSetup';
+import '../assets/css/HomePage.css';
 
 // Binance Smart Chain provider and TCA token setup
 const bscProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
