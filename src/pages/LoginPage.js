@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedBackground } from 'animated-backgrounds';
 import '../assets/css/LoginPage.css';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import metamaskIcon from '../assets/images/logos/metamask.svg';
 import coinbaseIcon from '../assets/images/logos/coinbase.svg';
 
@@ -38,8 +40,20 @@ const LoginPage = ({ connectWallet, account }) => {
           </div>
         </button>
       </div>
-      <div className="terms">
-        By connecting your wallet and signing a message, you agree to our <a href="#terms">Terms & Conditions</a> and <a href="#privacy">Privacy Policy</a>.
+      <div style={{ marginTop: '16px', textAlign: 'center' }}>
+        <Typography variant="body2" color="info" style={{ marginTop: '8px' }}>
+          <strong>Note:</strong> Ensure Binance Smart Chain is enabled in your wallet. If not, you will be prompted to add it.
+        </Typography>
+        <Typography variant="body2" color="gray">
+          By connecting your wallet and signing a message, you agree to our{' '}
+          <Link href="#terms" underline="hover">
+            Terms & Conditions
+          </Link>{' '}
+          and{' '}
+          <Link href="#privacy" underline="hover">
+            Privacy Policy
+          </Link>.
+        </Typography>
       </div>
     </div>
   );

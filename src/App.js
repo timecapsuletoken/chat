@@ -23,6 +23,45 @@ function App() {
       setAccount(savedAccount);
     }
   }, []);
+
+  const switchToBSC = async () => {
+    try {
+      // Request to switch to Binance Smart Chain
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x38' }], // 0x38 is the hexadecimal Chain ID for Binance Smart Chain
+      });
+      console.log('Switched to Binance Smart Chain');
+    } catch (error) {
+      if (error.code === 4902) {
+        // This error code indicates the chain has not been added to MetaMask
+        console.log('Binance Smart Chain not found. Adding it now...');
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: '0x38',
+                chainName: 'Binance Smart Chain',
+                nativeCurrency: {
+                  name: 'Binance Coin',
+                  symbol: 'BNB',
+                  decimals: 18,
+                },
+                rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                blockExplorerUrls: ['https://bscscan.com'],
+              },
+            ],
+          });
+          console.log('Binance Smart Chain added to MetaMask');
+        } catch (addError) {
+          console.error('Failed to add Binance Smart Chain:', addError);
+        }
+      } else {
+        console.error('Failed to switch to Binance Smart Chain:', error);
+      }
+    }
+  };  
   
   const connectWallet = async ( providerType) => {
     console.log("Provider Type:", providerType); // Diagnostic log
@@ -42,6 +81,7 @@ function App() {
             const chainId = await provider.send("eth_chainId", []);
             console.log("Current chain ID:", chainId);
             if (chainId !== "0x38") {
+              await switchToBSC(); 
               await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: '0x38' }],
