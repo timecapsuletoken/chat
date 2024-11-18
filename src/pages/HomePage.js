@@ -2,12 +2,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../assets/css/HomePage.css';
+
+import ChatPage from './ChatPage';
+import AboutModal from '../components/HomePage/Modals/AboutModal';
+import HelpModal from '../components/HomePage/Modals/HelpModal';
+
 import { FaPowerOff, FaWallet, FaCogs, FaInfoCircle, FaQuestionCircle, FaTimes, FaBars, FaExternalLinkAlt } from 'react-icons/fa';
 import { CiMenuKebab } from "react-icons/ci";
 import { LuMessageSquarePlus } from "react-icons/lu";
 import { MdHome } from "react-icons/md";
 import { IoClose } from 'react-icons/io5';
-import ChatPage from './ChatPage';
 import { QRCodeCanvas } from 'qrcode.react';
 import { IoChatboxSharp } from "react-icons/io5";
 import { RiBnbLine } from "react-icons/ri";
@@ -37,6 +41,8 @@ const HomePage = ({ account, disconnectWallet }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false); // State for HelpModal
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false); // State for wallet modal
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
@@ -62,7 +68,7 @@ const HomePage = ({ account, disconnectWallet }) => {
         });
   
         // Check if data was fetched; retry if needed
-        if (loadedChats.length > 0 || retry >= 3) {
+        if (loadedChats.length > 0 || retry >= 5) {
           setChats([...new Set(loadedChats)]); // Update state and remove duplicates
           console.log("Loaded chats from Gun:", loadedChats);
         } else {
@@ -386,11 +392,11 @@ const HomePage = ({ account, disconnectWallet }) => {
                               <FaCogs className="dropdown-icon" />
                               <span>Settings</span>
                           </div>
-                          <div className="dropdown-item">
+                          <div className="dropdown-item" onClick={() => setShowAboutModal(true)}>
                               <FaInfoCircle className="dropdown-icon" />
                               <span>About</span>
                           </div>
-                          <div className="dropdown-item">
+                          <div className="dropdown-item" onClick={() => setShowHelpModal(true)}>
                               <FaQuestionCircle className="dropdown-icon" />
                               <span>Help</span>
                           </div>
@@ -615,6 +621,10 @@ const HomePage = ({ account, disconnectWallet }) => {
             <FaBars /> <span>Menu</span>
           </button>
         )}
+      {/* About Modal */}
+      <AboutModal isOpen={showAboutModal} onClose={() => setShowAboutModal(false)} />
+      {/* Help Modal */}
+      <HelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} />
       {currentChat ? (
           <ChatPage 
             account={account}
@@ -642,8 +652,8 @@ const HomePage = ({ account, disconnectWallet }) => {
               <p>Built for users that Value their Privacy, TimeCapsule Chat is a messaging platform for users to simply and instantly message each other, wallet-to-wallet.</p>
             </div>
             <div className="important-card">
-              <h3>❗ Important!</h3>
-              <p>Never share your confidential information, passwords, private keys, or seed phrases with ANYONE! Be extra careful when receiving any external links or online forms. Always keep an eye out for malicious parties in the Dark Forest 👀</p>
+              <h3>❗ Be Careful</h3>
+              <p>Protect your sensitive details, such as passwords, private keys, or seed phrases, by never sharing them with anyone! Exercise caution when interacting with external links or online forms, and stay vigilant for potential threats lurking in the digital realm. Stay safe out there! 👀</p>
             </div>
             <button className="start-conversation-btn" onClick={handleOpenModal}>+ Start new conversation</button>
            </>

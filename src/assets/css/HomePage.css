@@ -901,16 +901,16 @@
 
 .dropdown-menu {
   position: absolute; /* Positioned within .dropdown-container */
-  top: 100%; /* Positioned directly below the toggle button */
-  left: 0;
+  top: 30%; /* Positioned directly below the toggle button */
+  left: 15px;
   background-color: #333;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   min-width: 160px;
-  max-width: 90%; /* Limits width on smaller screens */
+  max-width: 85%; /* Limits width on smaller screens */
   width: 100%;
-  padding: 10px;
+  padding: 5px;
   display: flex;
   flex-direction: column;
 }

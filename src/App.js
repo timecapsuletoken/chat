@@ -36,9 +36,8 @@ function App() {
           try {
             await provider.send("wallet_requestPermissions", [{ eth_accounts: {} }]);
             await provider.send("eth_requestAccounts", []);
-    
-            console.log("MetaMask connected");
-      
+            console.log("MetaMask connected:");
+          
             // Check and switch to BSC
             const chainId = await provider.send("eth_chainId", []);
             console.log("Current chain ID:", chainId);
