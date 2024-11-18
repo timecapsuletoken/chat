@@ -3,21 +3,18 @@ import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import '../assets/css/HomePage.css';
 
-import ChatPage from './ChatPage';
 import AboutModal from '../components/HomePage/Modals/AboutModal';
 import HelpModal from '../components/HomePage/Modals/HelpModal';
+import Sidebar from '../components/HomePage/Sidebar/Sidebar';
+import StartChatModal from '../components/HomePage/Modals/StartChatModal';
+import WalletModal from '../components/HomePage/Modals/WalletModal';
+import SettingsModal from '../components/HomePage/Modals/SettingsModal';
+import BlockedModal from '../components/HomePage/Modals/BlockedModal';
+import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
+import WelcomePage from '../components/HomePage/WelcomePage';
+import ChatWrapper from '../components/HomePage/ChatWrapper';
 
-import { FaPowerOff, FaWallet, FaCogs, FaInfoCircle, FaQuestionCircle, FaTimes, FaBars, FaExternalLinkAlt } from 'react-icons/fa';
-import { CiMenuKebab } from "react-icons/ci";
-import { LuMessageSquarePlus } from "react-icons/lu";
-import { MdHome } from "react-icons/md";
-import { IoClose } from 'react-icons/io5';
-import { QRCodeCanvas } from 'qrcode.react';
-import { IoChatboxSharp } from "react-icons/io5";
-import { RiBnbLine } from "react-icons/ri";
 import gun from '../utils/gunSetup';
-import { Typewriter } from 'react-simple-typewriter';
-import TCACoin from '../assets/images/logos/logo.png';
 
 // Binance Smart Chain provider and TCA token setup
 const bscProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
@@ -347,286 +344,77 @@ const HomePage = ({ account, disconnectWallet }) => {
 
   return (
     <div className="home-container">
-        <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
-            <div 
-              className="wallet-header"
-              style={{
-                background: isHovered ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : '#333'
-              }}
-            >
-              <div 
-                className="sidebar-icon waddr"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onClick={openWalletModal}
-              >
-                <p><FaWallet /> <span className="wallet-addr">{account ? `| ${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}</span></p>
-              </div>
-            </div>
-            <div className="sidebar-content">
-              {isSidebarOpen && (
-              <div className="sidebar-icon" style={{ background: isSidebarOpen ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : 'inherit' }}>
-                <button 
-                  className={`sidebar-toggle-inside ${isSidebarOpen ? 'open' : ''}`} 
-                  onClick={toggleSidebar}
-                  >
-                    <FaBars />
-                </button>
-              </div>
-              )}
-                <div className="sidebar-icon">
-                  <a href="/home"><MdHome /></a>
-                </div>
-                <div className="sidebar-icon">
-                  <button className="new-message" onClick={handleOpenModal}><LuMessageSquarePlus /></button>
-                </div>
-                  <div className="sidebar-icon">
-                    <button onClick={toggleDropdown}><CiMenuKebab /></button>
-                  </div>
-                  <div className="dropdown-container">
-                    {showDropdown && (
-                      <>
-                        <div className="dropdown-overlay" onClick={() => setShowDropdown(false)}></div>                
-                        <div className="dropdown-menu">
-                          <div className="dropdown-item" onClick={toggleSettingsModal}>
-                              <FaCogs className="dropdown-icon" />
-                              <span>Settings</span>
-                          </div>
-                          <div className="dropdown-item" onClick={() => setShowAboutModal(true)}>
-                              <FaInfoCircle className="dropdown-icon" />
-                              <span>About</span>
-                          </div>
-                          <div className="dropdown-item" onClick={() => setShowHelpModal(true)}>
-                              <FaQuestionCircle className="dropdown-icon" />
-                              <span>Help</span>
-                          </div>
-                          <div className="dropdown-item">
-                            <button className="disconnect-button" onClick={() => {
-                              disconnectWallet();
-                              navigate('/login');
-                            }}><FaPowerOff /> <span>Logout</span></button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-              </div>
-            <div className="chat-list">
-              {chats.length > 0 ? (
-                chats.map((address, index) => (
-                  <div 
-                    key={index}
-                    className="chat-item"
-                    onClick={() => {
-                      handleChatItemClick(address); // Handle chat item click
-                      closeSidebar(); // Close the sidebar on mobile
-                    }}
-                  >
-                    <IoChatboxSharp className="chat-message-icon"/>
-                    
-                    <p className="chat-address-sidebar">
-                      {address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address}
-                    </p>
-                    <FaTimes
-                      className="delete-icon"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevents the parent click event
-                        handleDeleteChat(address);
-                      }}
-                      title="Delete chat"
-                      style={{ marginLeft: 'auto', cursor: 'pointer' }}
-                    />
-                  </div>
-                ))
-              ) : (
-                <div className="empty-chat">
-                  <p className="head-empty-chat">Your chat is empty!</p>
-                  <p className="body-empty-chat">Once you start a new conversation, you'll see the address lists here.</p>
-                </div>
-              )}
-            </div>
-        </div>
-        {showModal && (
-          <div className="modal-overlay" onClick={handleCloseModal}>
-              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                  <div className="modal-header">
-                      <h2>Start New Chat</h2>
-                      <button className="close-button" onClick={handleCloseModal}>
-                          <IoClose />
-                      </button>
-                  </div>
-                  <p>Enter an address (or .bnb name) to start a new chat</p>
-                  <input 
-                    type="text"
-                    placeholder="e.g. 0x... or name.bnb"
-                    className="modal-input"
-                    value={chatAddress}
-                    onChange={(e) => setChatAddress(e.target.value)}                          
-                  />
-                  <button className="start-chat-button" onClick={() => {
-                      handleStartChat(); // Handle chat item click
-                      closeSidebar(); // Close the sidebar on mobile
-                    }}>
-                      <LuMessageSquarePlus /> Start Chatting
-                  </button>
-              </div>
-          </div>
-        )}
-      {isWalletModalOpen && (
-        <div className="wallet-modal-overlay" onClick={closeWalletModal}>
-          <div className="wallet-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="wallet-modal-header">
-              <h2>My Profile</h2>
-              <button className="wallet-close-button" onClick={closeWalletModal}>×</button>
-            </div>
-            <div className="wallet-details wallet-addr-details">
-              <p><strong>Address</strong></p>
-              <p className="wallet-address">
-                <a href={`https://bscscan.com/address/${account}`} target="_blank" rel="noopener noreferrer" className="grdntclr">
-                  {account}
-                </a>
-                <FaExternalLinkAlt className="wallet-address-extlink" />
-              </p>
-            </div>
-            <div className="wallet-stats">
-              <div className="wallet-balance">
-                <p>BNB Balance:</p>
-                <span className="coins-data">{formatNumber(balance)} <RiBnbLine className="bnb-coin-logo"/></span>
-              </div>
-              <div className="wallet-txns">
-                <p>TCA Balance:</p>
-                <span className="coins-data">{formatNumber(tcaBalance)} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
-              </div>
-            </div>
-            <div className="qr-code-section">
-              <p><strong>Your QR Code address</strong></p>
-              <p>(Safe to share with your contacts)</p>
-              <QRCodeCanvas value={account} size={128} />
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Settings Modal */}
-      {isSettingsModalOpen && (
-        <div className="modal-overlay" onClick={toggleSettingsModal}>
-          <div className="settings-modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2 className="settings-title">Settings</h2>
-            <button className="close-button" onClick={toggleSettingsModal}>×</button>
-            <div className="settings-sections">
-              <div className="notification_settings">
-                <h3>Notification Settings</h3>
-                <label>
-                  <input 
-                    type="checkbox" 
-                    checked={notificationsEnabled} 
-                    onChange={handleToggleNotifications} 
-                  />
-                  Enable Notifications
-                  <span>When "Unchecked", you won't receive notifications. (Note: Chrome's Autoplay Policy blocks sound notifications until you have interacted with the page via a click, tap, etc.)</span>
-                </label>
-                <label>
-                  <input 
-                    type="checkbox" 
-                    checked={soundAlertsEnabled} 
-                    onChange={handleToggleSoundAlerts} 
-                  />
-                  Enable Sound Alerts
-                  <span>By subscribing to Progressive Web APP (PWA) notifications, you will receive notifications even when the app is closed. Note: this feature only applies for Android devices.</span>
-                </label>
-                <label>
-                  <input 
-                    type="checkbox" 
-                    checked={desktopNotificationsEnabled} 
-                    onChange={handleToggleDesktopNotifications} 
-                  />
-                  Enable Desktop Notifications
-                  <span>Only accept new chat conversations from wallets which have sent at least one transaction on Ethereum (applicable before the start of a new conversation)</span>
-                </label>
-              </div>
-              <div className="privacy_settings">
-                <h3>Privacy Settings</h3>
-                <button className="manage-blocked-btn" onClick={toggleBlockedModal}>
-                  Manage Blocked Addresses
-                </button>
-              </div>
-              <div className="save_settings_btn">
-                <button onClick={() => {
-                  handleSaveSettings();
-                  //toggleSettingsModal();
-                }}>Save Settings</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {isBlockedModalOpen && (
-        <div className="modal-overlay" onClick={toggleBlockedModal}>
-          <div className="blocked-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Blocked Addresses</h2>
-              <button className="close-button" onClick={toggleBlockedModal}>×</button>
-            </div>
-
-            <div className="blocked-list">
-              <ul>
-                {blockedAddresses.length > 0 ? (
-                  blockedAddresses
-                    .filter(address => address) // Filter out any empty or invalid entries
-                    .map(address => (
-                      <li key={address}>
-                        <span className="blocked-address">{address}</span>
-                        <button
-                          className="unblock-button"
-                          onClick={() => handleUnblockAddress(address)}
-                        >
-                          Unblock
-                        </button>
-                      </li>
-                    ))
-                ) : (
-                  <li className="no-blocked-addresses">No addresses are currently blocked.</li>
-                )}
-              </ul>
-            </div>
-
-            <div className="block-input-container">
-              <input 
-                type="text" 
-                placeholder="Enter address to block" 
-                className="block-input"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleBlockAddress(e.target.value);
-                    e.target.value = '';
-                  }
-                }}
-              />
-              <button className="add-block-button" onClick={() => handleBlockAddress(document.querySelector('.block-input').value)}>
-                Block Address
-              </button>
-            </div>
-
-            <div className="modal-footer">
-              <button className="save-blocked-btn" onClick={() => {
-                handleSaveSettings();
-                toggleBlockedModal();
-              }}>Save Changes</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Sidebar
+        account={account}
+        isSidebarOpen={isSidebarOpen}
+        showDropdown={showDropdown}
+        chats={chats}
+        isHovered={isHovered}
+        toggleSidebar={toggleSidebar}
+        toggleDropdown={toggleDropdown}
+        setIsHovered={setIsHovered}
+        openWalletModal={openWalletModal}
+        handleOpenModal={handleOpenModal}
+        handleChatItemClick={handleChatItemClick}
+        handleDeleteChat={handleDeleteChat}
+        disconnectWallet={disconnectWallet}
+        navigate={navigate}
+        setShowAboutModal={setShowAboutModal}
+        setShowHelpModal={setShowHelpModal}
+        toggleSettingsModal={toggleSettingsModal}
+        closeSidebar={closeSidebar}
+      />
+      <StartChatModal
+        showModal={showModal}
+        handleCloseModal={handleCloseModal}
+        chatAddress={chatAddress}
+        setChatAddress={setChatAddress}
+        handleStartChat={handleStartChat}
+        closeSidebar={closeSidebar}
+      />
+      <WalletModal
+        isWalletModalOpen={isWalletModalOpen}
+        closeWalletModal={closeWalletModal}
+        account={account || ''}
+        balance={balance}
+        tcaBalance={tcaBalance}
+        formatNumber={formatNumber}
+      />
+      <SettingsModal
+        isSettingsModalOpen={isSettingsModalOpen}
+        toggleSettingsModal={toggleSettingsModal}
+        notificationsEnabled={notificationsEnabled}
+        soundAlertsEnabled={soundAlertsEnabled}
+        desktopNotificationsEnabled={desktopNotificationsEnabled}
+        handleToggleNotifications={handleToggleNotifications}
+        handleToggleSoundAlerts={handleToggleSoundAlerts}
+        handleToggleDesktopNotifications={handleToggleDesktopNotifications}
+        toggleBlockedModal={toggleBlockedModal}
+        handleSaveSettings={handleSaveSettings}
+      />
+      <BlockedModal
+        isBlockedModalOpen={isBlockedModalOpen}
+        toggleBlockedModal={toggleBlockedModal}
+        blockedAddresses={blockedAddresses}
+        handleUnblockAddress={handleUnblockAddress}
+        handleBlockAddress={handleBlockAddress}
+        handleSaveSettings={handleSaveSettings}
+      />
       <div className="main-content">
-      {!isSidebarOpen && (
-          <button className="sidebar-toggle" onClick={toggleSidebar}>
-            <FaBars /> <span>Menu</span>
-          </button>
-        )}
-      {/* About Modal */}
-      <AboutModal isOpen={showAboutModal} onClose={() => setShowAboutModal(false)} />
-      {/* Help Modal */}
-      <HelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} />
-      {currentChat ? (
-          <ChatPage 
+        <SidebarToggle 
+          isSidebarOpen={isSidebarOpen} 
+          toggleSidebar={toggleSidebar} 
+        />
+        <AboutModal 
+          isOpen={showAboutModal} 
+          onClose={() => setShowAboutModal(false)} 
+        />
+        <HelpModal 
+          isOpen={showHelpModal} 
+          onClose={() => setShowHelpModal(false)} 
+        />
+        {currentChat ? (
+          <ChatWrapper
             account={account}
             toggleBlockedModal={toggleBlockedModal}
             handleDeleteChat={handleDeleteChat}
@@ -635,30 +423,9 @@ const HomePage = ({ account, disconnectWallet }) => {
             formatNumber={formatNumber}
           />
         ) : (
-          <>
-            <div className="welcome-card">
-              <h2>Welcome to <br />
-                <span className="logo-text">
-                <Typewriter
-                  words={['TimeCapsule Chat', 'Wallet-to-Wallet']}
-                  loop={true}
-                  cursor
-                  cursorStyle="|"
-                  typeSpeed={70}
-                  deleteSpeed={50}
-                  delaySpeed={2000}
-                />
-                </span> <span className="beta-tag">Beta</span></h2>
-              <p>Built for users that Value their Privacy, TimeCapsule Chat is a messaging platform for users to simply and instantly message each other, wallet-to-wallet.</p>
-            </div>
-            <div className="important-card">
-              <h3>❗ Be Careful</h3>
-              <p>Protect your sensitive details, such as passwords, private keys, or seed phrases, by never sharing them with anyone! Exercise caution when interacting with external links or online forms, and stay vigilant for potential threats lurking in the digital realm. Stay safe out there! 👀</p>
-            </div>
-            <button className="start-conversation-btn" onClick={handleOpenModal}>+ Start new conversation</button>
-           </>
+          <WelcomePage handleOpenModal={handleOpenModal} />
         )}
-        </div>
+      </div>
     </div>
   );
 };
