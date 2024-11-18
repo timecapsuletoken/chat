@@ -307,7 +307,13 @@ const HomePage = ({ account, disconnectWallet }) => {
   const handleStartChat = () => {
     if (chatAddress.trim()) {
       const trimmedAddress = chatAddress.trim();
-  
+      
+      // Validate the address
+      if (!ethers.utils.isAddress(trimmedAddress)) {
+        alert('Invalid BNB Address. Please enter a valid address.');
+        return;
+      }
+
       // Save chat address in Gun under the account node
       gun.get(account).get('chats').set(trimmedAddress, (ack) => {
         if (ack.err) {

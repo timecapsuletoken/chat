@@ -22,10 +22,10 @@ const StartChatModal = ({
             <IoClose />
           </button>
         </div>
-        <p>Enter an address (or .bnb name) to start a new chat</p>
+        <p>Enter an BNB Address (BEP-20) to start a new chat</p>
         <input
           type="text"
-          placeholder="e.g. 0x... or name.bnb"
+          placeholder="e.g. 0x12345..."
           className="modal-input"
           value={chatAddress}
           onChange={(e) => setChatAddress(e.target.value)}
