@@ -55,12 +55,16 @@ const HomePage = ({ account, disconnectWallet }) => {
     if (account) {
       console.log("Fetching chats for account:", account);
   
-      // Attempt to fetch chats with retry
+      // Attempt to fetch chats with a limit
       const attemptFetch = (retry = 0) => {
-        const loadedChats = [];
+        let loadedChats = [];
+        let count = 0; // Counter to limit the number of records
+        const limit = 100; // Limit to the first 100 records
+  
         gun.get(account).get('chats').map().once((address) => {
-          if (address) {
+          if (address && count < limit) {
             loadedChats.push(address);
+            count++;
           }
         });
   
