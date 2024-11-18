@@ -164,6 +164,12 @@ const HomePage = ({ account, disconnectWallet }) => {
   const handleBlockAddress = (address) => {
     const trimmedAddress = address.trim();
     if (trimmedAddress && trimmedAddress !== '#' && !blockedAddresses.includes(trimmedAddress)) {
+
+      if (account === trimmedAddress) {
+        alert('Oops! You cannot Block your own wallet address. Please enter a different address');
+        return;
+      }
+      
       // Update both the Gun database and local state
       gun.get(account).get('blockedAddresses').set(trimmedAddress, (ack) => {
         if (ack.err) {
@@ -311,6 +317,11 @@ const HomePage = ({ account, disconnectWallet }) => {
       // Validate the address
       if (!ethers.utils.isAddress(trimmedAddress)) {
         alert('Invalid BNB Address. Please enter a valid address.');
+        return;
+      }
+
+      if (account === trimmedAddress) {
+        alert('Oops! You cannot start a chat with your own wallet address. Please enter a different address.');
         return;
       }
 

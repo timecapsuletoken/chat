@@ -127,9 +127,9 @@ const Sidebar = ({
         {isLoading ? (
           // Display skeleton placeholders while loading
           <>
-            {[...Array(1)].map((_, index) => (
+            {[...Array(3)].map((_, index) => (
               <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <Skeleton variant="rounded" width={210} height={60} />
+                <Skeleton sx={{ bgcolor: '#333' }} variant="rounded" width={240} height={60} />
               </div>
             ))}
           </>
@@ -162,7 +162,7 @@ const Sidebar = ({
           <div className="empty-chat">
             <p className="head-empty-chat">Your chat is empty!</p>
             <p className="body-empty-chat">
-              Once you start a new conversation, you'll see the address lists here.
+              Once you start a new conversation, you'll see the chat lists here.
             </p>
           </div>
         )}
