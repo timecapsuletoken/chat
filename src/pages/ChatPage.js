@@ -32,12 +32,25 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
   const [isWalletInfoModalOpen, setIsWalletInfoModalOpen] = useState(false);
   const [balance, setBalance] = useState(0); // Placeholder balance
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
+  const [blockedAddresses, setblockedAddresses] = useState([]);
 
   useEffect(() => {
     if (!chatAddress) {
       console.warn('No chat address provided');
     }
-  }, [chatAddress]);
+
+    if (account) {
+      const addresses = [];
+      gun.get(account).get('blockedAddresses').map().once((address) => {
+        if (address && address !== true) { // Exclude empty or invalid entries
+          addresses.push(address);
+        }
+      });
+      setblockedAddresses(addresses);
+    }
+  }, [account, chatAddress]);
+
+  const isAddressBlocked = blockedAddresses.includes(chatAddress);
 
   const handleSendMessage = () => {
     // Logic for sending a message can be added here
@@ -108,7 +121,6 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
     };
 
     const closeinfoWalletModal = () => setIsWalletInfoModalOpen(false);
-  
 
   return (
     <div className="chat-box">
@@ -118,7 +130,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
           <p className="chat-address">
             {chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}
             <br /> 
-            <span className="status">offline</span>
+            <span className="status">{isAddressBlocked === true ? `Address is Blocked` : 'Ready to Talk'}</span>
           </p>
         </div>
         <button
@@ -135,18 +147,40 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
             onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing when clicking inside
             tabIndex="0"
           >
-            <button onClick={() => {
-              setChatAddress(chatAddress); // Pre-fill the chat address
-              // Automatically block the chat address by saving to Gun.js
-              gun.get(account).get('blockedAddresses').set(chatAddress, (ack) => {
-                if (ack.err) {
-                  console.error("Failed to block address:", ack.err);
+            <button
+              onClick={() => {
+                if (blockedAddresses.includes(chatAddress)) {
+                  // Unblock the chat address
+                  gun.get(account).get('blockedAddresses').map().once((data, key) => {
+                    if (data === chatAddress) {
+                      gun.get(account).get('blockedAddresses').get(key).put(null, (ack) => {
+                        if (ack.err) {
+                          console.error("Failed to unblock address:", ack.err);
+                        } else {
+                          console.log("Address unblocked successfully:", chatAddress);
+                          setblockedAddresses((prev) => prev.filter((addr) => addr !== chatAddress)); // Update state
+                        }
+                      });
+                    }
+                  });
                 } else {
-                  console.log("Address blocked successfully:", chatAddress);
+                  // Block the chat address
+                  setChatAddress(chatAddress); // Pre-fill the chat address
+                  // Automatically block the chat address by saving to Gun.js
+                  gun.get(account).get('blockedAddresses').set(chatAddress, (ack) => {
+                    if (ack.err) {
+                      console.error("Failed to block address:", ack.err);
+                    } else {
+                      console.log("Address blocked successfully:", chatAddress);
+                      setblockedAddresses((prev) => [...prev, chatAddress]); // Update state
+                    }
+                  });
+                  toggleBlockedModal(); // Open the block modal
                 }
-              });
-              toggleBlockedModal(); // Open the block modal
-            }}>Block user</button>
+              }}
+            >
+              {blockedAddresses.includes(chatAddress) ? "Unblock user" : "Block user"}
+            </button>
             
             <button onClick={() => {
               handleDeleteChat(chatAddress); // Delete the chat
@@ -173,9 +207,10 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
           placeholder="Your Message Goes in Here"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          disabled={isAddressBlocked}
         />
         <button className="send-message-btn" onClick={handleSendMessage}>
-          <FaPaperPlane />
+          <FaPaperPlane disabled={isAddressBlocked} />
         </button>
       </div>
       <p className="input-hint">
