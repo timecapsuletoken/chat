@@ -2,6 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { IoClose } from 'react-icons/io5';
 import { LuMessageSquarePlus } from 'react-icons/lu';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
 
 const StartChatModal = ({
   showModal,
@@ -14,32 +21,94 @@ const StartChatModal = ({
   if (!showModal) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleCloseModal}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Start New Chat</h2>
-          <button className="close-button" onClick={handleCloseModal}>
-            <IoClose />
-          </button>
-        </div>
-        <p>Enter an BNB Address (BEP-20) to start a new chat</p>
-        <input
-          type="text"
-          placeholder="e.g. 0x12345..."
-          className="modal-input"
-          value={chatAddress}
-          onChange={(e) => setChatAddress(e.target.value)}
-        />
-        <button
-          className="start-chat-button"
-          onClick={() => {
-            handleStartChat(); // Handle chat item click
-            closeSidebar(); // Close the sidebar on mobile
-          }}
-        >
-          <LuMessageSquarePlus /> Start Chatting
-        </button>
-      </div>
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+      }}
+      onClick={handleCloseModal}
+    >
+      <Card
+        onClick={(e) => e.stopPropagation()} // Prevent click from closing modal
+        sx={{
+          width: 400,
+          maxWidth: '90%',
+          padding: 2,
+          boxShadow: 3,
+          backgroundColor: '#333',
+        }}
+      >
+        <CardContent>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff' }}>
+            <Typography variant="h5" component="div">
+              Start New Chat
+            </Typography>
+            <IconButton onClick={handleCloseModal}>
+              <IoClose color='#fff' />
+            </IconButton>
+          </div>
+          <Typography sx={{ mt: 1, mb: 1 }} color="#fff">
+            Enter a BNB Address (BEP-20) to start a new chat
+          </Typography>
+          <TextField
+            fullWidth
+            id="outlined-basic" 
+            label="e.g. 0x12345..." 
+            variant="outlined" 
+            //placeholder="e.g. 0x12345..."
+            value={chatAddress}
+            onChange={(e) => setChatAddress(e.target.value)}
+            sx={{
+              mt: 1,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff', // Text color
+                '& fieldset': {
+                  borderColor: '#fff', // Default border color
+                },
+                '&:hover fieldset': {
+                  borderColor: '#ddd', // Border color on hover
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#fff', // Border color when focused
+                },
+              },
+              '& .MuiInputBase-input': {
+                color: '#fff', // Input text color
+              },
+              '& .MuiInputLabel-root': {
+                color: '#fff', // Placeholder text color
+              },
+            }}          
+          />
+        </CardContent>
+        <CardActions>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={() => {
+              handleStartChat(); // Handle chat item click
+              closeSidebar(); // Close the sidebar on mobile
+            }}
+            endIcon={<LuMessageSquarePlus />}
+            sx={{
+              '&:hover': {
+                borderColor: '#f7c440',
+                color: '#f7c440',
+              },
+            }}
+          >
+            Start Chatting
+          </Button>
+        </CardActions>
+      </Card>
     </div>
   );
 };
