@@ -373,6 +373,10 @@
     font-size: 25px;
   }
 
+  .chatroom-icon {
+    margin: 10px;
+  }
+
   .chat-item .chat-message-icon {
     padding: 5px;
     border: solid 1px;

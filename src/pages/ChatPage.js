@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import gun from '../utils/gunSetup';
+import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
 import '../assets/css/ChatPage.css';
-import { IoChatboxSharp } from "react-icons/io5";
-import { IoOptionsOutline } from "react-icons/io5";
+import Avatar from '@mui/material/Avatar';
 import TCACoin from '../assets/images/logos/logo.png';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -21,13 +21,12 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletModal, setChatAddress, formatNumber }) => {
+const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber }) => {
   const [message, setMessage] = useState('');
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const chatAddress = params.get('chatwith');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to control emoji picker visibility
-  const [showChatOptions, setShowChatOptions] = useState(false);
   const navigate = useNavigate();
   const [isWalletInfoModalOpen, setIsWalletInfoModalOpen] = useState(false);
   const [balance, setBalance] = useState(0); // Placeholder balance
@@ -60,8 +59,6 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
   const toggleEmojiPicker = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
-
-  const toggleChatOptions = () => setShowChatOptions((prev) => !prev);
 
   // Updated emoji selection handler
   const onEmojiClick = (emojiObject) => {
@@ -126,70 +123,31 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, openWalletMod
     <div className="chat-box">
       <div className="chat-header">
         <div className="chat-address-info">
-            <IoChatboxSharp className="chat-message-icon"/>
+          <Avatar 
+            className="chatroom-icon"
+            sx={{
+              backgroundColor: chatAddress.length > 6 ? `#${chatAddress.slice(-6)}` : '#ddd',
+            }}
+          >
+            {chatAddress.length > 2 ? `${chatAddress.slice(-2)}` : chatAddress}
+          </Avatar>
           <p className="chat-address">
             {chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}
             <br /> 
             <span className="status">{isAddressBlocked === true ? `Address is Blocked` : 'Ready to Talk'}</span>
           </p>
         </div>
-        <button
-          className="chat-options"
-          onClick={() => toggleChatOptions((prev) => !prev)}
-          onBlur={() => toggleChatOptions(false)} // Close on blur
-          tabIndex="0" // Make the button focusable
-        >
-          <IoOptionsOutline />
-        </button>
-        {showChatOptions && (
-          <div 
-            className="chat-options-popup"
-            onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing when clicking inside
-            tabIndex="0"
-          >
-            <button
-              onClick={() => {
-                if (blockedAddresses.includes(chatAddress)) {
-                  // Unblock the chat address
-                  gun.get(account).get('blockedAddresses').map().once((data, key) => {
-                    if (data === chatAddress) {
-                      gun.get(account).get('blockedAddresses').get(key).put(null, (ack) => {
-                        if (ack.err) {
-                          console.error("Failed to unblock address:", ack.err);
-                        } else {
-                          console.log("Address unblocked successfully:", chatAddress);
-                          setblockedAddresses((prev) => prev.filter((addr) => addr !== chatAddress)); // Update state
-                        }
-                      });
-                    }
-                  });
-                } else {
-                  // Block the chat address
-                  setChatAddress(chatAddress); // Pre-fill the chat address
-                  // Automatically block the chat address by saving to Gun.js
-                  gun.get(account).get('blockedAddresses').set(chatAddress, (ack) => {
-                    if (ack.err) {
-                      console.error("Failed to block address:", ack.err);
-                    } else {
-                      console.log("Address blocked successfully:", chatAddress);
-                      setblockedAddresses((prev) => [...prev, chatAddress]); // Update state
-                    }
-                  });
-                  toggleBlockedModal(); // Open the block modal
-                }
-              }}
-            >
-              {blockedAddresses.includes(chatAddress) ? "Unblock user" : "Block user"}
-            </button>
-            
-            <button onClick={() => {
-              handleDeleteChat(chatAddress); // Delete the chat
-              navigate('/home'); // Redirect to /home after deletion
-            }}>Delete Chat</button>
-            
-            <button onClick={handleWalletInfo}>Wallet info</button>
-          </div>
-        )}
+        <ChatOptionsMenu
+          account={account}
+          chatAddress={chatAddress}
+          blockedAddresses={blockedAddresses}
+          setblockedAddresses={setblockedAddresses}
+          gun={gun}
+          handleDeleteChat={handleDeleteChat}
+          handleWalletInfo={handleWalletInfo}
+          toggleBlockedModal={toggleBlockedModal}
+          navigate={navigate}
+        />
       </div>
       <div className="chat-body">
         <p className="start-chat-message">... Your new conversation is empty ...</p>

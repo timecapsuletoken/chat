@@ -73,10 +73,17 @@ function App() {
         if (window.ethereum && window.ethereum.isMetaMask) {
           provider = new ethers.providers.Web3Provider(window.ethereum);
           try {
-            await provider.send("wallet_requestPermissions", [{ eth_accounts: {} }]);
-            await provider.send("eth_requestAccounts", []);
-            console.log("MetaMask connected:");
-          
+            
+            // Disconnect existing accounts to force account selection
+            await window.ethereum.request({
+              method: 'wallet_requestPermissions',
+              params: [{ eth_accounts: {} }],
+            });
+
+            // Request account access
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            console.log("MetaMask connected:", accounts[0]);
+
             // Check and switch to BSC
             const chainId = await provider.send("eth_chainId", []);
             console.log("Current chain ID:", chainId);

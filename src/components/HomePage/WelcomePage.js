@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Typewriter } from 'react-simple-typewriter';
+import Button from '@mui/material/Button';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const WelcomePage = ({ handleOpenModal }) => {
   return (
@@ -35,9 +37,21 @@ const WelcomePage = ({ handleOpenModal }) => {
           safe out there! 👀
         </p>
       </div>
-      <button className="start-conversation-btn" onClick={handleOpenModal}>
-        + Start new conversation
-      </button>
+      <Button 
+        variant="outlined"
+        endIcon={<ChatIcon />} 
+        onClick={handleOpenModal} 
+        sx={{
+          color: '#ce00fc', // Button text color
+          borderColor: '#ce00fc', // Button border color
+          '&:hover': {
+            borderColor: '#20d0e3', // Background color on hover
+            color: '#20d0e3', // Text color on hover
+          },
+        }}
+      >
+        New Message
+      </Button>
     </>
   );
 };

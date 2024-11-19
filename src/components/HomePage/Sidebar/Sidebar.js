@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Skeleton from '@mui/material/Skeleton';
-import { FaWallet, FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff, FaTimes } from 'react-icons/fa';
+import Avatar from '@mui/material/Avatar';
+import { FaWallet, FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff } from 'react-icons/fa';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import { MdHome } from 'react-icons/md';
-import { IoChatboxSharp } from 'react-icons/io5';
 
 const Sidebar = ({
   account,
@@ -143,18 +144,18 @@ const Sidebar = ({
                 closeSidebar();
               }}
             >
-              <IoChatboxSharp className="chat-message-icon" />
+              <Avatar sx={{ backgroundColor: address.length > 6 ? `#${address.slice(-6)}` : '#ddd', }}>{address.length > 2 ? `${address.slice(-2)}` : address}</Avatar>
               <p className="chat-address-sidebar">
                 {address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address}
               </p>
-              <FaTimes
+              <DeleteForeverIcon
+                variant="outlined"
                 className="delete-icon"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteChat(address);
                 }}
                 title="Delete chat"
-                style={{ marginLeft: 'auto', cursor: 'pointer' }}
               />
             </div>
           ))
