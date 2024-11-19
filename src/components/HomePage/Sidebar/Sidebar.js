@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Skeleton from '@mui/material/Skeleton';
 import Avatar from '@mui/material/Avatar';
+import Tooltip from '@mui/material/Tooltip';
 import { FaWallet, FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff } from 'react-icons/fa';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { CiMenuKebab } from 'react-icons/ci';
@@ -48,19 +49,21 @@ const Sidebar = ({
           background: isHovered ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : '#333',
         }}
       >
-        <div
-          className="sidebar-icon waddr"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={openWalletModal}
-        >
-          <p>
-            <FaWallet />{' '}
-            <span className="wallet-addr">
-              {account ? `| ${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}
-            </span>
-          </p>
-        </div>
+        <Tooltip title="My Wallet">
+          <div
+            className="sidebar-icon waddr"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={openWalletModal}
+          >
+              <p>
+                <FaWallet />{' '}
+                <span className="wallet-addr">
+                  {account ? `| ${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}
+                </span>
+              </p>
+          </div>
+        </Tooltip>
       </div>
       <div className="sidebar-content">
         {isSidebarOpen && (
@@ -76,21 +79,27 @@ const Sidebar = ({
             </button>
           </div>
         )}
-        <div className="sidebar-icon">
-          <a href="/home">
-            <MdHome />
-          </a>
-        </div>
-        <div className="sidebar-icon">
-          <button className="new-message" onClick={handleOpenModal}>
-            <LuMessageSquarePlus />
-          </button>
-        </div>
-        <div className="sidebar-icon">
-          <button onClick={toggleDropdown}>
-            <CiMenuKebab />
-          </button>
-        </div>
+        <Tooltip title="Home">
+          <div className="sidebar-icon">
+              <a href="/home">
+                <MdHome />
+              </a>
+          </div>
+        </Tooltip>
+        <Tooltip title="New Chat">
+          <div className="sidebar-icon">
+              <button className="new-message" onClick={handleOpenModal}>
+                <LuMessageSquarePlus />
+              </button>
+          </div>
+        </Tooltip>
+        <Tooltip title="Options">
+          <div className="sidebar-icon">
+              <button onClick={toggleDropdown}>
+                <CiMenuKebab />
+              </button>
+          </div>
+        </Tooltip>
         <div className="dropdown-container">
           {showDropdown && (
             <>
@@ -145,18 +154,21 @@ const Sidebar = ({
               }}
             >
               <Avatar sx={{ backgroundColor: address.length > 6 ? `#${address.slice(-6)}` : '#ddd', }}>{address.length > 2 ? `${address.slice(-2)}` : address}</Avatar>
-              <p className="chat-address-sidebar">
-                {address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address}
-              </p>
-              <DeleteForeverIcon
-                variant="outlined"
-                className="delete-icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteChat(address);
-                }}
-                title="Delete chat"
-              />
+              <Tooltip title={address}>
+                <p className="chat-address-sidebar">
+                  {address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address}
+                </p>
+              </Tooltip>
+              <Tooltip title="Delete Chat">
+                <DeleteForeverIcon
+                  variant="outlined"
+                  className="delete-icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteChat(address);
+                  }}
+                />
+              </Tooltip>
             </div>
           ))
         ) : (
