@@ -3,10 +3,15 @@ const webpack = require('webpack');
 module.exports = function override(config) {
   config.resolve.fallback = {
     ...config.resolve.fallback,
+    assert: require.resolve('assert'),
+    crypto: require.resolve('crypto-browserify'),
     stream: require.resolve('stream-browserify'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    os: require.resolve('os-browserify/browser'),
     vm: require.resolve('vm-browserify'),
-    process: require.resolve('process/browser'),
-  };
+    url: require.resolve('url'),
+  };  
 
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({

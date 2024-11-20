@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import SidebarAccount from '../Sidebar/SidebarAccount';
 import Skeleton from '@mui/material/Skeleton';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
-import { FaWallet, FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff } from 'react-icons/fa';
+import Divider from '@mui/material/Divider';
+import { FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff } from 'react-icons/fa';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
@@ -11,6 +13,7 @@ import { MdHome } from 'react-icons/md';
 
 const Sidebar = ({
   account,
+  gun,
   isSidebarOpen,
   showDropdown,
   chats,
@@ -22,6 +25,7 @@ const Sidebar = ({
   handleOpenModal,
   handleChatItemClick,
   handleDeleteChat,
+  handleClearChatHistory,
   disconnectWallet,
   navigate,
   setShowAboutModal,
@@ -40,6 +44,10 @@ const Sidebar = ({
 
     return () => clearTimeout(timer);
   }, []);
+  
+  const handleSwitchWallet = () => {
+    console.log('Switching wallet...');
+  };  
 
   return (
     <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
@@ -49,21 +57,12 @@ const Sidebar = ({
           background: isHovered ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : '#333',
         }}
       >
-        <Tooltip title="My Wallet">
-          <div
-            className="sidebar-icon waddr"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onClick={openWalletModal}
-          >
-              <p>
-                <FaWallet />{' '}
-                <span className="wallet-addr">
-                  {account ? `| ${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}
-                </span>
-              </p>
-          </div>
-        </Tooltip>
+        <SidebarAccount
+          account={account}
+          gun={gun}
+          handleClearChatHistory={handleClearChatHistory}
+          handleSwitchWallet={handleSwitchWallet}
+        />
       </div>
       <div className="sidebar-content">
         {isSidebarOpen && (
@@ -154,11 +153,13 @@ const Sidebar = ({
               }}
             >
               <Avatar sx={{ backgroundColor: address.length > 6 ? `#${address.slice(-6)}` : '#ddd', }}>{address.length > 2 ? `${address.slice(-2)}` : address}</Avatar>
+              <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
               <Tooltip title={address}>
                 <p className="chat-address-sidebar">
                   {address.length > 10 ? `${address.slice(0, 6)}...${address.slice(-4)}` : address}
                 </p>
               </Tooltip>
+              <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
               <Tooltip title="Delete Chat">
                 <DeleteForeverIcon
                   variant="outlined"
@@ -187,6 +188,7 @@ const Sidebar = ({
 Sidebar.propTypes = {
   // Define propTypes to enforce correct prop usage
   account: PropTypes.string,
+  gun: PropTypes.object.isRequired,
   isSidebarOpen: PropTypes.bool.isRequired,
   showDropdown: PropTypes.bool.isRequired,
   chats: PropTypes.array.isRequired,
@@ -198,6 +200,7 @@ Sidebar.propTypes = {
   handleOpenModal: PropTypes.func.isRequired,
   handleChatItemClick: PropTypes.func.isRequired,
   handleDeleteChat: PropTypes.func.isRequired,
+  handleClearChatHistory: PropTypes.func.isRequired,
   disconnectWallet: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired,
   setShowAboutModal: PropTypes.func.isRequired,

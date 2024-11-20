@@ -361,15 +361,36 @@ const HomePage = ({ account, disconnectWallet }) => {
         });
       }
     });
-  };    
+  };
+  
+  const handleClearChatHistory = () => {
+    if (account) {
+      // Clear all chats from Gun.js
+      gun.get(account).get('chats').map().once((data, key) => {
+        gun.get(account).get('chats').get(key).put(null, (ack) => {
+          if (ack.err) {
+            console.error("Failed to delete chat:", ack.err);
+          }
+        });
+      });
+  
+      // Clear local state
+      setChats([]);
+      console.log("Chat history cleared successfully.");
+    } else {
+      console.warn("No account found to clear chat history.");
+    }
+  };  
 
   return (
     <div className="home-container">
       <Sidebar
         account={account}
+        gun={gun}
         isSidebarOpen={isSidebarOpen}
         showDropdown={showDropdown}
         chats={chats}
+        setChats={setChats}
         isHovered={isHovered}
         toggleSidebar={toggleSidebar}
         toggleDropdown={toggleDropdown}
@@ -378,6 +399,7 @@ const HomePage = ({ account, disconnectWallet }) => {
         handleOpenModal={handleOpenModal}
         handleChatItemClick={handleChatItemClick}
         handleDeleteChat={handleDeleteChat}
+        handleClearChatHistory={handleClearChatHistory}
         disconnectWallet={disconnectWallet}
         navigate={navigate}
         setShowAboutModal={setShowAboutModal}
