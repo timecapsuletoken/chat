@@ -37,13 +37,12 @@ import {
 import gun from '../../../utils/gunSetup';
 import { switchWallet } from '../../../utils/wallet';
 
-const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
+const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const menuOpen = Boolean(menuAnchorEl);
   const [loading, setLoading] = useState(true);
 
   // Nickname Functionalities
-  const [nickname, setNickname] = useState('TCA#000');
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');
 
@@ -55,20 +54,11 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, han
 
   // Fetch nickname when component mounts
   useEffect(() => {
-    if (account) {
-      gun.get(account).get('nickname').once((data) => {
-        if (data) {
-          setNickname(data);
-          setTimeout(() => {
-            setLoading(false);
-          }, 6000);
-        } else {
-          setNickname(`TCA#${account.slice(-3)}`); // Default nickname
-          setTimeout(() => {
-            setLoading(false);
-          }, 6000);
-        }
-      });
+    
+    if (account && nickname) {
+      setTimeout(() => {
+        setLoading(false);
+      }, 6000);
     }
 
     const fetchNetwork = async () => {
@@ -107,7 +97,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, han
     const userAgent = navigator.userAgent;
     setBrowserInfo(userAgent);
 
-  }, [account]);
+  }, [account, nickname]);
 
   // Session Information Modal Logic
   const handleCloseSessionModal = () => setIsSessionModalOpen(false);
@@ -126,7 +116,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, han
           console.error('Failed to save nickname:', ack.err);
         } else {
           console.log('Nickname saved successfully:', newNickname);
-          setNickname(newNickname); // Update displayed nickname
+          setNewNickname(''); // Clear input
           setIsNicknameModalOpen(false); // Close modal
         }
       });
@@ -151,7 +141,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, han
       {/* Nickname and Wallet Address */}
       <div style={{ textAlign: 'center' }}>
       {loading ? (
-          <Skeleton variant="text" width="100%" />
+          <Skeleton sx={{ bgcolor: '#1c1c1c' }} variant="text" width="100%" />
         ) : (
           <Typography variant="body2" fontWeight="bold">
             {nickname}

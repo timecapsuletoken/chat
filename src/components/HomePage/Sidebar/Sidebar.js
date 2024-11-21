@@ -21,6 +21,8 @@ const Sidebar = ({
   isSidebarOpen,
   showDropdown,
   chats,
+  nickname,
+  loading,
   isHovered,
   toggleSidebar,
   toggleDropdown,
@@ -62,6 +64,8 @@ const Sidebar = ({
           switchAccount={switchAccount}
           switchToBSC={switchToBSC}
           providerType={providerType}
+          nickname={nickname}
+          loading={loading}   
           gun={gun}
           openWalletModal={openWalletModal}
           handleClearChatHistory={handleClearChatHistory}
@@ -188,6 +192,8 @@ Sidebar.propTypes = {
   isSidebarOpen: PropTypes.bool.isRequired,
   showDropdown: PropTypes.bool.isRequired,
   chats: PropTypes.array.isRequired,
+  nickname: PropTypes.string,
+  loading: PropTypes.bool.isRequired,
   isHovered: PropTypes.bool.isRequired,
   toggleSidebar: PropTypes.func.isRequired,
   toggleDropdown: PropTypes.func.isRequired,
