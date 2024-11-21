@@ -25,7 +25,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const HomePage = ({ account, disconnectWallet }) => {
+const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, providerType }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -124,8 +124,8 @@ const HomePage = ({ account, disconnectWallet }) => {
             setDesktopNotificationsEnabled(false);
             setBlockedAddresses([]);
   
-            // Retry fetching if data is empty, up to 3 attempts
-            if (retry < 3) {
+            // Retry fetching if data is empty, up to 2 attempts
+            if (retry < 2) {
               console.log(`Retrying fetch attempt ${retry + 1}...`);
               setTimeout(() => attemptFetch(retry + 1), 1000); // Retry after 1 second
             }
@@ -380,12 +380,16 @@ const HomePage = ({ account, disconnectWallet }) => {
     } else {
       console.warn("No account found to clear chat history.");
     }
-  };  
+  }; 
 
   return (
     <div className="home-container">
       <Sidebar
         account={account}
+        disconnectWallet={disconnectWallet}
+        switchAccount={switchAccount}
+        switchToBSC={switchToBSC}
+        providerType={localStorage.getItem('providerType')} 
         gun={gun}
         isSidebarOpen={isSidebarOpen}
         showDropdown={showDropdown}
@@ -400,7 +404,6 @@ const HomePage = ({ account, disconnectWallet }) => {
         handleChatItemClick={handleChatItemClick}
         handleDeleteChat={handleDeleteChat}
         handleClearChatHistory={handleClearChatHistory}
-        disconnectWallet={disconnectWallet}
         navigate={navigate}
         setShowAboutModal={setShowAboutModal}
         setShowHelpModal={setShowHelpModal}

@@ -5,7 +5,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
-import { FaBars, FaCogs, FaInfoCircle, FaQuestionCircle, FaPowerOff } from 'react-icons/fa';
+import { FaBars, FaCogs, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
@@ -13,6 +13,10 @@ import { MdHome } from 'react-icons/md';
 
 const Sidebar = ({
   account,
+  disconnectWallet,
+  switchAccount,
+  switchToBSC,
+  providerType,
   gun,
   isSidebarOpen,
   showDropdown,
@@ -26,7 +30,6 @@ const Sidebar = ({
   handleChatItemClick,
   handleDeleteChat,
   handleClearChatHistory,
-  disconnectWallet,
   navigate,
   setShowAboutModal,
   setShowHelpModal,
@@ -44,10 +47,6 @@ const Sidebar = ({
 
     return () => clearTimeout(timer);
   }, []);
-  
-  const handleSwitchWallet = () => {
-    console.log('Switching wallet...');
-  };  
 
   return (
     <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
@@ -59,9 +58,13 @@ const Sidebar = ({
       >
         <SidebarAccount
           account={account}
+          disconnectWallet={disconnectWallet}
+          switchAccount={switchAccount}
+          switchToBSC={switchToBSC}
+          providerType={providerType}
           gun={gun}
+          openWalletModal={openWalletModal}
           handleClearChatHistory={handleClearChatHistory}
-          handleSwitchWallet={handleSwitchWallet}
         />
       </div>
       <div className="sidebar-content">
@@ -115,17 +118,6 @@ const Sidebar = ({
                 <div className="dropdown-item" onClick={() => setShowHelpModal(true)}>
                   <FaQuestionCircle className="dropdown-icon" />
                   <span>Help</span>
-                </div>
-                <div className="dropdown-item">
-                  <button
-                    className="disconnect-button"
-                    onClick={() => {
-                      disconnectWallet();
-                      navigate('/login');
-                    }}
-                  >
-                    <FaPowerOff /> <span>Logout</span>
-                  </button>
                 </div>
               </div>
             </>
@@ -188,6 +180,10 @@ const Sidebar = ({
 Sidebar.propTypes = {
   // Define propTypes to enforce correct prop usage
   account: PropTypes.string,
+  switchAccount: PropTypes.func.isRequired,
+  switchToBSC: PropTypes.func.isRequired,
+  disconnectWallet: PropTypes.func.isRequired,
+  providerType: PropTypes.oneOf(['MetaMask', 'CoinbaseWallet']).isRequired,
   gun: PropTypes.object.isRequired,
   isSidebarOpen: PropTypes.bool.isRequired,
   showDropdown: PropTypes.bool.isRequired,
@@ -201,7 +197,6 @@ Sidebar.propTypes = {
   handleChatItemClick: PropTypes.func.isRequired,
   handleDeleteChat: PropTypes.func.isRequired,
   handleClearChatHistory: PropTypes.func.isRequired,
-  disconnectWallet: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired,
   setShowAboutModal: PropTypes.func.isRequired,
   setShowHelpModal: PropTypes.func.isRequired,

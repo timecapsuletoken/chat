@@ -7,6 +7,7 @@
     "@coinbase/wallet-sdk": "^4.0.3",
     "@emotion/react": "11.13.5",
     "@emotion/styled": "11.13.5",
+    "@metamask/sdk": "^0.30.3",
     "@mui/icons-material": "6.1.8",
     "@mui/material": "6.1.8",
     "@testing-library/jest-dom": "6.6.3",
