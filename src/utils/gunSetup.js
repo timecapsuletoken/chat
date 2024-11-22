@@ -1,5 +1,4 @@
 import Gun from 'gun';
-import { encryptData, decryptData } from './cryptographer';
 
 const gun = Gun({
   peers: [
@@ -10,23 +9,6 @@ const gun = Gun({
       },
     },
   ],
-});
-
-// Wrap Gun's `put` for encryption
-const originalPut = gun.put.bind(gun);
-
-gun.put = (data, callback) => {
-  const encryptedData = encryptData(data);
-  originalPut(encryptedData, callback);
-};
-
-// Decrypt on data fetch
-gun.on('in', (msg) => {
-  if (msg.put) {
-    Object.keys(msg.put).forEach((key) => {
-      msg.put[key] = decryptData(msg.put[key]);
-    });
-  }
 });
 
 export default gun;

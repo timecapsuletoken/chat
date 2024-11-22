@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const SECRET_KEY = process.env.REACT_APP_CRYPTOGRAPHER_SECRET_KEY || 'fallback-secret-key';
+const SECRET_KEY = process.env.REACT_APP_SECRET_KEY || 'fallback-secret-key';
 
 // Encrypt data
 export const encryptData = (data) => {
@@ -11,7 +11,19 @@ export const encryptData = (data) => {
 
 // Decrypt data
 export const decryptData = (ciphertext) => {
-  const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
-  const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-  return JSON.parse(decryptedData); // Convert back to JSON
-};
+    if (!ciphertext || typeof ciphertext !== 'string') {
+      console.warn('Invalid ciphertext, skipping decryption:', ciphertext);
+      return ciphertext; // Return as-is if not valid ciphertext
+    }
+  
+    try {
+      const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+      const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+  
+      return JSON.parse(decryptedData); // Convert back to JSON
+    } catch (error) {
+      console.error('Error decrypting data:', error.message, ciphertext);
+      return ciphertext; // Return as-is if decryption fails
+    }
+  };
+  
