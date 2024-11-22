@@ -17,7 +17,7 @@ import ChatWrapper from '../components/HomePage/ChatWrapper';
 import '../assets/css/HomePage.css';
 
 // Binance Smart Chain provider and TCA token setup
-const bscProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
+const bscProvider = new ethers.providers.JsonRpcProvider(`https://bsc-dataseed.binance.org/?_=${Date.now()}`);
 const TCA_TOKEN_ADDRESS = '0x31aab810b51f499340fc1e1b08716d2bc92c7a56';
 const BEP20_ABI = [
   "function balanceOf(address owner) view returns (uint256)",

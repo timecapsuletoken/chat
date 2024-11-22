@@ -10,7 +10,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       const MMSDK = new MetaMaskSDK({
         appName: 'YourAppName',
         theme: 'dark',
-        network: 'mainnet',
+        network: 'bsc-mainnet',
       });
 
       // Await SDK initialization
@@ -46,11 +46,13 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
           const chainId = await provider.send('eth_chainId', []);
           if (chainId !== '0x38') {
             console.log('Not on Binance Smart Chain. Attempting to switch...');
+            // Force Binance Smart Chain connection
             await switchToBSC();
-      
-            // Verify that the switch was successful
-            const updatedChainId = await provider.send('eth_chainId', []);
-            if (updatedChainId !== '0x38') {
+
+            // Verify the chain switch
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const chainId = await provider.send('eth_chainId', []);
+            if (chainId !== '0x38') {
               throw new Error('Failed to switch to Binance Smart Chain.');
             }
           }
@@ -67,7 +69,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       });
 
       const coinbaseProvider = coinbaseWallet.makeWeb3Provider(
-        'https://bsc-dataseed.binance.org/', // Binance Smart Chain
+        `https://bsc-dataseed.binance.org/?_=${Date.now()}`, // Binance Smart Chain
         56
       );
 
@@ -102,7 +104,7 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
       const MMSDK = new MetaMaskSDK({
         appName: 'YourAppName',
         theme: 'dark',
-        network: 'mainnet',
+        network: 'bsc-mainnet',
       });
 
       await MMSDK.init();
@@ -143,7 +145,7 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
       });
 
       const coinbaseProvider = coinbaseWallet.makeWeb3Provider(
-        'https://bsc-dataseed.binance.org/', // Binance Smart Chain
+        `https://bsc-dataseed.binance.org/?_=${Date.now()}`, // Binance Smart Chain
         56
       );
 

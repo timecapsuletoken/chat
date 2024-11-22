@@ -35,10 +35,10 @@ function App() {
         });
         console.log('Switched to Binance Smart Chain');
       } catch (error) {
-        // This error code indicates that the chain has not been added to MetaMask
         if (error.code === 4902) {
           console.log('Binance Smart Chain not found. Adding it now...');
           try {
+            // Add Binance Smart Chain
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [
@@ -50,13 +50,13 @@ function App() {
                     symbol: 'BNB',
                     decimals: 18,
                   },
-                  rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                  rpcUrls: [`https://bsc-dataseed.binance.org/?_=${Date.now()}`],
                   blockExplorerUrls: ['https://bscscan.com'],
                 },
               ],
             });
             console.log('Binance Smart Chain added to MetaMask');
-            // After adding, try switching again
+            // Retry switching to BSC
             await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: '0x38' }],
@@ -72,8 +72,7 @@ function App() {
     } else {
       console.error('MetaMask is not installed. Please install it to use this app.');
     }
-  };
-     
+  };  
 
    // Disconnect the wallet
    const disconnectWallet = () => {
