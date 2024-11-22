@@ -2,7 +2,12 @@ import Gun from 'gun';
 
 const gun = Gun({
   peers: [
-    'http://localhost:8765/gun', // Local Gun relay for testing
+    {
+      url: 'https://gun-private-relay.onrender.com/gun',
+      headers: {
+        'x-api-key': process.env.REACT_APP_GUN_API_KEY, // Ensure this variable is set in your environment
+      },
+    },
   ],
 });
 
