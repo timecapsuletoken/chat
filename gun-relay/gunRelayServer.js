@@ -23,8 +23,7 @@ const server = app.listen(port, () => {
 // Enable Radisk for persistent storage
 const gun = Gun({
   web: server,
-  radisk: true, // Enable Radisk for on-disk storage
-  file: 'data', // Specify the directory for storage
+  radisk: true, // Enables Radisk for persistent storage
 });
 
 Gun({ web: server });

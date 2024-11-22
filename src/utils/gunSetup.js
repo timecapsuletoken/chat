@@ -5,7 +5,7 @@ const gun = Gun({
     {
       url: 'https://gun-private-relay.onrender.com/gun',
       headers: {
-        'x-api-key': '940a7906641dd6bdf6fcd39eefe757248395e6cbe7b292a8f55c3a8e1fcceee5', // The same key you set in Render
+        'x-api-key': process.env.REACT_APP_GUN_API_KEY, // Ensure this variable is set in your environment
       },
     },
   ],
