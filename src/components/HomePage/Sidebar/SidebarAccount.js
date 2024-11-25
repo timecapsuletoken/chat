@@ -37,7 +37,7 @@ import {
 import gun from '../../../utils/gunSetup';
 import { switchWallet } from '../../../utils/wallet';
 
-const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
+const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, setNickname, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const menuOpen = Boolean(menuAnchorEl);
   const [loading, setLoading] = useState(true);
@@ -111,17 +111,18 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
   // Save nickname to Gun
   const saveNickname = () => {
     if (newNickname.trim() && account) {
-      gun.get(account).get('nickname').put(newNickname, (ack) => {
+      gun.get(account).put({ nickname: newNickname }, (ack) => {
         if (ack.err) {
           console.error('Failed to save nickname:', ack.err);
         } else {
           console.log('Nickname saved successfully:', newNickname);
-          setNewNickname(''); // Clear input
+          setNewNickname(''); // Clear the input field
+          setNickname(newNickname); // Update global nickname state
           setIsNicknameModalOpen(false); // Close modal
         }
       });
     }
-  };
+  };  
 
   const handleOptionsMenuClose = () => {
     setMenuAnchorEl(null);
@@ -147,7 +148,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
             {nickname}
           </Typography>
         )}
-        <Tooltip title="My Wallet info">
+        <Tooltip title="My Wallet info" sx={{cursor: 'pointer'}}>
           <Typography variant="body1" color="textSecondary" onClick={openWalletModal} noWrap>
             {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'No Wallet Connected'}
           </Typography>

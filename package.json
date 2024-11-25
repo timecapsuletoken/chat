@@ -9,6 +9,7 @@
     "@emotion/styled": "11.13.5",
     "@metamask/sdk": "^0.30.3",
     "@mui/icons-material": "6.1.8",
+    "@mui/lab": "^6.0.0-beta.16",
     "@mui/material": "6.1.8",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.0.1",

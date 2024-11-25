@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+
+// Components from your project
 import SidebarAccount from '../Sidebar/SidebarAccount';
-import Skeleton from '@mui/material/Skeleton';
-import Avatar from '@mui/material/Avatar';
-import Tooltip from '@mui/material/Tooltip';
-import Divider from '@mui/material/Divider';
-import { FaBars, FaCogs, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
+
+// Material-UI components
+import { Skeleton, Avatar, Tooltip, Divider } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
+// Icons from react-icons
+import { FaBars, FaCogs, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
 import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import { MdHome } from 'react-icons/md';
+
 
 const Sidebar = ({
   account,
@@ -22,6 +26,7 @@ const Sidebar = ({
   showDropdown,
   chats,
   nickname,
+  setNickname,
   loading,
   isHovered,
   toggleSidebar,
@@ -65,6 +70,7 @@ const Sidebar = ({
           switchToBSC={switchToBSC}
           providerType={providerType}
           nickname={nickname}
+          setNickname={setNickname}
           loading={loading}   
           gun={gun}
           openWalletModal={openWalletModal}
@@ -193,6 +199,7 @@ Sidebar.propTypes = {
   showDropdown: PropTypes.bool.isRequired,
   chats: PropTypes.array.isRequired,
   nickname: PropTypes.string,
+  setNickname: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   isHovered: PropTypes.bool.isRequired,
   toggleSidebar: PropTypes.func.isRequired,

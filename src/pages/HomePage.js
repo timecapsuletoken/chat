@@ -59,40 +59,30 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   
     console.log("Fetching chats for account:", account);
   
-    const loadedChats = new Set(); // To track unique chats
-    let subscription; // Track the subscription for cleanup
+    const loadedChats = new Set();
+    let subscription;
   
-    const loadChats = async () => {
+    const loadChats = () => {
       subscription = gun
         .get(account)
         .get('chats')
         .map()
-        .once((address, key) => {
+        .once((address) => {
           if (address) {
             loadedChats.add(address);
+            setChats(Array.from(loadedChats)); // Update state
           }
         })
         .on(() => {
-          const updatedChats = Array.from(loadedChats);
-  
-          setChats((prevChats) => {
-            if (JSON.stringify(prevChats) !== JSON.stringify(updatedChats)) {
-              console.log("Loaded chats:", updatedChats);
-              return updatedChats;
-            }
-            return prevChats; // No change, avoid re-render
-          });
+          console.log("Chats updated:", Array.from(loadedChats));
         });
     };
   
     loadChats();
   
-    // Cleanup subscription on unmount or account change
     return () => {
-      if (subscription) {
-        subscription.off();
-        console.log("Gun.js subscription cleaned up.");
-      }
+      if (subscription) subscription.off();
+      console.log("Gun.js subscription cleaned up.");
     };
   }, [account]);  
 
@@ -114,52 +104,63 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     console.log("Fetching settings for account:", account);
   
     const attemptFetch = async (retry = 0) => {
-      const data = await new Promise((resolve) => {
-        gun.get(account).once((fetchedData) => resolve(fetchedData || {}));
-      });
-  
-      if (Object.keys(data).length > 1) {
-        console.log("Fetched data from Gun:", data);
-  
-        // Update nickname
-        const fetchedNickname = data.nickname || `TCA#${account.slice(-3)}`;
-        setNickname(fetchedNickname);
-        console.log("Nickname updated:", fetchedNickname);
-  
-        // Update other settings
-        setNotificationsEnabled(data.notificationsEnabled || false);
-        setSoundAlertsEnabled(data.soundAlertsEnabled || false);
-        setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
-  
-        // Fetch blocked addresses
-        const addresses = await new Promise((resolve) => {
-          const blocked = [];
-          gun
-            .get(account)
-            .get('blockedAddresses')
-            .map()
-            .once((address) => {
-              if (address && address !== true) blocked.push(address);
-            })
-            .on(() => resolve(blocked));
+      try {
+        // Fetch all account data
+        const data = await new Promise((resolve) => {
+          gun.get(account).once((fetchedData) => resolve(fetchedData || {}));
         });
   
-        setBlockedAddresses(addresses);
-        console.log("Blocked addresses loaded:", addresses);
-      } else if (retry < 2) {
-        console.log(`Retrying fetch attempt ${retry + 1}...`);
-        setTimeout(() => attemptFetch(retry + 1), 1000);
-      } else {
-        console.log("No data found for this account in Gun.");
-        setNickname(`TCA#${account.slice(-3)}`); // Default nickname
-        setNotificationsEnabled(false);
-        setSoundAlertsEnabled(false);
-        setDesktopNotificationsEnabled(false);
-        setBlockedAddresses([]);
+        if (Object.keys(data).length > 1) {
+          console.log("Fetched data from Gun:", data);
+  
+          // Fetch and update nickname
+          const fetchedNickname = data.nickname || `TCA#${account.slice(-3)}`;
+          setNickname(fetchedNickname);
+          console.log("Nickname updated:", fetchedNickname);
+  
+          // Update other settings
+          setNotificationsEnabled(data.notificationsEnabled || false);
+          setSoundAlertsEnabled(data.soundAlertsEnabled || false);
+          setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
+  
+          // Fetch blocked addresses
+          const addresses = await new Promise((resolve) => {
+            const blocked = [];
+            gun
+              .get(account)
+              .get('blockedAddresses')
+              .map()
+              .once((address) => {
+                if (address && address !== true) blocked.push(address);
+              })
+              .on(() => resolve(blocked));
+          });
+  
+          setBlockedAddresses(addresses);
+          console.log("Blocked addresses loaded:", addresses);
+        } else if (retry < 2) {
+          console.log(`Retrying fetch attempt ${retry + 1}...`);
+          await attemptFetch(retry + 1); // Recursive retry
+        } else {
+          console.log("No data found for this account in Gun.");
+          // Set default values if no data is found
+          setNickname(`TCA#${account.slice(-3)}`);
+          setNotificationsEnabled(false);
+          setSoundAlertsEnabled(false);
+          setDesktopNotificationsEnabled(false);
+          setBlockedAddresses([]);
+        }
+      } catch (error) {
+        console.error("Error fetching settings from Gun:", error);
+        if (retry < 2) {
+          console.log(`Retrying fetch attempt ${retry + 1}...`);
+          await attemptFetch(retry + 1); // Recursive retry on error
+        }
       }
     };
   
     await attemptFetch();
+
   }, [account]);   
 
   const handleSaveSettings = () => {
@@ -167,6 +168,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       notificationsEnabled,
       soundAlertsEnabled,
       desktopNotificationsEnabled,
+      nickname,
     };
   
     console.log("Attempting to save settings:", settings);
@@ -230,7 +232,14 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
 
   useEffect(() => {
     const savedAccount = localStorage.getItem('connectedAccount');
-  
+    
+    console.log('Setting up listener for account:', account);
+
+    // Listen for real-time updates
+    gun.get(account).on((data) => {
+      console.log('Real-time data update:', data);
+    });
+
     if (!account && !savedAccount) {
       setChats([]);
       navigate('/login');
@@ -394,6 +403,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
             console.error("Failed to delete chat:", ack.err);
           } else {
             console.log("Chat deleted successfully:", chatToDelete);
+            setChats((prevChats) => prevChats.filter((chat) => chat !== chatToDelete));
           }
         });
       }
@@ -433,6 +443,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         chats={chats}
         setChats={setChats}
         nickname={nickname}
+        setNickname={setNickname}
         loading={loading}
         isHovered={isHovered}
         toggleSidebar={toggleSidebar}
