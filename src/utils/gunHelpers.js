@@ -2,27 +2,36 @@ import gun from './gunSetup';
 
 // Fetch chats linked to the user's account
 export const fetchChats = (account, setChats) => {
-  if (!account) return;
+    if (!account) return;
 
-  console.log("Fetching chats for account:", account);
+    console.log("Fetching chats for account:", account);
 
-  const loadedChats = new Set();
-  const subscription = gun
-    .get(account)
-    .get('chats')
-    .map()
-    .once((address) => {
-      if (address) {
-        loadedChats.add(address);
-        setChats(Array.from(loadedChats)); // Update state
-      }
-    })
-    .on(() => {
-      console.log("Chats updated:", Array.from(loadedChats));
+    const loadedChats = new Set();
+    const chatNode = gun.get(account).get('chats');
+
+    chatNode.map().once((data, key) => {
+        if (!data) {
+            console.warn(`Empty or invalid data for chat key: ${key}`);
+            return;
+        }
+
+        // If the data is stored as a nested object, access its value
+        const chatAddress = data[''] || data; // Adjust if structure differs
+        if (chatAddress) {
+            console.log("Resolved chat address:", data);
+            loadedChats.add(chatAddress);
+            setChats(Array.from(loadedChats));
+        } else {
+            console.warn(`No valid chat address found in key: ${key}`);
+        }
     });
 
-  return () => subscription.off(); // Clean up subscription
-};
+    // Cleanup function to detach listeners
+    return () => {
+        console.log("Cleaning up chat subscriptions for account:", account);
+        chatNode.off();
+    };
+}; 
 
 // Fetch settings for the user's account
 export const fetchSettings = async (account, setSettings) => {
@@ -33,7 +42,7 @@ export const fetchSettings = async (account, setSettings) => {
   try {
     const data = await new Promise((resolve) => {
       gun.get(account).once((fetchedData) => resolve(fetchedData || {}));
-    });
+    });  
 
     console.log("Fetched data from Gun:", data);
     setSettings(data);
@@ -148,6 +157,43 @@ export const handleClearChatHistory = (account, setChats) => {
   setChats([]);
   console.log("Chat history cleared.");
 };
+
+// Fetch the nickname
+export const fetchNickname = (account, setNickname) => {
+    if (!account) {
+        console.warn("Account is required to fetch nickname.");
+        return;
+    }
+
+    console.log("Fetching nickname for account:", account);
+
+    // Access the account node and get the 'nickname' field
+    const nicknameNode = gun.get(account).get('nickname');
+
+    nicknameNode.once((data, key) => {
+        if (!data) {
+            console.warn(`No nickname found for account: ${account}`);
+            setNickname(""); // Clear the nickname if not found
+            return;
+        }
+
+        // Extract the nickname value
+        const nickname = data[''] || data; // Handle flat or structured data
+        if (nickname) {
+            console.log(`Resolved nickname for account ${account}:`, nickname);
+            setNickname(nickname); // Update the state with the fetched nickname
+        } else {
+            console.warn(`Invalid or empty nickname found for account: ${account}`);
+            setNickname(""); // Clear if invalid
+        }
+    });
+
+    // Cleanup function to detach listeners
+    return () => {
+        console.log("Cleaning up nickname subscription for account:", account);
+        nicknameNode.off();
+    };
+}; 
 
 export const saveNicknameToGun = (account, nickname, callback) => {
     if (account && nickname.trim()) {

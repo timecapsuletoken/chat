@@ -6,6 +6,7 @@ import gun from '../utils/gunSetup';
 import {
   fetchChats,
   fetchSettings,
+  fetchNickname,
   handleSaveSettings,
   handleStartChat,
   handleDeleteChat,
@@ -66,14 +67,17 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
 
   const fetchSettingsData = useCallback(() => {
-    fetchSettings(account, (data) => {
-      if (data.nickname) setNickname(data.nickname);
-      setNotificationsEnabled(data.notificationsEnabled || false);
-      setSoundAlertsEnabled(data.soundAlertsEnabled || false);
-      setDesktopNotificationsEnabled(data.desktopNotificationsEnabled || false);
-      setBlockedAddresses(data.blockedAddresses || []);
+    console.log("Initializing settings fetch for account:", account);
+  
+    fetchSettings(account, (settings) => {
+  
+      // Apply other settings as needed
+      setNotificationsEnabled(settings.notificationsEnabled || false);
+      setSoundAlertsEnabled(settings.soundAlertsEnabled || false);
+      setDesktopNotificationsEnabled(settings.desktopNotificationsEnabled || false);
+      setBlockedAddresses(settings.blockedAddresses || []);
     });
-  }, [account]); // Add 'account' as a dependency  
+  }, [account]);   
 
   const formatNumber = (number) => {
     if (number >= 1e9) {
@@ -92,24 +96,33 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev); 
 
   useEffect(() => {
-    if (!account) {
-      setChats([]);
-      navigate('/login');
-      return;
-    }
+    const debounceFetch = setTimeout(() => {
 
-    setLoading(true); // Start loading
+      if (!account) {
+        console.log("Redirecting to login");
+        setChats([]);
+        navigate('/login');
+        return;
+      }
 
-    const cleanupChats = fetchChats(account, setChats);
-    fetchSettingsData();
+      console.log("Initializing chats");
+      setLoading(false);
+      const cleanupChats = fetchChats(account, setChats);
+      // Fetch nickname
+      const cleanupNickname = fetchNickname(account, setNickname);
+      setLoading(true);
+      fetchSettingsData();
+
+      return () => {
+        console.log("Cleaning up chat subscriptions for account:", account);
+        if (cleanupChats) cleanupChats();
+        if (cleanupNickname) cleanupNickname();
+      };
+    }, 300); // Delay of 300ms to avoid rapid re-renders
+
+    return () => clearTimeout(debounceFetch); // Clear timeout on unmount
+  }, [account, navigate, fetchSettingsData]);  
   
-    setLoading(false); // End loading  
-
-    return () => {
-      if (cleanupChats) cleanupChats();
-    };
-  }, [account, navigate, fetchSettingsData]);
-
   const saveSettings = () => {
     const settings = {
       nickname,
