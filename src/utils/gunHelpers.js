@@ -4,7 +4,7 @@ import gun from './gunSetup';
 export const fetchChats = (account, setChats) => {
     if (!account) return;
 
-    console.log("Fetching chats for account:", account);
+    console.log("Fetching chats for account:", account.slice(-4));
 
     const loadedChats = new Set();
     const chatNode = gun.get(account).get('chats');
@@ -18,7 +18,7 @@ export const fetchChats = (account, setChats) => {
         // If the data is stored as a nested object, access its value
         const chatAddress = data[''] || data; // Adjust if structure differs
         if (chatAddress) {
-            console.log("Resolved chat address:", data);
+            console.log("Resolved chat address:", data.slice(-4));
             loadedChats.add(chatAddress);
             setChats(Array.from(loadedChats));
         } else {
@@ -28,7 +28,7 @@ export const fetchChats = (account, setChats) => {
 
     // Cleanup function to detach listeners
     return () => {
-        console.log("Cleaning up chat subscriptions for account:", account);
+        console.log("Cleaning up chat subscriptions for account:", account.slice(-4));
         chatNode.off();
     };
 }; 
@@ -37,7 +37,7 @@ export const fetchChats = (account, setChats) => {
 export const fetchSettings = async (account, setSettings) => {
   if (!account) return;
 
-  console.log("Fetching settings for account:", account);
+  console.log("Fetching settings for account:", account.slice(-4));
 
   try {
     const data = await new Promise((resolve) => {
@@ -165,32 +165,32 @@ export const fetchNickname = (account, setNickname) => {
         return;
     }
 
-    console.log("Fetching nickname for account:", account);
+    console.log("Fetching nickname for account:", account.slice(-4));
 
     // Access the account node and get the 'nickname' field
     const nicknameNode = gun.get(account).get('nickname');
 
     nicknameNode.once((data, key) => {
         if (!data) {
-            console.warn(`No nickname found for account: ${account}`);
-            setNickname(""); // Clear the nickname if not found
+            console.warn(`No nickname found for account: ${account.slice(-4)}`);
+            setNickname(`TCA#${account.slice(-3)}`); // Clear the nickname if not found
             return;
         }
 
         // Extract the nickname value
         const nickname = data[''] || data; // Handle flat or structured data
         if (nickname) {
-            console.log(`Resolved nickname for account ${account}:`, nickname);
+            console.log(`Resolved nickname for account ${account.slice(-4)}:`, nickname);
             setNickname(nickname); // Update the state with the fetched nickname
         } else {
-            console.warn(`Invalid or empty nickname found for account: ${account}`);
-            setNickname(""); // Clear if invalid
+            console.warn(`Invalid or empty nickname found for account: ${account.slice(-4)}`);
+            setNickname(`TCA#${account.slice(-3)}`); // Clear if invalid
         }
     });
 
     // Cleanup function to detach listeners
     return () => {
-        console.log("Cleaning up nickname subscription for account:", account);
+        console.log("Cleaning up nickname subscription for account:", account.slice(-4));
         nicknameNode.off();
     };
 }; 

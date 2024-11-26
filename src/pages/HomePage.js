@@ -67,7 +67,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
 
   const fetchSettingsData = useCallback(() => {
-    console.log("Initializing settings fetch for account:", account);
+    console.log("Initializing settings fetch for account:", account.slice(-4));
   
     fetchSettings(account, (settings) => {
   
