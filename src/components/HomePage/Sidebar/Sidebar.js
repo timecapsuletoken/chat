@@ -188,13 +188,11 @@ const Sidebar = ({
 };
 
 Sidebar.propTypes = {
-  // Define propTypes to enforce correct prop usage
   account: PropTypes.string,
   switchAccount: PropTypes.func.isRequired,
   switchToBSC: PropTypes.func.isRequired,
   disconnectWallet: PropTypes.func.isRequired,
   providerType: PropTypes.oneOf(['MetaMask', 'CoinbaseWallet']).isRequired,
-  gun: PropTypes.object.isRequired,
   isSidebarOpen: PropTypes.bool.isRequired,
   showDropdown: PropTypes.bool.isRequired,
   chats: PropTypes.array.isRequired,

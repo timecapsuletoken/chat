@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 // Material-UI Components
 import {
   Menu,
@@ -34,7 +35,7 @@ import {
   Person2 as Person2Icon,
   ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
-import gun from '../../../utils/gunSetup';
+import { saveNicknameToGun } from '../../../utils/gunHelpers';
 import { switchWallet } from '../../../utils/wallet';
 
 const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, setNickname, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
@@ -54,50 +55,27 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
 
   // Fetch nickname when component mounts
   useEffect(() => {
-    
     if (account && nickname) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 6000);
+      setLoading(false); // Set loading to false when nickname is available
     }
-
+  
     const fetchNetwork = async () => {
       try {
         if (window.ethereum) {
-          let chainId;
-    
-          // Check if chainId is directly available
-          if (window.ethereum.chainId) {
-            chainId = window.ethereum.chainId;
-          } else {
-            // Fallback to request method
-            chainId = await window.ethereum.request({ method: 'eth_chainId' });
-          }
-    
-          // Map chain ID to network name
-          const networkName = chainId === '0x38' ? 'Binance Smart Chain' : 'Unknown';
-          setNetwork(networkName);
-    
-          // Log for debugging purposes
-          console.log('Current Chain ID:', chainId);
-          console.log('Mapped Network:', networkName);
+          const chainId = window.ethereum.chainId || await window.ethereum.request({ method: 'eth_chainId' });
+          setNetwork(chainId === '0x38' ? 'Binance Smart Chain' : 'Unknown');
         } else {
-          console.warn('No Ethereum provider found.');
           setNetwork('No Provider');
         }
       } catch (error) {
         console.error('Error fetching network information:', error);
         setNetwork('Error');
       }
-    };    
-
+    };
+  
     fetchNetwork();
-
-    // Fetch browser and device info
-    const userAgent = navigator.userAgent;
-    setBrowserInfo(userAgent);
-
-  }, [account, nickname]);
+    setBrowserInfo(navigator.userAgent);
+  }, [account, nickname]);  
 
   // Session Information Modal Logic
   const handleCloseSessionModal = () => setIsSessionModalOpen(false);
@@ -110,18 +88,16 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
 
   // Save nickname to Gun
   const saveNickname = () => {
-    if (newNickname.trim() && account) {
-      gun.get(account).put({ nickname: newNickname }, (ack) => {
-        if (ack.err) {
-          console.error('Failed to save nickname:', ack.err);
-        } else {
-          console.log('Nickname saved successfully:', newNickname);
-          setNewNickname(''); // Clear the input field
-          setNickname(newNickname); // Update global nickname state
-          setIsNicknameModalOpen(false); // Close modal
-        }
-      });
-    }
+    saveNicknameToGun(account, newNickname, (ack) => {
+      if (ack.err) {
+        console.error('Failed to save nickname:', ack.err);
+      } else {
+        console.log('Nickname saved successfully:', newNickname);
+        setNewNickname(''); // Clear the input field
+        setNickname(newNickname); // Update local nickname state
+        setIsNicknameModalOpen(false); // Close modal
+      }
+    });
   };  
 
   const handleOptionsMenuClose = () => {
@@ -437,6 +413,18 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
       </Dialog>
     </div>
   );
+};
+
+SidebarAccount.propTypes = {
+  account: PropTypes.string, // Wallet address of the connected user
+  nickname: PropTypes.string, // User's nickname
+  setNickname: PropTypes.func.isRequired, // Function to update the nickname
+  handleClearChatHistory: PropTypes.func.isRequired, // Function to clear chat history
+  openWalletModal: PropTypes.func.isRequired, // Function to open wallet modal
+  disconnectWallet: PropTypes.func.isRequired, // Function to disconnect the wallet
+  providerType: PropTypes.oneOf(['MetaMask', 'CoinbaseWallet']), // Type of wallet provider
+  switchAccount: PropTypes.func.isRequired, // Function to switch wallet accounts
+  switchToBSC: PropTypes.func.isRequired, // Function to switch to Binance Smart Chain
 };
 
 export default SidebarAccount;

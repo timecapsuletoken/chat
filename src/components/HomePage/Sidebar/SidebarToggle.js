@@ -6,7 +6,11 @@ const SidebarToggle = ({ isSidebarOpen, toggleSidebar }) => {
   if (isSidebarOpen) return null;
 
   return (
-    <button className="sidebar-toggle" onClick={toggleSidebar}>
+    <button 
+      className="sidebar-toggle" 
+      onClick={toggleSidebar}
+      aria-label="Toggle Sidebar menu"
+    >
       <FaBars /> <span>Menu</span>
     </button>
   );
