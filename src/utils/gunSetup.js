@@ -1,9 +1,8 @@
 import Gun from 'gun';
 
 const gun = Gun({
-  peers: [
-    'https://gun-private-relay.onrender.com/gun', // Local Gun relay for testing
-  ],
+  peers: ['http://localhost:8765/gun'], // Local relay server
+  localStorage: false, // Disable browser localStorage
 });
 
 export default gun;
