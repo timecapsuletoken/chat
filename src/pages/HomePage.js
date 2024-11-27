@@ -76,6 +76,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       setSoundAlertsEnabled(settings.soundAlertsEnabled || false);
       setDesktopNotificationsEnabled(settings.desktopNotificationsEnabled || false);
       setBlockedAddresses(settings.blockedAddresses || []);
+
     });
   }, [account]);   
 
@@ -125,10 +126,10 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   
   const saveSettings = () => {
     const settings = {
-      nickname,
       notificationsEnabled,
       soundAlertsEnabled,
       desktopNotificationsEnabled,
+      blockedAddresses,
     };
     handleSaveSettings(account, settings);
   };
