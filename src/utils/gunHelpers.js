@@ -55,8 +55,6 @@ export const fetchSettings = async (account, setSettings) => {
             }
           });          
 
-        console.log("Final blocked addresses array:", blockedAddressesArray);            
-
       setSettings({
         notificationsEnabled: data.notificationsEnabled || false,
         soundAlertsEnabled: data.soundAlertsEnabled || false,
@@ -123,24 +121,27 @@ export const handleBlockAddress = (account, address, setBlockedAddresses) => {
 
 // Unblock a specific address
 export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
-  const updatedBlockedAddresses = setBlockedAddresses((prev) =>
-    prev.filter((a) => a !== address)
-  );
-
-  gun.get(account).get('blockedAddresses').map().once((data, key) => {
-    if (data === address) {
-      gun.get(account).get('blockedAddresses').get(key).put(null, (ack) => {
-        if (ack.err) {
-          console.error("Failed to unblock address:", ack.err);
-        } else {
-          console.log("Address unblocked:", address);
-        }
-      });
+    if (!account || !address) {
+      console.error("Invalid account or address provided for unblocking.");
+      return;
     }
-  });
-
-  setBlockedAddresses(updatedBlockedAddresses);
-};
+  
+    console.log(`Attempting to unblock address: ${address}`);
+  
+    // Remove the address from the database
+    gun.get(account).get('blockedAddresses').get(address).put(null, (ack) => {
+      if (ack.err) {
+        console.error("Failed to unblock address:", ack.err);
+      } else {
+        console.log("Address successfully unblocked:", address);
+  
+        // Update the local state only after successful database deletion
+        setBlockedAddresses((prev) =>
+          prev.filter((blockedAddress) => blockedAddress !== address)
+        );
+      }
+    });
+};  
 
 // Start a new chat
 export const handleStartChat = (account, chatAddress, setChats, setSearchParams, setShowModal) => {

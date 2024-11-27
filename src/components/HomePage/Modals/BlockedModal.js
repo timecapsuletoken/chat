@@ -10,7 +10,6 @@ const BlockedModal = ({
   handleSaveSettings,
 }) => {
   if (!isBlockedModalOpen) return null;
-  console.log("BlockedModal props - blockedAddresses:", blockedAddresses);
 
   return (
     <div className="modal-overlay" onClick={toggleBlockedModal}>
