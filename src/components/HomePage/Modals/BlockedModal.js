@@ -10,6 +10,7 @@ const BlockedModal = ({
   handleSaveSettings,
 }) => {
   if (!isBlockedModalOpen) return null;
+  console.log("BlockedModal props - blockedAddresses:", blockedAddresses);
 
   return (
     <div className="modal-overlay" onClick={toggleBlockedModal}>
@@ -20,25 +21,23 @@ const BlockedModal = ({
         </div>
 
         <div className="blocked-list">
-          <ul>
+        <ul>
             {blockedAddresses.length > 0 ? (
-              blockedAddresses
-                .filter((address) => address) // Filter out any empty or invalid entries
-                .map((address) => (
-                  <li key={address}>
-                    <span className="blocked-address">{address}</span>
-                    <button
-                      className="unblock-button"
-                      onClick={() => handleUnblockAddress(address)}
-                    >
-                      Unblock
-                    </button>
-                  </li>
-                ))
+              [...new Set(blockedAddresses)].map((address) => ( // Ensure unique keys
+                <li key={address}>
+                  <span className="blocked-address">{address}</span>
+                  <button
+                    className="unblock-button"
+                    onClick={() => handleUnblockAddress(address)}
+                  >
+                    Unblock
+                  </button>
+                </li>
+              ))
             ) : (
               <li className="no-blocked-addresses">No addresses are currently blocked.</li>
             )}
-          </ul>
+        </ul>
         </div>
 
         <div className="block-input-container">
@@ -48,20 +47,30 @@ const BlockedModal = ({
             className="block-input"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                handleBlockAddress(e.target.value);
-                e.target.value = '';
+                const newAddress = e.target.value.trim();
+                if (newAddress && !blockedAddresses.includes(newAddress)) {
+                  handleBlockAddress(newAddress); // Call the function only for unique addresses
+                  e.target.value = '';
+                } else {
+                  console.warn("Address already blocked or invalid:", newAddress);
+                }
               }
-            }}
+            }}            
           />
           <button
             className="add-block-button"
             onClick={() => {
               const input = document.querySelector('.block-input');
               if (input) {
-                handleBlockAddress(input.value);
-                input.value = '';
+                const newAddress = input.value.trim();
+                if (newAddress && !blockedAddresses.includes(newAddress)) {
+                  handleBlockAddress(newAddress); // Call the function only for unique addresses
+                  input.value = '';
+                } else {
+                  console.warn("Address already blocked or invalid:", newAddress);
+                }
               }
-            }}
+            }}            
           >
             Block Address
           </button>

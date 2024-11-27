@@ -45,11 +45,24 @@ export const fetchSettings = async (account, setSettings) => {
       });
   
       console.log("Fetched settings data:", data);
+
+        const blockedAddressesArray = [];
+        const blockedAddressesNode = gun.get(account).get('blockedAddresses');
+
+        blockedAddressesNode.map().once((data, key) => {
+            if (data === true) {
+              blockedAddressesArray.push(key);
+            }
+          });          
+
+        console.log("Final blocked addresses array:", blockedAddressesArray);            
+
       setSettings({
         notificationsEnabled: data.notificationsEnabled || false,
         soundAlertsEnabled: data.soundAlertsEnabled || false,
         desktopNotificationsEnabled: data.desktopNotificationsEnabled || false,
-        blockedAddresses: data.blockedAddresses || [], // Ensure this is properly fetched
+        blockedAddresses: blockedAddressesArray,
+
       });
     } catch (error) {
       console.error("Error fetching settings from Gun:", error);
@@ -93,15 +106,20 @@ export const handleBlockAddress = (account, address, setBlockedAddresses) => {
       return;
     }
   
-    gun.get(account).get('blockedAddresses').set(trimmedAddress, (ack) => {
+    console.log(`Saving blocked address:`, trimmedAddress);
+  
+    // Save the address as a key in /blockedAddresses
+    gun.get(account).get('blockedAddresses').get(trimmedAddress).put(true, (ack) => {
       if (ack.err) {
         console.error("Failed to block address:", ack.err);
       } else {
-        setBlockedAddresses((prev) => (Array.isArray(prev) ? [...prev, trimmedAddress] : [trimmedAddress]));
-        console.log("Blocked address:", trimmedAddress);
+        console.log("Blocked address saved successfully:", trimmedAddress);
+        setBlockedAddresses((prev) =>
+          Array.isArray(prev) ? [...prev, trimmedAddress] : [trimmedAddress]
+        );
       }
     });
-};  
+};    
 
 // Unblock a specific address
 export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
