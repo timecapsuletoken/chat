@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import SidebarAccount from '../Sidebar/SidebarAccount';
 
 // Material-UI components
-import { Skeleton, Avatar, Tooltip, Divider } from '@mui/material';
+import { Skeleton, Tooltip, Divider } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 // Icons from react-icons
@@ -14,6 +14,20 @@ import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import { MdHome } from 'react-icons/md';
 
+// Avatar
+import jazzicon from '@metamask/jazzicon';
+
+const generateJazziconSVG = (address, diameter = 40) => {
+  if (!address) return null;
+
+  // Create a numeric seed based on the wallet address
+  const seed = parseInt(address.slice(2, 10), 16);
+  const icon = jazzicon(diameter, seed);
+
+  // Extract the SVG from the generated Jazzicon
+  const serializer = new XMLSerializer();
+  return serializer.serializeToString(icon);
+};
 
 const Sidebar = ({
   account,
@@ -154,7 +168,20 @@ const Sidebar = ({
                 closeSidebar();
               }}
             >
-              <Avatar sx={{ backgroundColor: address.length > 6 ? `#${address.slice(-6)}` : '#ddd', }}>{address.length > 2 ? `${address.slice(-2)}` : address}</Avatar>
+              {/* Render the Jazzicon SVG */}
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#f0f0f0', // Optional fallback background color
+                }}
+                dangerouslySetInnerHTML={{ __html: generateJazziconSVG(address) }}
+              />
               <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
               <Tooltip title={address}>
                 <p className="chat-address-sidebar">

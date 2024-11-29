@@ -54,7 +54,6 @@ const ChatOptionsMenu = ({
           setBlockedAddresses((prev) =>
             Array.isArray(prev) ? [...prev, chatAddress] : [chatAddress]
           );
-          toggleBlockedModal();
         }
       });
     }
@@ -66,8 +65,6 @@ const ChatOptionsMenu = ({
     navigate('/home'); // Redirect to /home after deletion
     handleClose();
   };
-
-  console.log("Blocked Addresses in ChatOptionsMenu:", blockedAddresses, typeof blockedAddresses);
 
   return (
     <div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 // Material-UI Components
 import {
@@ -35,6 +35,7 @@ import {
   Person2 as Person2Icon,
   ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
+import { generateJazzicon } from '../../../utils/jazzAvatar';
 import { saveNicknameToGun } from '../../../utils/gunHelpers';
 import { switchWallet } from '../../../utils/wallet';
 
@@ -53,10 +54,17 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
   const [network, setNetwork] = useState('Unknown');
   const [browserInfo, setBrowserInfo] = useState('');
 
+  // Jazzicon
+  const avatarRef = useRef(null);
+
   // Fetch nickname when component mounts
   useEffect(() => {
     if (account && nickname) {
       setLoading(false); // Set loading to false when nickname is available
+    }
+
+    if (account && avatarRef.current) {
+      generateJazzicon(account, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
     }
   
     const fetchNetwork = async () => {
@@ -107,13 +115,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
       {/* User Icon */}
-      <Avatar
-        sx={{
-          backgroundColor: account && account.length > 6 ? `#${account.slice(-6)}` : '#ddd',
-        }}
-      >
-        {account ? account.slice(-2) : '?'}
-      </Avatar>
+      <Avatar ref={avatarRef}></Avatar>
       <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
       {/* Nickname and Wallet Address */}
       <div style={{ textAlign: 'center' }}>

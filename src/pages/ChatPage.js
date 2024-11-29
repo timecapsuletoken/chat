@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import gun from '../utils/gunSetup';
@@ -6,11 +6,14 @@ import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust 
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
 import '../assets/css/ChatPage.css';
-import Avatar from '@mui/material/Avatar';
 import TCACoin from '../assets/images/logos/logo.png';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 import { RiBnbLine } from "react-icons/ri";
+import {
+  Avatar,
+} from '@mui/material';
+import { generateJazzicon } from '../utils/jazzAvatar';
 
 // Binance Smart Chain provider and TCA token setup
 const bscProvider = new ethers.providers.JsonRpcProvider(`https://bsc-dataseed.binance.org/?_=${Date.now()}`);
@@ -32,6 +35,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
   const [balance, setBalance] = useState(0); // Placeholder balance
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
   const [blockedAddresses, setBlockedAddresses] = useState([]);
+  const avatarRef = useRef(null);
 
   useEffect(() => {
     if (!account) return;
@@ -53,11 +57,17 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
         setTimeout(() => {
             console.log("Blocked addresses fetched:", addresses);
             setBlockedAddresses([...addresses]);
-        }, 500); // Slight delay to allow map() to complete
+        }, 100); // Slight delay to allow map() to complete
     };
 
     fetchBlockedAddresses();
 }, [account]);
+
+useEffect(() => {
+  if (chatAddress && avatarRef.current) {
+    generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
+  }
+}, [chatAddress]);
 
   const isAddressBlocked = blockedAddresses.includes(chatAddress);
 
@@ -133,14 +143,10 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
     <div className="chat-box">
       <div className="chat-header">
         <div className="chat-address-info">
-          <Avatar 
+        <Avatar
             className="chatroom-icon"
-            sx={{
-              backgroundColor: chatAddress.length > 6 ? `#${chatAddress.slice(-6)}` : '#ddd',
-            }}
-          >
-            {chatAddress.length > 2 ? `${chatAddress.slice(-2)}` : chatAddress}
-          </Avatar>
+            ref={avatarRef}
+          />
           <p className="chat-address">
             {chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}
             <br /> 
@@ -163,7 +169,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
         <p className="start-chat-message">... Your new conversation is empty ...</p>
       </div>
       <div className="chat-input-container">
-      <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} />
+      <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} disabled={isAddressBlocked} />
         {showEmojiPicker && (
           <div className="emoji-picker-container">
             <EmojiPicker onEmojiClick={onEmojiClick} />
