@@ -168,34 +168,78 @@ export const handleChatItemClick = (chatAddress, setSearchParams) => {
   setSearchParams({ chatwith: chatAddress });
 };
 
-// Delete a chat
+// Fully delete a chat, its metadata, and associated keys
 export const handleDeleteChat = (account, chatToDelete, setChats) => {
   gun.get(account).get('chats').map().once((data, key) => {
     if (data === chatToDelete) {
+      // First, set the chat value to null
       gun.get(account).get('chats').get(key).put(null, (ack) => {
         if (ack.err) {
-          console.error("Failed to delete chat:", ack.err);
+          console.error("Failed to delete chat value:", ack.err);
         } else {
-          console.log("Chat deleted:", chatToDelete);
-          setChats((prev) => prev.filter((chat) => chat !== chatToDelete));
+          console.log("Chat value deleted:", chatToDelete);
+
+          // Explicitly delete the key from the database
+          gun.get(account).get('chats').get(key).put(null, (keyAck) => {
+            if (keyAck.err) {
+              console.error("Failed to delete chat key:", keyAck.err);
+            } else {
+              console.log("Chat key deleted:", key);
+
+              // Update local chats list
+              setChats((prev) => prev.filter((chat) => chat !== chatToDelete));
+
+              // Optional: Log final state for verification
+              gun.get(account).get('chats').once((finalState) => {
+                console.log("Remaining chats after deletion:", finalState);
+              });
+            }
+          });
         }
       });
     }
   });
 };
 
-// Clear all chat history
+// Clear all chat history and associated metadata
 export const handleClearChatHistory = (account, setChats) => {
-  gun.get(account).get('chats').map().once((data, key) => {
-    gun.get(account).get('chats').get(key).put(null, (ack) => {
+  const recursiveDelete = (node) => {
+    node.map().once((data, key) => {
+      const childNode = node.get(key);
+
+      // Recursively delete child nodes
+      childNode.map().once((childData, childKey) => {
+        recursiveDelete(childNode.get(childKey));
+      });
+
+      // Delete the current node
+      childNode.put(null, (ack) => {
+        if (ack.err) {
+          console.error(`Failed to delete node (${key}):`, ack.err);
+        } else {
+          console.log(`Node (${key}) deleted successfully.`);
+        }
+      });
+    });
+
+    // Finally, delete the parent node itself
+    node.put(null, (ack) => {
       if (ack.err) {
-        console.error("Failed to clear chat history:", ack.err);
+        console.error("Failed to delete parent node:", ack.err);
+      } else {
+        console.log("Parent node deleted successfully.");
       }
     });
-  });
+  };
 
+  const chatsNode = gun.get(account).get('chats');
+
+  // Recursively delete all data under 'chats'
+  recursiveDelete(chatsNode);
+
+  // Clear local state
   setChats([]);
-  console.log("Chat history cleared.");
+  console.log("All chat history and metadata cleared.");
 };
 
 // Fetch the nickname

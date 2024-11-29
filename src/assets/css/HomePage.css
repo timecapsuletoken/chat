@@ -437,7 +437,7 @@
   }
 
   .sidebar-icon:hover {
-    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3); /* Highlight on hover */
+    background: linear-gradient(90deg, #ce00fc75, #f7c4408a, #20d0e387);
     transform: translateY(-2px); /* Slight lift on hover */
   }
 

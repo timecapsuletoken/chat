@@ -64,7 +64,7 @@ const Sidebar = ({
     // Simulate a loading delay for demo purposes
     const timer = setTimeout(() => {
       setIsLoading(false); // Set loading to false when data is ready
-    }, 6000); // Adjust delay as needed
+    }, 3000); // Adjust delay as needed
 
     return () => clearTimeout(timer);
   }, []);
@@ -178,7 +178,6 @@ const Sidebar = ({
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  backgroundColor: '#f0f0f0', // Optional fallback background color
                 }}
                 dangerouslySetInnerHTML={{ __html: generateJazziconSVG(address) }}
               />
