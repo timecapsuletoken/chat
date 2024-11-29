@@ -31,23 +31,33 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
   const [isWalletInfoModalOpen, setIsWalletInfoModalOpen] = useState(false);
   const [balance, setBalance] = useState(0); // Placeholder balance
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
-  const [blockedAddresses, setblockedAddresses] = useState([]);
+  const [blockedAddresses, setBlockedAddresses] = useState([]);
 
   useEffect(() => {
-    if (!chatAddress) {
-      console.warn('No chat address provided');
-    }
+    if (!account) return;
 
-    if (account) {
-      const addresses = [];
-      gun.get(account).get('blockedAddresses').map().once((address) => {
-        if (address && address !== true) { // Exclude empty or invalid entries
-          addresses.push(address);
-        }
-      });
-      setblockedAddresses(addresses);
-    }
-  }, [account, chatAddress]);
+    const fetchBlockedAddresses = async () => {
+        console.log("Fetching blocked addresses for account:", account);
+
+        const addresses = [];
+        const blockedAddressesNode = gun.get(account).get('blockedAddresses');
+
+        // Fetch the blocked addresses
+        blockedAddressesNode.map().once((data, key) => {
+            if (data === true) {
+                addresses.push(key);
+            }
+        });
+
+        // Ensure state update after all data is fetched
+        setTimeout(() => {
+            console.log("Blocked addresses fetched:", addresses);
+            setBlockedAddresses([...addresses]);
+        }, 500); // Slight delay to allow map() to complete
+    };
+
+    fetchBlockedAddresses();
+}, [account]);
 
   const isAddressBlocked = blockedAddresses.includes(chatAddress);
 
@@ -141,7 +151,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
           account={account}
           chatAddress={chatAddress}
           blockedAddresses={blockedAddresses}
-          setblockedAddresses={setblockedAddresses}
+          setBlockedAddresses={setBlockedAddresses}
           gun={gun}
           handleDeleteChat={handleDeleteChat}
           handleWalletInfo={handleWalletInfo}

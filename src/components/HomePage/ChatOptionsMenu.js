@@ -11,7 +11,7 @@ const ChatOptionsMenu = ({
   account,
   chatAddress,
   blockedAddresses,
-  setblockedAddresses,
+  setBlockedAddresses,
   gun,
   handleDeleteChat,
   handleWalletInfo,
@@ -32,27 +32,29 @@ const ChatOptionsMenu = ({
   const handleBlockUnblock = () => {
     if (blockedAddresses.includes(chatAddress)) {
       // Unblock the chat address
-      gun.get(account).get('blockedAddresses').map().once((data, key) => {
-        if (data === chatAddress) {
-          gun.get(account).get('blockedAddresses').get(key).put(null, (ack) => {
-            if (ack.err) {
-              console.error("Failed to unblock address:", ack.err);
-            } else {
-              console.log("Address unblocked successfully:", chatAddress);
-              setblockedAddresses((prev) => prev.filter((addr) => addr !== chatAddress)); // Update state
-            }
-          });
+      gun.get(account).get('blockedAddresses').get(chatAddress).put(null, (ack) => {
+        if (ack.err) {
+          console.error("Failed to unblock address:", ack.err);
+        } else {
+          console.log("Address successfully unblocked:", chatAddress);
+    
+          // Update the local state only after successful database deletion
+          setBlockedAddresses((prev) =>
+            prev.filter((blockedAddress) => blockedAddress !== chatAddress)
+          );
         }
       });
     } else {
       // Block the chat address
-      gun.get(account).get('blockedAddresses').set(chatAddress, (ack) => {
+      gun.get(account).get('blockedAddresses').get(chatAddress).put(true, (ack) => {
         if (ack.err) {
           console.error("Failed to block address:", ack.err);
         } else {
-          console.log("Address blocked successfully:", chatAddress);
-          setblockedAddresses((prev) => [...prev, chatAddress]); // Update state
-          toggleBlockedModal(); // Open the block modal
+          console.log("Blocked address saved successfully:", chatAddress);
+          setBlockedAddresses((prev) =>
+            Array.isArray(prev) ? [...prev, chatAddress] : [chatAddress]
+          );
+          toggleBlockedModal();
         }
       });
     }
@@ -64,6 +66,8 @@ const ChatOptionsMenu = ({
     navigate('/home'); // Redirect to /home after deletion
     handleClose();
   };
+
+  console.log("Blocked Addresses in ChatOptionsMenu:", blockedAddresses, typeof blockedAddresses);
 
   return (
     <div>
