@@ -1,7 +1,7 @@
 import Gun from 'gun';
 
 const gun = Gun({
-  peers: ['http://localhost:8765/gun'], // Local relay server
+  peers: ['http://192.168.1.2:8765/gun'], // Local relay server
   localStorage: false, // Disable browser localStorage
 });
 

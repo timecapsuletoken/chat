@@ -2,6 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import gun from '../utils/gunSetup';
+import Gun from 'gun';
+// eslint-disable-next-line
+import 'gun/sea';
+import 'gun/lib/webrtc'; // Real-time peer connections (if needed)
+import { generateKeysForAccount } from '../utils/gunHelpers';
 import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
@@ -25,7 +30,9 @@ const BEP20_ABI = [
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
 const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber }) => {
-  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]); // All chat messages
+  const [message, setMessage] = useState(''); // Current input message
+
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const chatAddress = params.get('chatwith');
@@ -61,20 +68,113 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
     };
 
     fetchBlockedAddresses();
-}, [account]);
+  }, [account]);
 
-useEffect(() => {
-  if (chatAddress && avatarRef.current) {
-    generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
-  }
-}, [chatAddress]);
+  const processedMessageIds = useRef(new Set()); // Use ref to track processed messages
+
+  useEffect(() => {
+    if (!chatAddress || !account) return;
+  
+    console.log('Subscribing to messages for chatAddress:', chatAddress);
+  
+    const chatNode = gun.get(`chats/${account}/messages`); // Sender's messages
+    const receiverNode = gun.get(`chats/${chatAddress}/messages`); // Receiver's messages
+  
+    const decryptMessage = async (message, id) => {
+      const isSenderMessage = message.sender === account;
+      const keys = await gun.get(isSenderMessage ? account : chatAddress).get('keys').once();
+  
+      if (!keys || !keys.priv) {
+        console.error('Private key is missing for decryption.');
+        return { ...message, content: '[Unable to decrypt]', id };
+      }
+  
+      try {
+        const decryptedContent = await Gun.SEA.decrypt(message.content, keys.priv);
+        return { ...message, content: decryptedContent || '[Unable to decrypt]', id };
+      } catch (error) {
+        console.error('Decryption failed for message ID:', id, error);
+        return { ...message, content: '[Unable to decrypt]', id };
+      }
+    };
+  
+    const processMessage = async (message, id, source) => {
+      if (!message || processedMessageIds.current.has(id)) return; // Skip duplicates
+      processedMessageIds.current.add(id);
+  
+      const processedMessage = await decryptMessage(message, id);
+      console.log(`Message from ${source}:`, processedMessage);
+  
+      setMessages((prev) => {
+        const exists = prev.some((msg) => msg.id === id);
+        if (!exists) {
+          return [...prev, processedMessage];
+        }
+        return prev;
+      });
+    };
+  
+    const senderListener = chatNode.map().once((message, id) =>
+      processMessage(message, id, 'sender')
+    );
+  
+    const receiverListener = receiverNode.map().once((message, id) =>
+      processMessage(message, id, 'receiver')
+    );
+  
+    return () => {
+      senderListener.off();
+      receiverListener.off();
+    };
+  }, [account, chatAddress]);  
+  
+  useEffect(() => {
+    const ensureKeysExist = async (user) => {
+      const keys = await gun.get(user).get('keys').once();
+      if (!keys || !keys.pub) {
+        console.log('Generating keys for account:', user);
+        await generateKeysForAccount(user);
+      } else {
+        console.log('Keys already exist for account:', user);
+      }
+    };
+    
+    if (chatAddress && avatarRef.current) {
+      generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
+    }
+
+    if (account) ensureKeysExist(account);
+    if (chatAddress) ensureKeysExist(chatAddress);
+  }, [account, chatAddress]);   
 
   const isAddressBlocked = blockedAddresses.includes(chatAddress);
 
-  const handleSendMessage = () => {
-    // Logic for sending a message can be added here
+  const handleSendMessage = async () => {
+    if (!message.trim()) return;
+  
+    console.log('Sender account:', account, 'Chat Address:', chatAddress);
+  
+    const timestamp = Date.now();
+  
+    const receiverKeys = await gun.get(chatAddress).get('keys').once();
+    if (!receiverKeys || !receiverKeys.pub) {
+      console.error('Receiver does not have a public key.');
+      return;
+    }
+  
+    const encryptedMessage = await Gun.SEA.encrypt(message, receiverKeys.pub);
+    const newMessage = {
+      sender: account,
+      content: encryptedMessage,
+      timestamp,
+    };
+  
+    // Save the message under the receiver's node
+    gun.get(`chats/${chatAddress}/messages`).set(newMessage);
+  
+    // Clear the input field
     setMessage('');
-  };
+  };   
 
   const toggleEmojiPicker = () => {
     setShowEmojiPicker(!showEmojiPicker);
@@ -165,8 +265,15 @@ useEffect(() => {
           navigate={navigate}
         />
       </div>
-      <div className="chat-body">
-        <p className="start-chat-message">... Your new conversation is empty ...</p>
+      <div className="chat-container">
+        <div className="chat-body">
+            {messages.map((msg, index) => (
+              <div key={index} className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
+                <p>{msg.content}</p>
+                <small>{new Date(msg.timestamp).toLocaleString()}</small>
+              </div>
+            ))}
+        </div>
       </div>
       <div className="chat-input-container">
       <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} disabled={isAddressBlocked} />

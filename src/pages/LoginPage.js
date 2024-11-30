@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import metamaskIcon from '../assets/images/logos/metamask.svg';
 import coinbaseIcon from '../assets/images/logos/coinbase.svg';
+import { generateKeysForAccount } from '../utils/gunHelpers';
 
 const LoginPage = ({ connectWallet, account }) => {
   const navigate = useNavigate();
@@ -15,6 +16,11 @@ const LoginPage = ({ connectWallet, account }) => {
       localStorage.setItem('connectedAccount', account);
       const savedProvider = localStorage.getItem('providerType');
       console.log('LoginPage Provider:', savedProvider);
+      // Generate SEA keys for the logged-in account
+      generateKeysForAccount(account).then((keys) => {
+        console.log('Generated keys on login:', keys);
+      });
+
       navigate('/home'); // Redirect to /home when account is connected
     }
   }, [account, navigate]);

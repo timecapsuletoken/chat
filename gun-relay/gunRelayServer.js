@@ -7,7 +7,7 @@ const port = process.env.PORT || 8765;
 app.use(Gun.serve);
 
 const server = app.listen(port, () => {
-  console.log(`Gun relay server running at http://localhost:${port}`);
+  console.log(`Gun relay server running at ${port}`);
 });
 
 // Initialize Gun with the server

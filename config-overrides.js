@@ -26,13 +26,7 @@ module.exports = function override(config) {
   );
 
   // Ignore specific Gun.js warnings related to dynamic dependencies
-  config.ignoreWarnings = [
-    ...(config.ignoreWarnings || []),
-    {
-      module: /gun\.js$/,
-      message: /Critical dependency: the request of a dependency is an expression/,
-    },
-  ];
+  config.ignoreWarnings = [/Critical dependency: the request of a dependency is an expression/];
 
   return config;
 };
