@@ -75,28 +75,64 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
 
     console.log('Subscribing to messages for chatAddress:', chatAddress);
 
+    // Clear messages and processed IDs when switching chats
+    setMessages([]);
+    processedMessageIds.current.clear();
+
     if (chatAddress && avatarRef.current) {
-      generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
+        generateJazzicon(chatAddress, avatarRef.current, 40); // Generate Jazzicon for the chat
     }
 
     const chatNode = gun.get(`chats/${account}/messages`); // Sender's messages
     const receiverNode = gun.get(`chats/${chatAddress}/messages`); // Receiver's messages
 
     const processMessage = async (message, id, source) => {
-      if (!message || processedMessageIds.current.has(id)) return; // Skip duplicates
-      processedMessageIds.current.add(id);
-  
-      try {
-          const decryptedContent = decryptMessage(message.content);
-          const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
-          console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
-  
-          setMessages((prev) => [...prev, processedMessage]);
-      } catch (error) {
-          console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
-          setMessages((prev) => [...prev, { ...message, content: '[Unable to decrypt]', id }]);
-      }
-    };  
+        if (!message || processedMessageIds.current.has(id)) return; // Skip duplicates
+        processedMessageIds.current.add(id);
+
+        try {
+            // Ensure message belongs to the current chat
+            if (
+                (source === 'receiver' && message.sender !== account) ||
+                (source === 'sender' && message.sender !== chatAddress)
+            ) {
+                return; // Ignore messages not related to the current chat
+            }
+
+            const decryptedContent = decryptMessage(
+                message.content,
+                message.sender,
+                message.sender === account ? chatAddress : account
+            );
+            const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
+
+            console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
+            setMessages((prev) =>
+                [...prev, processedMessage].sort((a, b) => a.timestamp - b.timestamp) // Sort by timestamp
+            );
+        } catch (error) {
+            console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
+            setMessages((prev) =>
+                [...prev, { ...message, content: '[Unable to decrypt]', id }].sort((a, b) => a.timestamp - b.timestamp)
+            );
+        }
+    };
+
+    const fetchMessages = async () => {
+        // Fetch messages for the current chat from both sender and receiver nodes
+        const senderMessages = await gun.get(`chats/${account}/messages`).once();
+        const receiverMessages = await gun.get(`chats/${chatAddress}/messages`).once();
+
+        // Combine and process fetched messages
+        Object.entries(senderMessages || {}).forEach(([id, message]) =>
+            processMessage(message, id, 'sender')
+        );
+        Object.entries(receiverMessages || {}).forEach(([id, message]) =>
+            processMessage(message, id, 'receiver')
+        );
+    };
+
+    fetchMessages();
 
     const senderListener = chatNode.map().on((message, id) => processMessage(message, id, 'sender'));
     const receiverListener = receiverNode.map().on((message, id) => processMessage(message, id, 'receiver'));
@@ -106,7 +142,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
         receiverListener.off();
     };
   }, [account, chatAddress]);
-
+  
   useEffect(() => {
     if (chatBodyRef.current) {
         chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight; // Scroll to the bottom
