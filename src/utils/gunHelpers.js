@@ -1,30 +1,4 @@
 import gun from './gunSetup';
-import Gun from 'gun';
-
-export const generateKeysForAccount = async (account) => {
-  const existingKeys = await gun.get(account).get('keys').once();
-  if (existingKeys && existingKeys.ep && existingKeys.ep.ub && existingKeys.ep.riv) {
-      console.log(`[DEBUG] Existing encryption keys found for account: ${account}`, existingKeys.ep);
-      return existingKeys.ep;
-  }
-
-  console.log(`[DEBUG] No existing keys found. Generating new keys for account: ${account}`);
-  const newKeys = await Gun.SEA.pair();
-  return new Promise((resolve) => {
-      gun.get(account).get('keys').put(
-          { ep: { ub: newKeys.pub, riv: newKeys.priv } },
-          (ack) => {
-              if (ack.err) {
-                  console.error(`[DEBUG] Error saving keys for account: ${account}`, ack.err);
-                  resolve(null);
-              } else {
-                  console.log(`[DEBUG] New keys saved successfully for account: ${account}`);
-                  resolve({ pub: newKeys.pub, priv: newKeys.priv });
-              }
-          }
-      );
-  });
-};
 
 // Fetch chats linked to the user's account
 export const fetchChats = (account, setChats) => {

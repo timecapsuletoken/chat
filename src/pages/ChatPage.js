@@ -2,11 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import gun from '../utils/gunSetup';
-import Gun from 'gun';
-// eslint-disable-next-line
-import 'gun/sea';
 import 'gun/lib/webrtc'; // Real-time peer connections (if needed)
-import { generateKeysForAccount } from '../utils/gunHelpers';
+import { encryptMessage, decryptMessage } from '../utils/cryptographer';
 import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
@@ -74,107 +71,68 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
 
   useEffect(() => {
     if (!chatAddress || !account) return;
-  
+
     console.log('Subscribing to messages for chatAddress:', chatAddress);
-  
+
     const chatNode = gun.get(`chats/${account}/messages`); // Sender's messages
     const receiverNode = gun.get(`chats/${chatAddress}/messages`); // Receiver's messages
-  
-    const decryptMessage = async (message, id) => {
-      const isSenderMessage = message.sender === account;
-      const keys = await gun.get(isSenderMessage ? account : chatAddress).get('keys').once();
-  
-      if (!keys || !keys.priv) {
-        console.error('Private key is missing for decryption.');
-        return { ...message, content: '[Unable to decrypt]', id };
-      }
-  
-      try {
-        const decryptedContent = await Gun.SEA.decrypt(message.content, keys.priv);
-        return { ...message, content: decryptedContent || '[Unable to decrypt]', id };
-      } catch (error) {
-        console.error('Decryption failed for message ID:', id, error);
-        return { ...message, content: '[Unable to decrypt]', id };
-      }
-    };
-  
+
     const processMessage = async (message, id, source) => {
       if (!message || processedMessageIds.current.has(id)) return; // Skip duplicates
       processedMessageIds.current.add(id);
   
-      const processedMessage = await decryptMessage(message, id);
-      console.log(`Message from ${source}:`, processedMessage);
+      try {
+          const decryptedContent = decryptMessage(message.content);
+          const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
+          console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
   
-      setMessages((prev) => {
-        const exists = prev.some((msg) => msg.id === id);
-        if (!exists) {
-          return [...prev, processedMessage];
-        }
-        return prev;
-      });
-    };
-  
-    const senderListener = chatNode.map().once((message, id) =>
-      processMessage(message, id, 'sender')
-    );
-  
-    const receiverListener = receiverNode.map().once((message, id) =>
-      processMessage(message, id, 'receiver')
-    );
-  
+          setMessages((prev) => [...prev, processedMessage]);
+      } catch (error) {
+          console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
+          setMessages((prev) => [...prev, { ...message, content: '[Unable to decrypt]', id }]);
+      }
+    };  
+
+    const senderListener = chatNode.map().on((message, id) => processMessage(message, id, 'sender'));
+    const receiverListener = receiverNode.map().on((message, id) => processMessage(message, id, 'receiver'));
+
     return () => {
-      senderListener.off();
-      receiverListener.off();
+        senderListener.off();
+        receiverListener.off();
     };
-  }, [account, chatAddress]);  
+  }, [account, chatAddress]);
+
   
   useEffect(() => {
-    const ensureKeysExist = async (user) => {
-      const keys = await gun.get(user).get('keys').once();
-      if (!keys || !keys.pub) {
-        console.log('Generating keys for account:', user);
-        await generateKeysForAccount(user);
-      } else {
-        console.log('Keys already exist for account:', user);
-      }
-    };
     
     if (chatAddress && avatarRef.current) {
       generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
     }
 
-    if (account) ensureKeysExist(account);
-    if (chatAddress) ensureKeysExist(chatAddress);
   }, [account, chatAddress]);   
 
   const isAddressBlocked = blockedAddresses.includes(chatAddress);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-  
-    console.log('Sender account:', account, 'Chat Address:', chatAddress);
-  
-    const timestamp = Date.now();
-  
-    const receiverKeys = await gun.get(chatAddress).get('keys').once();
-    if (!receiverKeys || !receiverKeys.pub) {
-      console.error('Receiver does not have a public key.');
-      return;
-    }
-  
-    const encryptedMessage = await Gun.SEA.encrypt(message, receiverKeys.pub);
+
+    console.log('[DEBUG] Sending message:', message);
+
+    const encryptedMessage = encryptMessage(message);
+    console.log('[DEBUG] Encrypted message:', encryptedMessage);
+
     const newMessage = {
-      sender: account,
-      content: encryptedMessage,
-      timestamp,
+        sender: account,
+        content: encryptedMessage,
+        timestamp: Date.now(),
     };
-  
-    // Save the message under the receiver's node
+
+    // Save the encrypted message to Gun.js
     gun.get(`chats/${chatAddress}/messages`).set(newMessage);
-  
+
     // Clear the input field
     setMessage('');
-  };   
+  };
 
   const toggleEmojiPicker = () => {
     setShowEmojiPicker(!showEmojiPicker);

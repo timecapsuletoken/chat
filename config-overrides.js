@@ -11,12 +11,13 @@ module.exports = function override(config) {
     os: require.resolve('os-browserify/browser'),
     vm: require.resolve('vm-browserify'),
     url: require.resolve('url'),
+    buffer: require.resolve('buffer'),
   };  
 
   config.plugins = (config.plugins || []).concat([
     new webpack.ProvidePlugin({
-      process: 'process/browser',
       Buffer: ['buffer', 'Buffer'],
+      process: 'process/browser',
     }),
   ]);
 
