@@ -729,12 +729,17 @@
   
   .main-content {
     flex: 1;
-    padding: 40px;
-    margin-left: 270px;
+    padding: 0; /* Remove padding to avoid unintentional overflow */
+    margin-left: 270px; /* Keep margin-left for layout, adjust if necessary */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    width: calc(100vw - 270px); /* Explicitly set width to prevent overflow */
+    max-width: calc(100vw - 270px); /* Ensure no horizontal scrolling */
+    height: 100vh; /* Match the viewport height */
+    overflow: hidden; /* Prevent scrolling */
+    box-sizing: border-box; /* Include padding and border in width/height */
   }
   
   .welcome-card,

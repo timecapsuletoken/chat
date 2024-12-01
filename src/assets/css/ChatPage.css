@@ -1,12 +1,10 @@
   .chat-box {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100vh;
-    max-height: 100vh; /* Limit to viewport height on desktop */
-    border-radius: 8px;
-    padding: 10px;
-    background-color: #333;
+    width: 90%;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden; /* Prevent scrolling within chat-box */
+    box-sizing: border-box; /* Include padding in height */
   }
   
   .chat-header {
@@ -254,45 +252,50 @@
   .chat-container {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Full height of the chat page */
+    flex: 1; /* Take remaining space in .chat-box */
+    overflow-y: auto; /* Enable scrolling for messages */
+    padding: 0; /* Avoid unnecessary spacing */
   }
 
   /* Message list container */
   .chat-body {
-    flex: 1; /* Takes all remaining space */
+    flex: 1; /* Takes remaining height in the container */
+    overflow-y: auto; /* Enables vertical scrolling */
+    max-height: calc(100vh - 150px); /* Adjust based on header and input height */
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Align messages to the bottom */
-    padding: 10px;
     gap: 10px;
-    overflow-y: auto; /* Enable scrolling if messages exceed available space */
-    border-radius: 8px;
   }
 
   /* Shared styles for all messages */
   .message {
-    max-width: 60%;
-    padding: 10px 15px;
-    border-radius: 15px;
+    display: inline-block; /* Ensures the message wraps to fit content */
+    max-width: 60%; /* Prevents the message from being too wide */
+    padding: 10px 15px; /* Adds spacing inside the message box */
+    border-radius: 15px; /* Rounded corners */
     font-size: 14px;
     line-height: 1.5;
+    word-wrap: break-word; /* Ensures long words or URLs break correctly */
+    word-break: break-word;
+    margin-bottom: 10px; /* Adds space between messages */
     position: relative;
   }
 
   /* Sender (user's) messages */
   .message.sent {
-    align-self: flex-end;
-    background-color: #007bff;
+    align-self: flex-end; /* Align to the right */
+    background-color: #007bff; /* Customize the color */
     color: white;
-    border-top-right-radius: 0;
+    border-top-right-radius: 0; /* Different corner for sent messages */
   }
 
   /* Receiver's messages */
   .message.received {
-    align-self: flex-start;
-    background-color: #e5e5ea;
-    color: black;
-    border-top-left-radius: 0;
+    align-self: flex-start; /* Align to the left */
+    background-color: #1c1c1c; /* Customize the color */
+    color: #fff;
+    border-top-left-radius: 0; /* Different corner for received messages */
   }
 
   /* Timestamp */
@@ -305,7 +308,7 @@
   }
 
   .message.received small {
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   /* Input container */
@@ -313,6 +316,12 @@
     display: flex;
     gap: 10px;
     padding: 10px;
+    border-top: 1px solid #ddd; /* Optional: Separate the input visually */
+    background-color: #333; /* Ensure it contrasts with the chat body */
+    width: 100%; /* Take the full width of the parent container */
+    box-sizing: border-box; /* Include padding in the width */
+    position: relative; /* Prevent unintended overlap */
+    z-index: 1; /* Ensure it's above other content */
   }
 
   .chat-input-container input {
@@ -380,10 +389,19 @@
   
   .chat-input {
     flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-right: 10px;
+    width: 100%;
+    height: 40px; /* Similar height to an input */
+    padding: 10px; /* Inner padding for text */
+    border: 1px solid #ddd; /* Border styling to mimic input */
+    border-radius: 8px; /* Rounded corners */
+    font-size: 14px; /* Match input font size */
+    font-family: inherit; /* Inherit font for consistency */
+    line-height: 1.2; /* Ensure proper line spacing */
+    box-sizing: border-box; /* Include padding in width/height */
+    resize: none; /* Disable manual resizing */
+    overflow-y: hidden; /* Hide scrollbars until necessary */
+    background-color: #fff; /* Input-like background */
+    color: #000; /* Input-like text color */
   }
   
   .send-message-btn {

@@ -40,6 +40,9 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
   const [blockedAddresses, setBlockedAddresses] = useState([]);
   const avatarRef = useRef(null);
+  const chatBodyRef = useRef(null); // Reference for the chat-body container
+  const processedMessageIds = useRef(new Set()); // Use ref to track processed messages
+  const isAddressBlocked = blockedAddresses.includes(chatAddress);
 
   useEffect(() => {
     if (!account) return;
@@ -67,12 +70,14 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
     fetchBlockedAddresses();
   }, [account]);
 
-  const processedMessageIds = useRef(new Set()); // Use ref to track processed messages
-
   useEffect(() => {
     if (!chatAddress || !account) return;
 
     console.log('Subscribing to messages for chatAddress:', chatAddress);
+
+    if (chatAddress && avatarRef.current) {
+      generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
+    }
 
     const chatNode = gun.get(`chats/${account}/messages`); // Sender's messages
     const receiverNode = gun.get(`chats/${chatAddress}/messages`); // Receiver's messages
@@ -102,16 +107,11 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
     };
   }, [account, chatAddress]);
 
-  
   useEffect(() => {
-    
-    if (chatAddress && avatarRef.current) {
-      generateJazzicon(chatAddress, avatarRef.current, 40); // Generate a Jazzicon with a diameter of 40px
+    if (chatBodyRef.current) {
+        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight; // Scroll to the bottom
     }
-
-  }, [account, chatAddress]);   
-
-  const isAddressBlocked = blockedAddresses.includes(chatAddress);
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
@@ -196,6 +196,21 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
     };
 
     const closeinfoWalletModal = () => setIsWalletInfoModalOpen(false);
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault(); // Prevent default behavior of Enter
+        handleSendMessage(); // Send the message
+      } else if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault(); // Prevent default behavior
+        setMessage((prevMessage) => `${prevMessage}\n`); // Add a new line
+      }
+    };    
+    
+    const adjustHeight = (e) => {
+      const element = e.target;
+      element.style.height = "40px"; // Reset height
+      element.style.height = `${element.scrollHeight}px`; // Adjust to content
+    };
 
   return (
     <div className="chat-box">
@@ -224,7 +239,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
         />
       </div>
       <div className="chat-container">
-        <div className="chat-body">
+        <div className="chat-body" ref={chatBodyRef}>
             {messages.map((msg, index) => (
               <div key={index} className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
                 <p>{msg.content}</p>
@@ -240,12 +255,15 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}
-        <input
-          type="text"
+         <textarea
           className="chat-input"
           placeholder="Your Message Goes in Here"
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            adjustHeight(e);
+          }}      
+          onKeyDown={(e) => handleKeyDown(e)}
           disabled={isAddressBlocked}
         />
         <button className="send-message-btn" onClick={handleSendMessage}>
