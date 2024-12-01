@@ -264,7 +264,7 @@
     max-height: calc(100vh - 150px); /* Adjust based on header and input height */
     padding: 10px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 10px;
   }
 

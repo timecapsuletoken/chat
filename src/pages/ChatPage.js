@@ -248,6 +248,8 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
       element.style.height = `${element.scrollHeight}px`; // Adjust to content
     };
 
+    const reversedMessages = [...messages].reverse();
+
   return (
     <div className="chat-box">
       <div className="chat-header">
@@ -276,7 +278,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
       </div>
       <div className="chat-container">
         <div className="chat-body" ref={chatBodyRef}>
-            {messages.map((msg, index) => (
+            {reversedMessages.map((msg, index) => (
               <div key={index} className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
                 <p>{msg.content}</p>
                 <small>{new Date(msg.timestamp).toLocaleString()}</small>
