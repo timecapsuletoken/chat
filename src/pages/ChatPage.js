@@ -277,14 +277,22 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
         />
       </div>
       <div className="chat-container">
-        <div className="chat-body" ref={chatBodyRef}>
-            {reversedMessages.map((msg, index) => (
-              <div key={index} className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
-                <p>{msg.content}</p>
-                <small>{new Date(msg.timestamp).toLocaleString()}</small>
-              </div>
-            ))}
-        </div>
+      <div className="chat-body" ref={chatBodyRef}>
+        {reversedMessages.map((msg, index) => (
+          <div key={index} className={`message-wrapper ${msg.sender === account ? 'sent-wrapper' : 'received-wrapper'}`}>
+            <div
+              className="message-avatar"
+              ref={(el) => {
+                if (el) generateJazzicon(msg.sender, el, 20); // Generate avatar for each sender/receiver
+              }}
+            />
+            <div className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
+              <p>{msg.content}</p>
+              <small>{new Date(msg.timestamp).toLocaleString()}</small>
+            </div>
+          </div>
+        ))}
+      </div>
       </div>
       <div className="chat-input-container">
       <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} disabled={isAddressBlocked} />

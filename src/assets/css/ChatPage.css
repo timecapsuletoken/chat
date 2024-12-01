@@ -275,7 +275,6 @@
     padding: 10px 15px; /* Adds spacing inside the message box */
     border-radius: 15px; /* Rounded corners */
     font-size: 14px;
-    line-height: 1.5;
     word-wrap: break-word; /* Ensures long words or URLs break correctly */
     word-break: break-word;
     margin-bottom: 10px; /* Adds space between messages */
@@ -287,7 +286,7 @@
     align-self: flex-end; /* Align to the right */
     background-color: #007bff; /* Customize the color */
     color: white;
-    border-top-right-radius: 0; /* Different corner for sent messages */
+    border-bottom-right-radius: 0; /* Different corner for sent messages */
   }
 
   /* Receiver's messages */
@@ -295,7 +294,7 @@
     align-self: flex-start; /* Align to the left */
     background-color: #1c1c1c; /* Customize the color */
     color: #fff;
-    border-top-left-radius: 0; /* Different corner for received messages */
+    border-bottom-left-radius: 0; /* Different corner for received messages */
   }
 
   /* Timestamp */
@@ -310,6 +309,28 @@
   .message.received small {
     color: rgba(255, 255, 255, 0.8);
   }
+
+  .message-wrapper {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+  
+  .sent-wrapper {
+    flex-direction: row-reverse; /* Avatar on the right for sent messages */
+  }
+  
+  .received-wrapper {
+    flex-direction: row; /* Avatar on the left for received messages */
+  }
+  
+  .message-avatar {
+    width: 20px; /* Adjusted width for smaller avatar */
+    height: 30px; /* Adjusted height for smaller avatar */
+    border-radius: 50%; /* Ensure circular shape */
+    margin: 0 8px; /* Adjust margin for proper spacing */
+    display: flex;  
+  }  
 
   /* Input container */
   .chat-input-container {
