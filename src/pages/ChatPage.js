@@ -104,6 +104,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
                 message.sender,
                 message.sender === account ? chatAddress : account
             );
+
             const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
 
             console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);

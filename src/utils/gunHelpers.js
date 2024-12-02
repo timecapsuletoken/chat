@@ -8,6 +8,7 @@ export const fetchChats = (account, setChats) => {
 
     const loadedChats = new Set();
     const chatNode = gun.get(account).get('chats');
+    const messageNode = gun.get(`chats/${account}/messages`);
 
     chatNode.map().once((data, key) => {
         if (!data) {
@@ -26,10 +27,23 @@ export const fetchChats = (account, setChats) => {
         }
     });
 
+    // Monitor incoming messages to dynamically add new senders
+    messageNode.map().on((message, id) => {
+        if (!message || !message.sender) return;
+
+        const senderAddress = message.sender;
+        if (!loadedChats.has(senderAddress)) {
+            console.log("New sender detected:", senderAddress.slice(-4));
+            loadedChats.add(senderAddress);
+            setChats(Array.from(loadedChats));
+        }
+    });
+
     // Cleanup function to detach listeners
     return () => {
         console.log("Cleaning up chat subscriptions for account:", account.slice(-4));
         chatNode.off();
+        messageNode.off();
     };
 }; 
 

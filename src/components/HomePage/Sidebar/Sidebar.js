@@ -163,7 +163,7 @@ const Sidebar = ({
           chats.map((address, index) => (
             <div
               key={index}
-              className="chat-item"
+              className={'chat-item'}
               onClick={() => {
                 handleChatItemClick(address);
                 closeSidebar();
