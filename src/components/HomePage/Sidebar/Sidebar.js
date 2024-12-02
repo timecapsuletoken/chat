@@ -39,6 +39,7 @@ const Sidebar = ({
   isSidebarOpen,
   showDropdown,
   chats,
+  setChats,
   nickname,
   setNickname,
   loading,
@@ -49,7 +50,7 @@ const Sidebar = ({
   openWalletModal,
   handleOpenModal,
   handleChatItemClick,
-  handleDeleteChat,
+  deleteChat,
   handleClearChatHistory,
   navigate,
   setShowAboutModal,
@@ -194,7 +195,8 @@ const Sidebar = ({
                   className="delete-icon"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeleteChat(address);
+                    console.log("Delete button clicked for address:", address);
+                    deleteChat(address); // Call deleteChat here                
                   }}
                 />
               </Tooltip>
@@ -222,6 +224,7 @@ Sidebar.propTypes = {
   isSidebarOpen: PropTypes.bool.isRequired,
   showDropdown: PropTypes.bool.isRequired,
   chats: PropTypes.array.isRequired,
+  setChats: PropTypes.func.isRequired,
   nickname: PropTypes.string,
   setNickname: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
@@ -232,7 +235,7 @@ Sidebar.propTypes = {
   openWalletModal: PropTypes.func.isRequired,
   handleOpenModal: PropTypes.func.isRequired,
   handleChatItemClick: PropTypes.func.isRequired,
-  handleDeleteChat: PropTypes.func.isRequired,
+  deleteChat: PropTypes.func.isRequired,
   handleClearChatHistory: PropTypes.func.isRequired,
   navigate: PropTypes.func.isRequired,
   setShowAboutModal: PropTypes.func.isRequired,

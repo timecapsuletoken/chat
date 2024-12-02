@@ -26,7 +26,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber }) => {
+const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => {
   const [messages, setMessages] = useState([]); // All chat messages
   const [message, setMessage] = useState(''); // Current input message
 
@@ -270,7 +270,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
           blockedAddresses={blockedAddresses}
           setBlockedAddresses={setBlockedAddresses}
           gun={gun}
-          handleDeleteChat={handleDeleteChat}
+          deleteChat={deleteChat}
           handleWalletInfo={handleWalletInfo}
           toggleBlockedModal={toggleBlockedModal}
           navigate={navigate}
@@ -317,7 +317,7 @@ const ChatPage = ({ account, toggleBlockedModal, handleDeleteChat, formatNumber 
         </button>
       </div>
       <p className="input-hint">
-        <span>Enter</span> To send, <span>Shift + Enter</span> To add a New line
+        <span>Decentralized Communication</span> (<span>BETA</span>) v1.00.0
       </p>
       {isWalletInfoModalOpen && (
         <div className="wallet-modal-overlay" onClick={() => setIsWalletInfoModalOpen(false)}>

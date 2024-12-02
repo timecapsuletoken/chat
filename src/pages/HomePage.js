@@ -268,7 +268,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         openWalletModal={openWalletModal}
         handleOpenModal={handleOpenModal}
         handleChatItemClick={(chatAddress) => setSearchParams({ chatwith: chatAddress })}
-        handleDeleteChat={deleteChat}
+        deleteChat={deleteChat}
         handleClearChatHistory={clearChatHistory}
         navigate={navigate}
         setShowAboutModal={setShowAboutModal}
@@ -329,7 +329,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
           <ChatWrapper
             account={account}
             toggleBlockedModal={toggleBlockedModal}
-            handleDeleteChat={deleteChat}
+            deleteChat={deleteChat}
             openWalletModal={openWalletModal}
             setChatAddress={setChatAddress}
             formatNumber={formatNumber}

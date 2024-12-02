@@ -13,7 +13,7 @@ const ChatOptionsMenu = ({
   blockedAddresses,
   setBlockedAddresses,
   gun,
-  handleDeleteChat,
+  deleteChat,
   handleWalletInfo,
   toggleBlockedModal,
   navigate,
@@ -61,7 +61,7 @@ const ChatOptionsMenu = ({
   };
 
   const handleDelete = () => {
-    handleDeleteChat(chatAddress); // Delete the chat
+    deleteChat(chatAddress); // Delete the chat
     navigate('/home'); // Redirect to /home after deletion
     handleClose();
   };

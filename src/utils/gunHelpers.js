@@ -170,32 +170,39 @@ export const handleChatItemClick = (chatAddress, setSearchParams) => {
 
 // Fully delete a chat, its metadata, and associated keys
 export const handleDeleteChat = (account, chatToDelete, setChats) => {
-  gun.get(account).get('chats').map().once((data, key) => {
+  const chatsNode = gun.get(account).get('chats');
+
+  chatsNode.map().once((data, key) => {
+    // Check if this key matches the chatToDelete
     if (data === chatToDelete) {
-      // First, set the chat value to null
-      gun.get(account).get('chats').get(key).put(null, (ack) => {
+      console.log(`Deleting chat: ${chatToDelete}, Key: ${key}`);
+
+      // Step 1: Delete the chat metadata
+      chatsNode.get(key).put(null, (ack) => {
         if (ack.err) {
-          console.error("Failed to delete chat value:", ack.err);
-        } else {
-          console.log("Chat value deleted:", chatToDelete);
+          console.error("Failed to delete chat metadata:", ack.err);
+          return;
+        }
+        console.log(`Chat metadata deleted for key: ${key}`);
 
-          // Explicitly delete the key from the database
-          gun.get(account).get('chats').get(key).put(null, (keyAck) => {
-            if (keyAck.err) {
-              console.error("Failed to delete chat key:", keyAck.err);
+        // Step 2: Delete associated messages
+        const messagesNode = gun.get(`chats/${account}/messages/${key}`);
+        messagesNode.map().once((_, messageKey) => {
+          messagesNode.get(messageKey).put(null, (msgAck) => {
+            if (msgAck.err) {
+              console.error(`Failed to delete message with key ${messageKey}:`, msgAck.err);
             } else {
-              console.log("Chat key deleted:", key);
-
-              // Update local chats list
-              setChats((prev) => prev.filter((chat) => chat !== chatToDelete));
-
-              // Optional: Log final state for verification
-              gun.get(account).get('chats').once((finalState) => {
-                console.log("Remaining chats after deletion:", finalState);
-              });
+              console.log(`Deleted message: ${messageKey}`);
             }
           });
-        }
+        });
+
+        // Step 3: Update the local state
+        setChats((prevChats) => {
+          const updatedChats = prevChats.filter((chat) => chat !== chatToDelete);
+          console.log("Updated chats list:", updatedChats);
+          return updatedChats;
+        });
       });
     }
   });

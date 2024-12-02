@@ -13,7 +13,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
   }
   
   .chat-address-info {
@@ -337,7 +337,7 @@
     display: flex;
     gap: 10px;
     padding: 10px;
-    border-top: 1px solid #ddd; /* Optional: Separate the input visually */
+    border-top: 1px solid #ccc; /* Optional: Separate the input visually */
     background-color: #333; /* Ensure it contrasts with the chat body */
     width: 100%; /* Take the full width of the parent container */
     box-sizing: border-box; /* Include padding in the width */
@@ -388,7 +388,7 @@
     display: flex;
     align-items: center;
     padding: 10px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #ccc;
   }
   
   .emoji-icon {

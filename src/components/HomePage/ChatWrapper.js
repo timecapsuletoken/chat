@@ -5,7 +5,7 @@ import ChatPage from '../../pages/ChatPage';
 const ChatWrapper = ({
   account,
   toggleBlockedModal,
-  handleDeleteChat,
+  deleteChat,
   openWalletModal,
   setChatAddress,
   formatNumber,
@@ -14,7 +14,7 @@ const ChatWrapper = ({
     <ChatPage
       account={account}
       toggleBlockedModal={toggleBlockedModal}
-      handleDeleteChat={handleDeleteChat}
+      deleteChat={deleteChat}
       openWalletModal={openWalletModal}
       setChatAddress={setChatAddress}
       formatNumber={formatNumber}
@@ -25,7 +25,7 @@ const ChatWrapper = ({
 ChatWrapper.propTypes = {
   account: PropTypes.string,
   toggleBlockedModal: PropTypes.func.isRequired,
-  handleDeleteChat: PropTypes.func.isRequired,
+  deleteChat: PropTypes.func.isRequired,
   openWalletModal: PropTypes.func.isRequired,
   setChatAddress: PropTypes.func.isRequired,
   formatNumber: PropTypes.func.isRequired,
