@@ -42,9 +42,12 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to toggle sidebar visibility
+
   const [chatAddress, setChatAddress] = useState('');
   const currentChat = searchParams.get('chatwith');
   const [chats, setChats] = useState([]);
+  const [unreadChats, setUnreadChats] = useState(new Set());
+
   const [balance, setBalance] = useState(0); // Placeholder balance
   const [tcaBalance, setTcaBalance] = useState(0); // TCA token balance
   const [isHovered, setIsHovered] = useState(false);
@@ -96,6 +99,39 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const handleToggleSoundAlerts = () => setSoundAlertsEnabled((prev) => !prev);
   const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev); 
 
+  useEffect(() => {
+    if (!account) return;
+
+    const messageNode = gun.get(`chats/${account}/messages`);
+
+    // Listen for message changes
+    const listener = messageNode.map().on((message, id) => {
+      if (
+        message &&
+        message.status === 'unread' &&
+        message.sender &&
+        !unreadChats.has(message.sender)
+      ) {
+        console.log("[DEBUG] Adding unread chat:", message.sender);
+        setUnreadChats((prev) => new Set([...prev, message.sender]));
+      }
+
+      // Remove from unreadChats if marked as read
+      if (message && message.status === 'read' && unreadChats.has(message.sender)) {
+        console.log("[DEBUG] Removing from unread chats:", message.sender);
+        setUnreadChats((prev) => {
+          const updated = new Set(prev);
+          updated.delete(message.sender);
+          return updated;
+        });
+      }
+    });
+
+    return () => {
+      listener.off(); // Clean up the listener on unmount
+    };
+  }, [account, unreadChats]); 
+  
   useEffect(() => {
     const debounceFetch = setTimeout(() => {
 
@@ -258,6 +294,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         showDropdown={showDropdown}
         chats={chats}
         setChats={setChats}
+        unreadChats={unreadChats}
         nickname={nickname}
         setNickname={setNickname}
         loading={loading}

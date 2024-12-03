@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 // Components from your project
 import SidebarAccount from '../Sidebar/SidebarAccount';
 
+import { markMessagesAsRead } from '../../../utils/gunHelpers';
+
 // Material-UI components
 import { Skeleton, Tooltip, Divider } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -40,6 +42,7 @@ const Sidebar = ({
   showDropdown,
   chats,
   setChats,
+  unreadChats,
   nickname,
   setNickname,
   loading,
@@ -68,7 +71,7 @@ const Sidebar = ({
     }, 3000); // Adjust delay as needed
 
     return () => clearTimeout(timer);
-  }, []);
+  }, []); 
 
   return (
     <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
@@ -163,9 +166,11 @@ const Sidebar = ({
           chats.map((address, index) => (
             <div
               key={index}
-              className={'chat-item'}
+              className={`chat-item ${unreadChats.has(address) ? 'unread-message' : ''}`}
               onClick={() => {
                 handleChatItemClick(address);
+                console.log("Chat clicked:", address, account);
+                markMessagesAsRead(account, address);
                 closeSidebar();
               }}
             >
@@ -225,6 +230,7 @@ Sidebar.propTypes = {
   showDropdown: PropTypes.bool.isRequired,
   chats: PropTypes.array.isRequired,
   setChats: PropTypes.func.isRequired,
+  unreadChats: PropTypes.instanceOf(Set).isRequired,
   nickname: PropTypes.string,
   setNickname: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,

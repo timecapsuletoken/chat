@@ -1,5 +1,68 @@
 import gun from './gunSetup';
 
+export const markMessagesAsRead = (receiver, chatAddress) => {
+  if (!receiver || !chatAddress) {
+    console.error("[DEBUG] Receiver or chat address is missing.");
+    return;
+  }
+
+  const messageNode = gun.get(`chats/${receiver}/messages`);
+
+  messageNode.map().once((message, id) => {
+    console.log("[DEBUG] Checking message:", { id, message });
+
+    // Validate the message
+    if (!message) {
+      console.log(`[DEBUG] Skipping null or undefined message: ${id}`);
+      return;
+    }
+
+    if (message.status !== 'unread') {
+      console.log(`[DEBUG] Skipping message not marked as unread: ${id}`);
+      return;
+    }
+
+    if (message.sender !== chatAddress) {
+      console.log(`[DEBUG] Skipping message from a different sender: ${id}`);
+      return;
+    }
+
+    console.log(`[DEBUG] Marking message ${id} as read for receiver: ${receiver}`);
+
+    // Update only the status field
+    gun.get(`chats/${receiver}/messages`).get(id).get('status').put(
+      'read',
+      (ack) => {
+        if (ack.err) {
+          console.error(`[DEBUG] Failed to mark message ${id} as read:`, ack.err);
+        } else {
+          console.log(`[DEBUG] Successfully marked message ${id} as read.`);
+        }
+      }
+    );
+  });
+};
+
+export const hasUnreadMessages = async (account, chatAddress) => {
+  if (!account || !chatAddress) {
+    console.error("[DEBUG] Missing account or chat address.");
+    return false;
+  }
+
+  return new Promise((resolve) => {
+    const messageNode = gun.get(`chats/${account}/messages`);
+    let unreadExists = false;
+
+    messageNode.map().once((message, id) => {
+      if (message && message.status === 'unread' && message.sender === chatAddress) {
+        unreadExists = true;
+      }
+    });
+
+    setTimeout(() => resolve(unreadExists), 200); // Allow time for Gun.js async calls
+  });
+};
+
 // Fetch chats linked to the user's account
 export const fetchChats = (account, setChats) => {
     if (!account) return;

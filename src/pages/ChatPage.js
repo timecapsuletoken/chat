@@ -162,6 +162,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
         sender: account,
         content: encryptedMessage,
         timestamp: Date.now(),
+        'status': 'unread',
     };
 
     // Save the encrypted message to Gun.js
