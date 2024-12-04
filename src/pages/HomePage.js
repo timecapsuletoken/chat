@@ -275,6 +275,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
 
   const deleteChat = (chatToDelete) => {
     handleDeleteChat(account, chatToDelete, setChats);
+    navigate('/home');
   };
 
   const clearChatHistory = () => {

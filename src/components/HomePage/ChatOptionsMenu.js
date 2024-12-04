@@ -67,7 +67,7 @@ const ChatOptionsMenu = ({
   };
 
   return (
-    <div>
+    <div className="chat-options-menu-btn">
       <Button
         aria-controls={open ? 'chat-options-menu' : undefined}
         aria-haspopup="true"

@@ -16,6 +16,7 @@ import { RiBnbLine } from "react-icons/ri";
 import {
   Avatar,
 } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
 
 // Binance Smart Chain provider and TCA token setup
@@ -44,6 +45,16 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
   const chatBodyRef = useRef(null); // Reference for the chat-body container
   const processedMessageIds = useRef(new Set()); // Use ref to track processed messages
   const isAddressBlocked = blockedAddresses.includes(chatAddress);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = () => {
+    setIsLoading(true);
+    // Simulate an async operation
+    setTimeout(() => {
+      setIsLoading(false);
+      handleSendMessage();
+    }, 500);
+  };
 
   useEffect(() => {
     if (!account) return;
@@ -378,9 +389,13 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
           onKeyDown={(e) => handleKeyDown(e)}
           disabled={isAddressBlocked}
         />
-        <button className="send-message-btn" onClick={handleSendMessage}>
+        <LoadingButton
+          loading={isLoading}
+          variant="outlined"
+          onClick={handleSubmit}
+        >
           <FaPaperPlane disabled={isAddressBlocked} />
-        </button>
+        </LoadingButton>
       </div>
       <p className="input-hint">
         <span>Decentralized Communication</span> (<span>BETA</span>) v1.00.0
