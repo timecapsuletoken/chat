@@ -332,6 +332,26 @@
     display: flex;  
   }  
 
+  .message-status {
+    display: block;
+    font-size: 0.8rem;
+    color: gray;
+    margin-top: 5px;
+    text-align: right;
+  }
+  
+  .sent-wrapper .message-status {
+    text-align: right; /* Aligns with sent messages */
+  }
+  
+  .received-wrapper .message-status {
+    text-align: left; /* Aligns with received messages */
+  }  
+
+  .display-none {
+    display: none;
+  }
+
   /* Input container */
   .chat-input-container {
     display: flex;

@@ -5,6 +5,7 @@ import gun from '../utils/gunSetup';
 import 'gun/lib/webrtc'; // Real-time peer connections (if needed)
 import { encryptMessage, decryptMessage } from '../utils/cryptographer';
 import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
+import { markMessagesAsRead } from '../utils/gunHelpers'; // Adjust the import path if needed
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
 import '../assets/css/ChatPage.css';
@@ -29,7 +30,7 @@ const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscPr
 const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => {
   const [messages, setMessages] = useState([]); // All chat messages
   const [message, setMessage] = useState(''); // Current input message
-
+  
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const chatAddress = params.get('chatwith');
@@ -82,7 +83,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
     if (chatAddress && avatarRef.current) {
       generateJazzicon(chatAddress, avatarRef.current, 40); // Generate Jazzicon for the chat
     }
-  
+
     const senderNode = gun.get(`chats/${account}/messages/${chatAddress}`); // Messages sent by the sender
     const receiverNode = gun.get(`chats/${chatAddress}/messages/${account}`); // Messages received from the receiver
   
@@ -111,6 +112,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
         setMessages((prev) =>
           [...prev, processedMessage].sort((a, b) => a.timestamp - b.timestamp) // Sort by timestamp
         );
+
       } catch (error) {
         console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
         setMessages((prev) =>
@@ -142,7 +144,32 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
       senderListener.off();
       receiverListener.off();
     };
-  }, [account, chatAddress]);  
+  }, [account, chatAddress]);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      const targetClasses = [
+        'chat-box',
+        'chat-header',
+        'chat-container',
+        'chat-body',
+      ];
+
+      // Check if the clicked element belongs to the target classes
+      if (targetClasses.some((cls) => event.target.closest(`.${cls}`))) {
+        console.log('[DEBUG] Click detected in chat area. Marking messages as read.');
+        markMessagesAsRead(account, chatAddress); // Mark messages as read
+      }
+    };
+
+    // Attach event listener to the document
+    document.addEventListener('click', handleClick);
+
+    // Cleanup listener on unmount
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, [account, chatAddress]);
   
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -327,7 +354,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
             />
             <div className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
               <p>{msg.content}</p>
-              <small>{new Date(msg.timestamp).toLocaleString()}</small>
+              <small>{new Date(msg.timestamp).toLocaleString()}</small>              
             </div>
           </div>
         ))}
