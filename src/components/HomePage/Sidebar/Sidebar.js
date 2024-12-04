@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 // Components from your project
@@ -48,6 +48,7 @@ const Sidebar = ({
   loading,
   isHovered,
   toggleSidebar,
+  closetoggleSidebar,
   toggleDropdown,
   setIsHovered,
   openWalletModal,
@@ -63,6 +64,7 @@ const Sidebar = ({
 }) => {
   
   const [isLoading, setIsLoading] = useState(true);
+  const sidebarRef = useRef(null);
 
   useEffect(() => {
     // Simulate a loading delay for demo purposes
@@ -73,8 +75,23 @@ const Sidebar = ({
     return () => clearTimeout(timer);
   }, []); 
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        console.log("[DEBUG] Click detected outside sidebar. Toggling sidebar.");
+        closetoggleSidebar(); // Run the function when clicking outside the sidebar
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [closetoggleSidebar]);
+
   return (
-    <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
+    <div ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
       <div
         className="wallet-header"
         style={{
@@ -99,7 +116,7 @@ const Sidebar = ({
         {isSidebarOpen && (
           <div
             className="sidebar-icon"
-            style={{ background: isSidebarOpen ? 'linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3)' : 'inherit' }}
+            style={{ background: isSidebarOpen ? '#828282' : 'inherit' }}
           >
             <button
               className={`sidebar-toggle-inside ${isSidebarOpen ? 'open' : ''}`}
@@ -236,6 +253,7 @@ Sidebar.propTypes = {
   setNickname: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   isHovered: PropTypes.bool.isRequired,
+  closetoggleSidebar: PropTypes.func.isRequired,
   toggleSidebar: PropTypes.func.isRequired,
   toggleDropdown: PropTypes.func.isRequired,
   setIsHovered: PropTypes.func.isRequired,

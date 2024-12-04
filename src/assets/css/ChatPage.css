@@ -562,8 +562,10 @@
     }
   
     .chat-input-container {
-      flex-direction: column; /* Stack input and button */
+      display: flex;
       gap: 5px;
+      align-items: stretch;
+      flex-direction: row;
     }
   
     .chat-input-container input,
@@ -573,7 +575,7 @@
     }
 
     .chat-input {
-      margin-bottom: 10px;
+      margin-bottom: 0;
     }
   
     .send-message-btn {

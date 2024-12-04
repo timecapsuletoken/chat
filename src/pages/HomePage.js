@@ -262,6 +262,13 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     console.log("Sidebar state:", !isSidebarOpen); // Log state to check toggle
   };
 
+  const closetoggleSidebar = () => {
+    if (isSidebarOpen) {
+      setIsSidebarOpen(false);
+      console.log("Sidebar closed.");
+    }
+  };  
+
    // Function to close sidebar
    const closeSidebar = () => {
     if (window.innerWidth <= 768) { // Check if on mobile
@@ -309,6 +316,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         loading={loading}
         isHovered={isHovered}
         toggleSidebar={toggleSidebar}
+        closetoggleSidebar={closetoggleSidebar}
         toggleDropdown={toggleDropdown}
         setIsHovered={setIsHovered}
         openWalletModal={openWalletModal}

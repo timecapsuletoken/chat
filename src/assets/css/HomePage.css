@@ -430,11 +430,11 @@
   }
   
   .sidebar-icon.sidebar-toggle-container.open {
-    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3); /* New color when containing sidebar-toggle-inside */
+    background: #828282; /* New color when containing sidebar-toggle-inside */
   }
 
   .sidebar-icon .sidebar-toggle-inside.open {
-    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3) !important; /* New color when the sidebar is open */
+    background: #828282 !important; /* New color when the sidebar is open */
   }
   
   /* Sidebar icon styling */
@@ -455,7 +455,7 @@
   }
 
   .sidebar-icon:hover {
-    background: linear-gradient(90deg, #ce00fc75, #f7c4408a, #20d0e387);
+    background-color: #828282;
     transform: translateY(-2px); /* Slight lift on hover */
   }
 
@@ -1051,7 +1051,7 @@
 }
 
 .start-chat-button {
-  background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3) !important;
+  background: #828282 !important;
   color: #1c1c1c;
   padding: 10px 20px;
   border: none;
