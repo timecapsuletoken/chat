@@ -72,77 +72,77 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
 
   useEffect(() => {
     if (!chatAddress || !account) return;
-
+  
     console.log('Subscribing to messages for chatAddress:', chatAddress);
-
+  
     // Clear messages and processed IDs when switching chats
     setMessages([]);
     processedMessageIds.current.clear();
-
+  
     if (chatAddress && avatarRef.current) {
-        generateJazzicon(chatAddress, avatarRef.current, 40); // Generate Jazzicon for the chat
+      generateJazzicon(chatAddress, avatarRef.current, 40); // Generate Jazzicon for the chat
     }
-
-    const chatNode = gun.get(`chats/${account}/messages`); // Sender's messages
-    const receiverNode = gun.get(`chats/${chatAddress}/messages`); // Receiver's messages
-
+  
+    const senderNode = gun.get(`chats/${account}/messages/${chatAddress}`); // Messages sent by the sender
+    const receiverNode = gun.get(`chats/${chatAddress}/messages/${account}`); // Messages received from the receiver
+  
     const processMessage = async (message, id, source) => {
-        if (!message || processedMessageIds.current.has(id)) return; // Skip duplicates
-        processedMessageIds.current.add(id);
-
-        try {
-            // Ensure message belongs to the current chat
-            if (
-                (source === 'receiver' && message.sender !== account) ||
-                (source === 'sender' && message.sender !== chatAddress)
-            ) {
-                return; // Ignore messages not related to the current chat
-            }
-
-            const decryptedContent = decryptMessage(
-                message.content,
-                message.sender,
-                message.sender === account ? chatAddress : account
-            );
-
-            const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
-
-            console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
-            setMessages((prev) =>
-                [...prev, processedMessage].sort((a, b) => a.timestamp - b.timestamp) // Sort by timestamp
-            );
-        } catch (error) {
-            console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
-            setMessages((prev) =>
-                [...prev, { ...message, content: '[Unable to decrypt]', id }].sort((a, b) => a.timestamp - b.timestamp)
-            );
+      if (!message || processedMessageIds.current.has(id)) return; // Skip duplicates
+      processedMessageIds.current.add(id);
+  
+      try {
+        // Ensure message belongs to the current chat
+        if (
+          (source === 'receiver' && message.sender !== chatAddress) || // Received message from the other party
+          (source === 'sender' && message.sender !== account) // Sent message by the current user
+        ) {
+          return; // Ignore messages not related to the current chat
         }
+  
+        const decryptedContent = decryptMessage(
+          message.content,
+          message.sender,
+          message.sender === account ? chatAddress : account
+        );
+  
+        const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
+  
+        console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
+        setMessages((prev) =>
+          [...prev, processedMessage].sort((a, b) => a.timestamp - b.timestamp) // Sort by timestamp
+        );
+      } catch (error) {
+        console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
+        setMessages((prev) =>
+          [...prev, { ...message, content: '[Unable to decrypt]', id }].sort((a, b) => a.timestamp - b.timestamp)
+        );
+      }
     };
-
+  
     const fetchMessages = async () => {
-        // Fetch messages for the current chat from both sender and receiver nodes
-        const senderMessages = await gun.get(`chats/${account}/messages`).once();
-        const receiverMessages = await gun.get(`chats/${chatAddress}/messages`).once();
-
-        // Combine and process fetched messages
-        Object.entries(senderMessages || {}).forEach(([id, message]) =>
-            processMessage(message, id, 'sender')
-        );
-        Object.entries(receiverMessages || {}).forEach(([id, message]) =>
-            processMessage(message, id, 'receiver')
-        );
+      // Fetch messages for the current chat from both sender and receiver nodes
+      const senderMessages = await gun.get(`chats/${account}/messages/${chatAddress}`).once();
+      const receiverMessages = await gun.get(`chats/${chatAddress}/messages/${account}`).once();
+  
+      // Combine and process fetched messages
+      Object.entries(senderMessages || {}).forEach(([id, message]) =>
+        processMessage(message, id, 'sender')
+      );
+      Object.entries(receiverMessages || {}).forEach(([id, message]) =>
+        processMessage(message, id, 'receiver')
+      );
     };
-
+  
     fetchMessages();
-
-    const senderListener = chatNode.map().on((message, id) => processMessage(message, id, 'sender'));
+  
+    const senderListener = senderNode.map().on((message, id) => processMessage(message, id, 'sender'));
     const receiverListener = receiverNode.map().on((message, id) => processMessage(message, id, 'receiver'));
-
+  
     return () => {
-        senderListener.off();
-        receiverListener.off();
+      senderListener.off();
+      receiverListener.off();
     };
-  }, [account, chatAddress]);
+  }, [account, chatAddress]);  
   
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -152,25 +152,62 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-
+  
     console.log('[DEBUG] Sending message:', message);
-
+  
+    // Encrypt the message content
     const encryptedMessage = encryptMessage(message);
     console.log('[DEBUG] Encrypted message:', encryptedMessage);
-
-    const newMessage = {
-        sender: account,
-        content: encryptedMessage,
-        timestamp: Date.now(),
-        'status': 'unread',
+  
+    const timestamp = Date.now();
+  
+    // Message for the sender (status: 'read')
+    const senderMessage = {
+      sender: account,
+      content: encryptedMessage,
+      timestamp,
+      status: 'read', // Sender's message is marked as read
     };
-
-    // Save the encrypted message to Gun.js
-    gun.get(`chats/${chatAddress}/messages`).set(newMessage);
-
+  
+    // Message for the receiver (status: 'unread')
+    const receiverMessage = {
+      sender: account,
+      content: encryptedMessage,
+      timestamp,
+      status: 'unread', // Receiver's message is marked as unread
+    };
+  
+    // Save the message for the sender
+    gun.get(`chats/${account}/messages/${chatAddress}`).set(senderMessage, (senderAck) => {
+      if (senderAck.err) {
+        console.error('[DEBUG] Failed to save message for sender:', senderAck.err);
+      } else {
+        console.log('[DEBUG] Message saved for sender.');
+      }
+    });
+  
+    // Save the message for the receiver and add the chat to their node
+    gun.get(`chats/${chatAddress}/messages/${account}`).set(receiverMessage, (receiverAck) => {
+      if (receiverAck.err) {
+        console.error('[DEBUG] Failed to save message for receiver:', receiverAck.err);
+      } else {
+        console.log('[DEBUG] Message saved for receiver.');
+  
+        // Add the chat to the receiver's `chats` node
+        const receiverChatsNode = gun.get(chatAddress).get('chats');
+        receiverChatsNode.set(account, (receiverAck) => {
+          if (receiverAck.err) {
+            console.error("Failed to add chat for receiver:", receiverAck.err);
+          } else {
+            console.log(`Chat added for receiver: ${chatAddress} with ${account}`);
+          }
+        });
+      }
+    });
+  
     // Clear the input field
     setMessage('');
-  };
+  };  
 
   const toggleEmojiPicker = () => {
     setShowEmojiPicker(!showEmojiPicker);

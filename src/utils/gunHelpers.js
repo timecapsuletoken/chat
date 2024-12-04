@@ -1,4 +1,5 @@
 import gun from './gunSetup';
+import 'gun/lib/unset.js';
 
 export const markMessagesAsRead = (receiver, chatAddress) => {
   if (!receiver || !chatAddress) {
@@ -6,12 +7,9 @@ export const markMessagesAsRead = (receiver, chatAddress) => {
     return;
   }
 
-  const messageNode = gun.get(`chats/${receiver}/messages`);
+  const messageNode = gun.get(`chats/${receiver}/messages/${chatAddress}`);
 
   messageNode.map().once((message, id) => {
-    console.log("[DEBUG] Checking message:", { id, message });
-
-    // Validate the message
     if (!message) {
       console.log(`[DEBUG] Skipping null or undefined message: ${id}`);
       return;
@@ -22,45 +20,37 @@ export const markMessagesAsRead = (receiver, chatAddress) => {
       return;
     }
 
-    if (message.sender !== chatAddress) {
-      console.log(`[DEBUG] Skipping message from a different sender: ${id}`);
-      return;
-    }
-
     console.log(`[DEBUG] Marking message ${id} as read for receiver: ${receiver}`);
 
-    // Update only the status field
-    gun.get(`chats/${receiver}/messages`).get(id).get('status').put(
-      'read',
-      (ack) => {
-        if (ack.err) {
-          console.error(`[DEBUG] Failed to mark message ${id} as read:`, ack.err);
-        } else {
-          console.log(`[DEBUG] Successfully marked message ${id} as read.`);
-        }
+    gun.get(`chats/${receiver}/messages/${chatAddress}`).get(id).get('status').put('read', (ack) => {
+      if (ack.err) {
+        console.error(`[DEBUG] Failed to mark message ${id} as read:`, ack.err);
+      } else {
+        console.log(`[DEBUG] Successfully marked message ${id} as read.`);
       }
-    );
+    });
   });
 };
 
-export const hasUnreadMessages = async (account, chatAddress) => {
+export const hasUnreadMessages = (account, chatAddress) => {
   if (!account || !chatAddress) {
     console.error("[DEBUG] Missing account or chat address.");
     return false;
   }
 
-  return new Promise((resolve) => {
-    const messageNode = gun.get(`chats/${account}/messages`);
-    let unreadExists = false;
+  console.log(`[DEBUG] Setting up listener for unread messages for chatAddress: ${chatAddress}`);
 
-    messageNode.map().once((message, id) => {
-      if (message && message.status === 'unread' && message.sender === chatAddress) {
-        unreadExists = true;
-      }
-    });
+  let unreadExists = false;
 
-    setTimeout(() => resolve(unreadExists), 200); // Allow time for Gun.js async calls
+  const receiverNode = gun.get(`chats/${account}/messages/${chatAddress}`);
+  receiverNode.map().once((message, id) => {
+    if (message && message.status === 'unread') {
+      console.log(`[DEBUG] Found unread message in receiverNode. ID: ${id}`);
+      unreadExists = true;
+    }
   });
+
+  return unreadExists;
 };
 
 // Fetch chats linked to the user's account
@@ -92,14 +82,14 @@ export const fetchChats = (account, setChats) => {
 
     // Monitor incoming messages to dynamically add new senders
     messageNode.map().on((message, id) => {
-        if (!message || !message.sender) return;
+      if (!message || !message.sender) return;
 
-        const senderAddress = message.sender;
-        if (!loadedChats.has(senderAddress)) {
-            console.log("New sender detected:", senderAddress.slice(-4));
-            loadedChats.add(senderAddress);
-            setChats(Array.from(loadedChats));
-        }
+      const senderAddress = message.sender;
+      if (!loadedChats.has(senderAddress)) {
+          console.log("New sender detected:", senderAddress.slice(-4));
+          loadedChats.add(senderAddress);
+          setChats(Array.from(loadedChats));
+      }
     });
 
     // Cleanup function to detach listeners
@@ -229,13 +219,20 @@ export const handleStartChat = (account, chatAddress, setChats, setSearchParams,
     return;
   }
 
-  gun.get(account).get('chats').set(trimmedAddress, (ack) => {
-    if (ack.err) {
-      console.error("Failed to start chat:", ack.err);
+  // Step 1: Add the chat to the sender's `chats` node
+  const senderChatsNode = gun.get(account).get('chats');
+  senderChatsNode.set(trimmedAddress, (senderAck) => {
+    if (senderAck.err) {
+      console.error("Failed to add chat for sender:", senderAck.err);
     } else {
+      console.log(`Chat added for sender: ${account} with ${trimmedAddress}`);
+
+      // Update the UI for the sender
       setChats((prev) => [...new Set([...prev, trimmedAddress])]);
       setSearchParams({ chatwith: trimmedAddress });
       setShowModal(false);
+
+      // Do not add the chat to the receiver's `chats` node here
     }
   });
 };
@@ -247,17 +244,19 @@ export const handleChatItemClick = (chatAddress, setSearchParams) => {
 
 // Fully delete a chat, its metadata, and associated keys
 export const handleDeleteChat = (account, chatAddress, setChats) => {
-  const chatsNode = gun.get(account).get("chats");
-  const messagesBasePath = `chats/0x/${account}/messages`;
+  const userChatsNode = gun.get(account).get('chats');
+  const messagesBasePath = `chats/${chatAddress}/messages`;
 
-  // Step 1: Traverse the chats node to find the chat key for the chat address
-  chatsNode.map().once((data, chatKey) => {
+  // Step 1: Find the chat reference in the user's chats
+  userChatsNode.map().once((data, chatKey) => {
     if (data === chatAddress) {
       console.log(`Found chat to delete: Address = ${chatAddress}, Key = ${chatKey}`);
 
-      // Step 2: Delete all messages for this chatKey under the current user
-      const messagesNode = gun.get(`${messagesBasePath}/${chatKey}`);
+      // Step 2: Delete all messages under the messages node
+      const messagesNode = gun.get(messagesBasePath);
       messagesNode.map().once((_, messageKey) => {
+        if (!messageKey) return; // Skip null or invalid keys
+
         console.log(`Deleting message: Key = ${messageKey}`);
         messagesNode.get(messageKey).put(null, (msgAck) => {
           if (msgAck.err) {
@@ -268,20 +267,21 @@ export const handleDeleteChat = (account, chatAddress, setChats) => {
         });
       });
 
-      // Step 3: Remove the chat metadata from the chats node
-      chatsNode.get(chatKey).put(null, (ack) => {
-        if (ack.err) {
-          console.error(`Failed to delete chat metadata with Key = ${chatKey}:`, ack.err);
-        } else {
-          console.log(`Chat metadata deleted: Key = ${chatKey}`);
+      // Step 3: Delete the chat reference from the user's chats node
+      setTimeout(() => {
+        console.log(`Deleting chat metadata for Key = ${chatKey}`);
+        userChatsNode.get(chatKey).put(null, (ack) => {
+          if (ack.err) {
+            console.error(`Failed to delete chat metadata with Key = ${chatKey}:`, ack.err);
+          } else {
+            console.log(`Chat metadata deleted: Key = ${chatKey}`);
 
-          // Step 4: Update the UI state
-          setChats((prevChats) =>
-            prevChats.filter((chat) => chat !== chatAddress)
-          );
-          console.log(`Chat removed from UI for Address = ${chatAddress}`);
-        }
-      });
+            // Step 4: Update the UI state
+            setChats((prevChats) => prevChats.filter((chat) => chat !== chatAddress));
+            console.log(`Chat removed from UI for Address = ${chatAddress}`);
+          }
+        });
+      }, 500); // Delay to ensure messages are deleted first
     }
   });
 };

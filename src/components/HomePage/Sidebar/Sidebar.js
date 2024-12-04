@@ -169,7 +169,8 @@ const Sidebar = ({
               className={`chat-item ${unreadChats.has(address) ? 'unread-message' : ''}`}
               onClick={() => {
                 handleChatItemClick(address);
-                console.log("Chat clicked:", address, account);
+                console.log("[DEBUG] Chat clicked. Address:", address);
+                console.log("[DEBUG] unreadChats contains address:", unreadChats.has(address));
                 markMessagesAsRead(account, address);
                 closeSidebar();
               }}

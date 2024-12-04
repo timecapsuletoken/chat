@@ -7,6 +7,7 @@ import {
   fetchChats,
   fetchSettings,
   fetchNickname,
+  //hasUnreadMessages,
   handleSaveSettings,
   handleStartChat,
   handleDeleteChat,
@@ -100,37 +101,44 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev); 
 
   useEffect(() => {
-    if (!account) return;
-
-    const messageNode = gun.get(`chats/${account}/messages`);
-
-    // Listen for message changes
-    const listener = messageNode.map().on((message, id) => {
-      if (
-        message &&
-        message.status === 'unread' &&
-        message.sender &&
-        !unreadChats.has(message.sender)
-      ) {
-        console.log("[DEBUG] Adding unread chat:", message.sender);
-        setUnreadChats((prev) => new Set([...prev, message.sender]));
-      }
-
-      // Remove from unreadChats if marked as read
-      if (message && message.status === 'read' && unreadChats.has(message.sender)) {
-        console.log("[DEBUG] Removing from unread chats:", message.sender);
-        setUnreadChats((prev) => {
-          const updated = new Set(prev);
-          updated.delete(message.sender);
-          return updated;
-        });
-      }
-    });
-
+    if (!account || chats.length === 0) {
+      console.log("[DEBUG] No account or chats to check unread messages.");
+      return;
+    }
+  
+    const unreadSet = new Set();
+    const listeners = [];
+  
+    console.log("[DEBUG] Setting up real-time unread messages monitoring.");
+  
+    for (const chatAddress of chats) {
+      const receiverNode = gun.get(`chats/${account}/messages/${chatAddress}`);
+      console.log(`[DEBUG] Listening to messages for chat: ${chatAddress}`);
+  
+      const listener = receiverNode.map().on((message, id) => {
+        if (!message || !id) return;
+  
+        console.log(`[DEBUG] Processing message ID: ${id} for chatAddress: ${chatAddress}`, message);
+  
+        if (message.status === 'unread') {
+          console.log(`[DEBUG] Adding chat with unread messages: ${chatAddress}`);
+          unreadSet.add(chatAddress);
+        } else if (message.status === 'read' && unreadSet.has(chatAddress)) {
+          console.log(`[DEBUG] Removing chat with read messages: ${chatAddress}`);
+          unreadSet.delete(chatAddress);
+        }
+  
+        setUnreadChats(new Set([...unreadSet]));
+      });
+  
+      listeners.push(listener);
+    }
+  
     return () => {
-      listener.off(); // Clean up the listener on unmount
+      console.log("[DEBUG] Cleaning up listeners for unread messages.");
+      listeners.forEach((listener) => listener.off());
     };
-  }, [account, unreadChats]); 
+  }, [account, chats]);    
   
   useEffect(() => {
     const debounceFetch = setTimeout(() => {
