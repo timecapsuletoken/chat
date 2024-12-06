@@ -214,6 +214,12 @@ export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
 export const handleStartChat = (account, chatAddress, setChats, setSearchParams, setShowModal) => {
   const trimmedAddress = chatAddress.trim();
 
+  if (account === chatAddress)
+  {
+    alert("You can not Speak to yourself:", chatAddress);
+    return;
+  }
+
   if (!trimmedAddress || trimmedAddress === account) {
     console.warn("Invalid chat address:", chatAddress);
     return;

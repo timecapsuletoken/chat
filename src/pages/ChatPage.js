@@ -15,7 +15,9 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { RiBnbLine } from "react-icons/ri";
 import {
   Avatar,
+  TextField,
 } from '@mui/material';
+
 import LoadingButton from '@mui/lab/LoadingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
 
@@ -190,7 +192,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
-  
+    
     console.log('[DEBUG] Sending message:', message);
   
     // Encrypt the message content
@@ -372,15 +374,19 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
       </div>
       </div>
       <div className="chat-input-container">
-      <FaSmile className="emoji-icon" onClick={toggleEmojiPicker} disabled={isAddressBlocked} />
+      <FaSmile className="emoji-icon" onClick={isAddressBlocked ? null : toggleEmojiPicker} />
         {showEmojiPicker && (
           <div className="emoji-picker-container">
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}
-         <textarea
-          className="chat-input"
-          placeholder="Your Message Goes in Here"
+        <TextField
+          //className="chat-input"
+          id="outlined-textarea"
+          label="Your Message Goes in Here"
+          multiline
+          fullWidth
+          maxRows={4}
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
@@ -388,13 +394,36 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
           }}      
           onKeyDown={(e) => handleKeyDown(e)}
           disabled={isAddressBlocked}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'white', // Default border color
+              },
+              '&:hover fieldset': {
+                borderColor: 'white', // Border color on hover
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'white', // Border color when focused
+              },
+            },
+            '& .MuiInputBase-input': {
+              color: 'white', // Text color
+            },
+            '& .MuiInputLabel-root': {
+              color: 'white', // Default label color
+            },
+            '& .MuiInputLabel-root.Mui-focused': {
+              color: 'white', // Label color when focused
+            },
+          }}
         />
         <LoadingButton
           loading={isLoading}
           variant="outlined"
           onClick={handleSubmit}
+          disabled={isAddressBlocked}
         >
-          <FaPaperPlane disabled={isAddressBlocked} />
+          <FaPaperPlane/>
         </LoadingButton>
       </div>
       <p className="input-hint">

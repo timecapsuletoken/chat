@@ -129,6 +129,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         }
   
         setUnreadChats(new Set([...unreadSet]));
+        console.log("[DEBUG] Updated unreadChats in HomePage:", Array.from(unreadSet));
       });
   
       listeners.push(listener);
@@ -138,7 +139,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       console.log("[DEBUG] Cleaning up listeners for unread messages.");
       listeners.forEach((listener) => listener.off());
     };
-  }, [account, chats]);    
+  }, [account, chats, setUnreadChats]);    
   
   useEffect(() => {
     const debounceFetch = setTimeout(() => {

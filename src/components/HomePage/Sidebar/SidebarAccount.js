@@ -123,7 +123,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
           <Skeleton sx={{ bgcolor: '#1c1c1c' }} variant="text" width="100%" />
         ) : (
           <Typography variant="body2" fontWeight="bold">
-            {nickname}
+            {nickname.slice(0, 10)}
           </Typography>
         )}
         <Tooltip title="My Wallet info" sx={{cursor: 'pointer'}}>
