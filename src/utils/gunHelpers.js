@@ -165,7 +165,7 @@ export const handleSaveSettings = (account, settings) => {
 
 // Block a specific address
 export const handleBlockAddress = (account, address, setBlockedAddresses) => {
-    const trimmedAddress = address.trim();
+    const trimmedAddress = address;
     if (!trimmedAddress || trimmedAddress === account) {
       console.warn("Invalid address to block:", address);
       return;
@@ -212,7 +212,7 @@ export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
 
 // Start a new chat
 export const handleStartChat = (account, chatAddress, setChats, setSearchParams, setShowModal) => {
-  const trimmedAddress = chatAddress.trim();
+  const trimmedAddress = chatAddress;
 
   if (account === chatAddress)
   {
@@ -238,7 +238,6 @@ export const handleStartChat = (account, chatAddress, setChats, setSearchParams,
       setSearchParams({ chatwith: trimmedAddress });
       setShowModal(false);
 
-      // Do not add the chat to the receiver's `chats` node here
     }
   });
 };
@@ -371,7 +370,7 @@ export const fetchNickname = (account, setNickname) => {
 }; 
 
 export const saveNicknameToGun = (account, nickname, callback) => {
-    if (account && nickname.trim()) {
+    if (account && nickname) {
       gun.get(account).put({ nickname }, (ack) => {
         callback(ack);
       });

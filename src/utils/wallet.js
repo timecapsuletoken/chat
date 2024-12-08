@@ -38,7 +38,8 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       
         if (accounts && accounts.length > 0) {
           console.log('MetaMask connected:', accounts[0]);
-          setAccount(accounts[0]);
+          const checksumAddress = ethers.utils.getAddress(accounts[0]); // Convert to checksum format
+          setAccount(checksumAddress);
           localStorage.setItem('providerType', providerType);
       
           // Check the current chain and switch to Binance Smart Chain if necessary
