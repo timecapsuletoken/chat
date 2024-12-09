@@ -149,7 +149,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         setChats([]);
         navigate('/login');
         return;
-      }
+      }          
 
       console.log("Initializing chats");
       setLoading(false);

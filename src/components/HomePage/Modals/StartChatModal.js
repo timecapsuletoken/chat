@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { fetchWalletFromNickname } from '../../../utils/gunHelpers';
 import { IoClose } from 'react-icons/io5';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import Button from '@mui/material/Button';
@@ -9,6 +10,8 @@ import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
 
 const StartChatModal = ({
   showModal,
@@ -18,7 +21,29 @@ const StartChatModal = ({
   handleStartChat,
   closeSidebar,
 }) => {
+  const [nickname, setNickname] = useState(''); // State to store the entered nickname
+  const [error, setError] = useState(null); // State to store the error message (if any)
+
   if (!showModal) return null;
+
+  const handleNicknameSearch = () => {
+    if (!nickname.trim()) {
+      setError('Please enter a valid nickname.');
+      return;
+    }
+
+    fetchWalletFromNickname(nickname, (response) => {
+      if (response.wallet) {
+        console.log('Wallet found:', response.wallet);
+        setChatAddress(response.wallet); // Set wallet address in the input field
+        setError(null); // Clear any error message
+      } else {
+        console.error('Failed to fetch wallet:', response.err);
+        setError('No wallet found for this nickname.'); // Set error message
+        setChatAddress(''); // Clear the input if no wallet is found
+      }
+    });
+  };
 
   return (
     <div
@@ -88,6 +113,40 @@ const StartChatModal = ({
               },
             }}          
           />
+          <Divider>
+            <Chip label="or via Nickname" size="medium" />
+          </Divider>
+          <TextField
+          fullWidth
+          id="nickname-field"
+          label="e.g. TCA#123..."
+          variant="outlined"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)} // Update nickname state
+          onBlur={handleNicknameSearch} // Trigger search on blur
+          sx={{
+            mt: 1,
+            '& .MuiOutlinedInput-root': {
+              color: '#fff', // Text color
+              '& fieldset': {
+                borderColor: '#fff', // Default border color
+              },
+              '&:hover fieldset': {
+                borderColor: '#ddd', // Border color on hover
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#fff', // Border color when focused
+              },
+            },
+            '& .MuiInputBase-input': {
+              color: '#fff', // Input text color
+            },
+            '& .MuiInputLabel-root': {
+              color: '#fff', // Placeholder text color
+            },
+          }}
+        />
+        {error && <p style={{ color: 'red', marginTop: 8 }}>{error}</p>}
         </CardContent>
         <CardActions>
           <Button
