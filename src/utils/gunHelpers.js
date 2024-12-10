@@ -348,7 +348,7 @@ export const fetchNickname = (account, setNickname) => {
     if (!data) {
       console.warn(`No nickname found for account: ${account.slice(-4)}`);
 
-      const defaultNickname = `TCA@${account.slice(-3)}`;
+      const defaultNickname = `@${account.slice(-5)}`;
       console.log(`[DEBUG] Saving default nickname: ${defaultNickname}`);
 
       // Save default nickname
@@ -361,7 +361,7 @@ export const fetchNickname = (account, setNickname) => {
 
           // Delay and then save the mapping to ensure synchronization
           setTimeout(() => {
-            saveNicknameToGun(defaultNickname, account, (ack) => {
+            saveNicknameToGun(account, defaultNickname, (ack) => {
               if (ack.err) {
                 console.error(`[ERROR] Failed to save mapping for nickname: "${defaultNickname}"`, ack.err);
               } else {
@@ -380,7 +380,7 @@ export const fetchNickname = (account, setNickname) => {
       console.log(`Resolved nickname for account ${account.slice(-4)}:`, nickname);
       setNickname(nickname);
     } else {
-      const defaultNickname = `TCA@${account.slice(-3)}`;
+      const defaultNickname = `@${account.slice(-5)}`;
       console.log(`[DEBUG] Saving default nickname: ${defaultNickname}`);
 
       gun.get(account).put({ nickname: defaultNickname }, (ack) => {
@@ -391,7 +391,7 @@ export const fetchNickname = (account, setNickname) => {
           setNickname(defaultNickname);
 
           setTimeout(() => {
-            saveNicknameToGun(defaultNickname, account, (ack) => {
+            saveNicknameToGun(account, defaultNickname, (ack) => {
               if (ack.err) {
                 console.error(`[ERROR] Failed to save mapping for nickname: "${defaultNickname}"`, ack.err);
               } else {

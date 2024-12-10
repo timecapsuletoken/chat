@@ -23,24 +23,34 @@ const StartChatModal = ({
 }) => {
   const [nickname, setNickname] = useState(''); // State to store the entered nickname
   const [error, setError] = useState(null); // State to store the error message (if any)
+  const [success, setSuccess] = useState(false); // Explicit success state
 
   if (!showModal) return null;
 
-  const handleNicknameSearch = () => {
+  const onSearchClick = () => {
+    setError(null); // Clear error state before search
+    setSuccess(false); // Reset success state before search
+    handleNicknameSearch(nickname);
+  };
+  
+  const handleNicknameSearch = (nickname) => {
     if (!nickname.trim()) {
       setError('Please enter a valid nickname.');
+      setSuccess(false); // Ensure success is cleared
       return;
     }
-
+  
     fetchWalletFromNickname(nickname, (response) => {
       if (response.wallet) {
         console.log('Wallet found:', response.wallet);
         setChatAddress(response.wallet); // Set wallet address in the input field
         setError(null); // Clear any error message
+        setSuccess(true); // Mark as success
       } else {
         console.error('Failed to fetch wallet:', response.err);
         setError('No wallet found for this nickname.'); // Set error message
         setChatAddress(''); // Clear the input if no wallet is found
+        setSuccess(false); // Clear success if there's an error
       }
     });
   };
@@ -148,9 +158,15 @@ const StartChatModal = ({
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={handleNicknameSearch} // Trigger search on icon click
+                        onClick={onSearchClick} // Trigger search on button click
                         edge="end"
-                        sx={{ color: error ? 'red' : 'green' }}
+                        sx={{
+                          color: error
+                            ? 'red'
+                            : success
+                            ? 'green'
+                            : '#fff', // Neutral color for default state
+                        }}
                       >
                         <Search />
                       </IconButton>
@@ -160,30 +176,52 @@ const StartChatModal = ({
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
-                  color: error ? '#fff' : 'green', // Text color changes on success
+                  color: '#fff', // Default text color
                   '& fieldset': {
-                    borderColor: error ? 'red' : 'green', // Border color changes based on error state
+                    borderColor: error
+                      ? 'red'
+                      : success
+                      ? 'green'
+                      : '#fff', // Default border color
                   },
                   '&:hover fieldset': {
-                    borderColor: error ? 'red' : '#00e676', // A brighter green for hover in success state
+                    borderColor: error
+                      ? 'red'
+                      : success
+                      ? '#00e676'
+                      : '#fff', // Hover border for error or success
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: error ? 'red' : '#00e676', // Focus border matches hover color in success state
+                    borderColor: error
+                      ? 'red'
+                      : success
+                      ? '#00e676'
+                      : '#fff', // Focus border for error or success
                   },
                 },
                 '& .MuiInputBase-input': {
-                  color: error ? '#fff' : '#fff', // Input text color changes for success state
+                  color: '#fff', // Default input text color
                 },
                 '& .MuiInputLabel-root': {
-                  color: error ? 'red' : 'green', // Placeholder text color changes for success state
+                  color: error
+                    ? 'red'
+                    : success
+                    ? 'green'
+                    : '#fff', // Default label color
                 },
               }}
             />
             {error ? (
-              <FormHelperText id="nickname-error-text">{error}</FormHelperText>
-            ) : (
+              <FormHelperText id="nickname-error-text" sx={{ color: 'red' }}>
+                {error}
+              </FormHelperText>
+            ) : success ? (
               <FormHelperText id="nickname-success-text" sx={{ color: 'green' }}>
                 Nickname resolved successfully!
+              </FormHelperText>
+            ) : (
+              <FormHelperText id="nickname-default-text" sx={{ color: '#fff' }}>
+                Enter a nickname to begin.
               </FormHelperText>
             )}
           </FormControl>
