@@ -16,8 +16,9 @@ import { RiBnbLine } from "react-icons/ri";
 import {
   Avatar,
   TextField,
+  Card,
 } from '@mui/material';
-
+import Divider, { dividerClasses } from '@mui/material/Divider';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
 
@@ -30,7 +31,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => {
+const ChatPage = ({ account, findNick, toggleBlockedModal, deleteChat, formatNumber }) => {
   const [messages, setMessages] = useState([]); // All chat messages
   const [message, setMessage] = useState(''); // Current input message
   
@@ -319,7 +320,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
         e.preventDefault(); // Prevent default behavior
         setMessage((prevMessage) => `${prevMessage}\n`); // Add a new line
       }
-    };    
+    }; 
     
     const adjustHeight = (e) => {
       const element = e.target;
@@ -338,9 +339,38 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
             ref={avatarRef}
           />
           <p className="chat-address">
-            {chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}
+            {findNick}
             <br /> 
-            <span className="status">{isAddressBlocked === true ? `Address is Blocked` : 'Ready to Talk'}</span>
+            <Card
+              variant="outlined"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                border: '0',
+                backgroundColor: 'transparent',
+                color: 'white',
+                '& svg': {
+                  m: 1,
+                },
+                [`& .${dividerClasses.root}`]: {
+                  mx: 0.5,
+                },
+              }}
+            >
+              <span>{chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}</span>
+              <Divider
+                orientation="vertical"
+                variant="middle"
+                flexItem
+                sx={{
+                  borderColor: '#1c1c1c', // Set the color of the divider
+                  borderWidth: '1px', // Adjust the thickness
+                  height: '10px', // Explicit height for the vertical divider
+                  mx: 1, // Add some spacing between elements
+                }}
+              />
+              <span className="status">{isAddressBlocked === true ? `Address is Blocked` : 'Ready to Talk'}</span>
+            </Card>
           </p>
         </div>
         <ChatOptionsMenu

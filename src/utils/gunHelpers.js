@@ -495,6 +495,31 @@ export const fetchWalletFromNickname = (nickname, callback) => {
     }
   });
 };  
+
+export const fetchNicknameFromWallet = (wallet) => {
+  return new Promise((resolve, reject) => {
+    if (!wallet) {
+      console.warn("Wallet address is required to fetch nickname.");
+      reject("Invalid parameters");
+      return;
+    }
+
+    console.log(`[DEBUG] Fetching nickname for wallet: "${wallet}"`);
+
+    const walletNode = gun.get(wallet).get('nickname');
+
+    walletNode.once((data) => {
+      if (!data) {
+        console.warn(`[DEBUG] No nickname found for wallet: "${wallet}"`);
+        reject("No nickname found");
+      } else {
+        const nickname = data[''] || data; // Handle flat or structured data
+        console.log(`[DEBUG] Nickname for wallet "${wallet}": ${nickname}`);
+        resolve(nickname);
+      }
+    });
+  });
+};
   
   export const deleteMessage = (account, chatAddress, messageId) => {
     gun.get(account)

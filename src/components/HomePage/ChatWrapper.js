@@ -7,6 +7,7 @@ const ChatWrapper = ({
   toggleBlockedModal,
   deleteChat,
   openWalletModal,
+  findNick,
   setChatAddress,
   formatNumber,
 }) => {
@@ -16,6 +17,7 @@ const ChatWrapper = ({
       toggleBlockedModal={toggleBlockedModal}
       deleteChat={deleteChat}
       openWalletModal={openWalletModal}
+      findNick={findNick}
       setChatAddress={setChatAddress}
       formatNumber={formatNumber}
     />
@@ -27,6 +29,7 @@ ChatWrapper.propTypes = {
   toggleBlockedModal: PropTypes.func.isRequired,
   deleteChat: PropTypes.func.isRequired,
   openWalletModal: PropTypes.func.isRequired,
+  findNick: PropTypes.string.isRequired,
   setChatAddress: PropTypes.func.isRequired,
   formatNumber: PropTypes.func.isRequired,
 };
