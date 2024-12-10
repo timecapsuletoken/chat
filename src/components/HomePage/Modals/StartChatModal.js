@@ -8,8 +8,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
+import { TextField, InputAdornment, IconButton, FormControl, FormHelperText } from '@mui/material';
+import { Search } from '@mui/icons-material';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 
@@ -113,40 +113,80 @@ const StartChatModal = ({
               },
             }}          
           />
-          <Divider>
-            <Chip label="or via Nickname" size="medium" />
+          <Divider
+            sx={{
+              my: 2, // Adds vertical margin (top and bottom) to the Divider
+              '&::before, &::after': {
+                borderColor: '#fff',
+              },
+            }}
+          >
+            <Chip
+              label="Find via Nickname"
+              size="medium"
+              sx={{
+                color: '#fff', // Text color
+                backgroundColor: 'transparent', // Transparent background for the chip
+                border: '1px solid #fff', // Optional border for the chip
+              }}
+            />
           </Divider>
-          <TextField
-          fullWidth
-          id="nickname-field"
-          label="e.g. TCA#123..."
-          variant="outlined"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)} // Update nickname state
-          onBlur={handleNicknameSearch} // Trigger search on blur
-          sx={{
-            mt: 1,
-            '& .MuiOutlinedInput-root': {
-              color: '#fff', // Text color
-              '& fieldset': {
-                borderColor: '#fff', // Default border color
-              },
-              '&:hover fieldset': {
-                borderColor: '#ddd', // Border color on hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#fff', // Border color when focused
-              },
-            },
-            '& .MuiInputBase-input': {
-              color: '#fff', // Input text color
-            },
-            '& .MuiInputLabel-root': {
-              color: '#fff', // Placeholder text color
-            },
-          }}
-        />
-        {error && <p style={{ color: 'red', marginTop: 8 }}>{error}</p>}
+          <FormControl
+            fullWidth
+            variant="outlined"
+            error={Boolean(error)} // Set error state based on the error message
+            sx={{ mt: 1 }}
+          >
+            <TextField
+              id="nickname-field"
+              label="e.g. TCA#123..."
+              variant="outlined"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)} // Update nickname state
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleNicknameSearch} // Trigger search on icon click
+                        edge="end"
+                        sx={{ color: error ? 'red' : 'green' }}
+                      >
+                        <Search />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: error ? '#fff' : 'green', // Text color changes on success
+                  '& fieldset': {
+                    borderColor: error ? 'red' : 'green', // Border color changes based on error state
+                  },
+                  '&:hover fieldset': {
+                    borderColor: error ? 'red' : '#00e676', // A brighter green for hover in success state
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: error ? 'red' : '#00e676', // Focus border matches hover color in success state
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  color: error ? '#fff' : '#fff', // Input text color changes for success state
+                },
+                '& .MuiInputLabel-root': {
+                  color: error ? 'red' : 'green', // Placeholder text color changes for success state
+                },
+              }}
+            />
+            {error ? (
+              <FormHelperText id="nickname-error-text">{error}</FormHelperText>
+            ) : (
+              <FormHelperText id="nickname-success-text" sx={{ color: 'green' }}>
+                Nickname resolved successfully!
+              </FormHelperText>
+            )}
+          </FormControl>
         </CardContent>
         <CardActions>
           <Button
