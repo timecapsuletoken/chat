@@ -348,7 +348,7 @@ export const fetchNickname = (account, setNickname) => {
     if (!data) {
       console.warn(`No nickname found for account: ${account.slice(-4)}`);
 
-      const defaultNickname = `@${account.slice(-5)}`;
+      const defaultNickname = `TCA@${account.slice(-4)}`;
       console.log(`[DEBUG] Saving default nickname: ${defaultNickname}`);
 
       // Save default nickname
@@ -380,7 +380,7 @@ export const fetchNickname = (account, setNickname) => {
       console.log(`Resolved nickname for account ${account.slice(-4)}:`, nickname);
       setNickname(nickname);
     } else {
-      const defaultNickname = `@${account.slice(-5)}`;
+      const defaultNickname = `TCA@${account.slice(-4)}`;
       console.log(`[DEBUG] Saving default nickname: ${defaultNickname}`);
 
       gun.get(account).put({ nickname: defaultNickname }, (ack) => {
