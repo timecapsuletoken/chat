@@ -8,7 +8,6 @@ import {
   fetchSettings,
   fetchNickname,
   //hasUnreadMessages,
-  fetchNicknameFromWallet,
   handleSaveSettings,
   handleStartChat,
   handleDeleteChat,
@@ -66,7 +65,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const [desktopNotificationsEnabled, setDesktopNotificationsEnabled] = useState(false);
   const [blockedAddresses, setBlockedAddresses] = useState([]);
 
-  const [findNick, setfindNick] = useState('Fetching...');
   const [nickname, setNickname] = useState(''); // State to hold the nickname
   const [loading, setLoading] = useState(true); // Initial loading state is true
 
@@ -170,12 +168,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
 
     return () => clearTimeout(debounceFetch); // Clear timeout on unmount
   }, [account, navigate, fetchSettingsData]);  
-
-  useEffect(() => {
-    if (chatAddress || currentChat) {
-      findNickname(currentChat);
-    }
-  }, [chatAddress, currentChat, findNick]);  
   
   const saveSettings = () => {
     const settings = {
@@ -185,16 +177,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       blockedAddresses,
     };
     handleSaveSettings(account, settings);
-  };
-
-  const findNickname = async (wallet) => {
-    try {
-      const fetchedNickname = await fetchNicknameFromWallet(wallet);
-      setfindNick(fetchedNickname);
-    } catch (err) {
-      console.error("Error fetching nickname:", err);
-      setfindNick('No nickname found');
-    }
   };
 
   const toggleBlockedModal = () => {
@@ -330,7 +312,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         chats={chats}
         setChats={setChats}
         unreadChats={unreadChats}
-        findNick={findNick}
         nickname={nickname}
         setNickname={setNickname}
         loading={loading}
@@ -406,7 +387,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
             deleteChat={deleteChat}
             openWalletModal={openWalletModal}
             setChatAddress={setChatAddress}
-            findNick={findNick}
             formatNumber={formatNumber}
           />
         ) : (

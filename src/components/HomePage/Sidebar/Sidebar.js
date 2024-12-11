@@ -43,7 +43,6 @@ const Sidebar = ({
   chats,
   setChats,
   unreadChats,
-  findNick,
   nickname,
   setNickname,
   loading,
@@ -66,7 +65,6 @@ const Sidebar = ({
   
   const [isLoading, setIsLoading] = useState(true);
   const sidebarRef = useRef(null);
-  const [findnicknames, setfindnicknames] = useState({}); // State to store nicknames for each address
 
   useEffect(() => {
     // Simulate a loading delay for demo purposes
@@ -91,24 +89,6 @@ const Sidebar = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closetoggleSidebar]);
-
-  useEffect(() => {
-    // Fetch nicknames for all chats
-    const fetchAllNicknames = async () => {
-      const nicknamesMap = {};
-      for (const address of chats) {
-        try {
-          const nickname = await findNick(address);
-          nicknamesMap[address] = nickname;
-        } catch {
-          nicknamesMap[address] = null; // Handle missing nicknames
-        }
-      }
-      setfindnicknames(nicknamesMap);
-    };
-
-    fetchAllNicknames();
-  }, [chats, findNick]);
 
   return (
     <div ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
@@ -228,9 +208,7 @@ const Sidebar = ({
               <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
               <Tooltip title={address}>
                 <p className="chat-address-sidebar">
-                  {findnicknames[address] !== undefined
-                    ? findnicknames[address] || `${address.slice(0, 6)}...${address.slice(-4)}`
-                    : 'Loading...'}
+                  {address.slice(0, 6)}...{address.slice(-4)}
                 </p>
               </Tooltip>
               <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
@@ -271,7 +249,6 @@ Sidebar.propTypes = {
   chats: PropTypes.array.isRequired,
   setChats: PropTypes.func.isRequired,
   unreadChats: PropTypes.instanceOf(Set).isRequired,
-  findNick: PropTypes.string.isRequired,
   nickname: PropTypes.string,
   setNickname: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,

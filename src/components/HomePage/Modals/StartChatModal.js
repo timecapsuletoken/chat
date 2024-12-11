@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { fetchWalletFromNickname } from '../../../utils/gunHelpers';
+
+// Icon imports
 import { IoClose } from 'react-icons/io5';
 import { LuMessageSquarePlus } from 'react-icons/lu';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Typography from '@mui/material/Typography';
-import { TextField, InputAdornment, IconButton, FormControl, FormHelperText } from '@mui/material';
 import { Search } from '@mui/icons-material';
-import Divider from '@mui/material/Divider';
-import Chip from '@mui/material/Chip';
+
+// Material-UI imports
+import {
+  Button,
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  TextField,
+  InputAdornment,
+  IconButton,
+  FormControl,
+  FormHelperText,
+  Divider,
+  Chip,
+} from '@mui/material';
 
 const StartChatModal = ({
   showModal,
@@ -21,6 +31,7 @@ const StartChatModal = ({
   handleStartChat,
   closeSidebar,
 }) => {
+
   const [nickname, setNickname] = useState(''); // State to store the entered nickname
   const [error, setError] = useState(null); // State to store the error message (if any)
   const [success, setSuccess] = useState(false); // Explicit success state
@@ -32,7 +43,7 @@ const StartChatModal = ({
     setSuccess(false); // Reset success state before search
     handleNicknameSearch(nickname);
   };
-  
+    
   const handleNicknameSearch = (nickname) => {
     if (!nickname.trim()) {
       setError('Please enter a valid nickname.');
@@ -132,7 +143,7 @@ const StartChatModal = ({
             }}
           >
             <Chip
-              label="Find via Nickname"
+              label="Find Wallet via Nickname"
               size="medium"
               sx={{
                 color: '#fff', // Text color
@@ -149,7 +160,7 @@ const StartChatModal = ({
           >
             <TextField
               id="nickname-field"
-              label="e.g. TCA#123..."
+              label="e.g. 0a1B2..."
               variant="outlined"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)} // Update nickname state
@@ -213,7 +224,7 @@ const StartChatModal = ({
             />
             {error ? (
               <FormHelperText id="nickname-error-text" sx={{ color: 'red' }}>
-                {error}
+                Try Again - {error}
               </FormHelperText>
             ) : success ? (
               <FormHelperText id="nickname-success-text" sx={{ color: 'green' }}>
