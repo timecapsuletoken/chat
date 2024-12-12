@@ -11,7 +11,8 @@ const server = app.listen(port, () => {
 });
 
 // Initialize Gun with the server
-const gun = Gun({ web: server });
-
-// File-based persistence (default)
-// Data will be stored in ./radata directory
+const gun = Gun({
+  web: server,
+  radisk: true, // File-based persistence
+  localStorage: false, // Disable browser localStorage if Fly.io doesn't support shared storage
+});
