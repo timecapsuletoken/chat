@@ -1,23 +1,28 @@
-app = "gun-relay-server"
-kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
+app = "gun-relay"
+
+[build]
+builder = "heroku/buildpacks:20"
 
 [env]
 PORT = "8765"
+USE_HTTPS = "false" # Change to "true" if using HTTPS
+PEERS = ""          # Add peer URLs if needed
 
 [[services]]
-  internal_port = 8765
-  protocol = "tcp"
+internal_port = 8765
+protocol = "tcp"
 
   [services.concurrency]
     hard_limit = 25
     soft_limit = 20
 
   [[services.ports]]
-    handlers = ["http"]
-    port = 80
-
+    port = 80    # HTTP port
   [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
+    port = 443   # HTTPS port
+
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "1m"
+    restart_limit = 0

@@ -1,18 +1,30 @@
-const Gun = require('gun');
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 8765;
+import Gun from 'gun';
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
+import express from 'express';
 
-// Serve Gun.js assets
+// Use Express as the web server
+const app = express();
 app.use(Gun.serve);
 
-const server = app.listen(port, () => {
-  console.log(`Gun relay server running at ${port}`);
+const port = process.env.PORT || 8765; // Default Fly.io internal port
+
+// Determine whether to use HTTPS or HTTP
+const server = process.env.USE_HTTPS === 'true'
+  ? https.createServer(
+      {
+        key: fs.readFileSync(process.env.SSL_KEY_PATH || './certs/key.pem'), // Ensure cert paths
+        cert: fs.readFileSync(process.env.SSL_CERT_PATH || './certs/cert.pem'),
+      },
+      app
+    )
+  : http.createServer(app);
+
+const gun = Gun({ web: server, peers: (process.env.PEERS || '').split(',') });
+
+server.listen(port, () => {
+  console.log(`Gun relay server running on port ${port}`);
 });
 
-// Initialize Gun with the server
-Gun({
-  web: server,
-  radisk: true, // File-based persistence
-  localStorage: false, // Disable browser localStorage if Fly.io doesn't support shared storage
-});
+export default gun;
