@@ -1,16 +1,18 @@
 {
-  "name": "gun-relay",
+  "name": "gun-private-relay",
   "version": "1.0.0",
-  "description": "Gun.js private relay server",
+  "description": "A private Gun.js relay with radisk for P2P connections",
   "main": "gunRelayServer.js",
   "scripts": {
     "start": "node gunRelayServer.js"
   },
   "dependencies": {
     "gun": "^0.2020.1240",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "cors": "^2.8.5"
   },
   "engines": {
-    "node": ">=16.x"
-  }
+    "node": ">=14.x"
+  },
+  "license": "MIT"
 }
