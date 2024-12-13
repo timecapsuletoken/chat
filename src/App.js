@@ -50,7 +50,7 @@ function App() {
                     symbol: 'BNB',
                     decimals: 18,
                   },
-                  rpcUrls: [`https://bsc-dataseed.binance.org/?_=${Date.now()}`],
+                  rpcUrls: ['https://bsc-dataseed.binance.org/'],
                   blockExplorerUrls: ['https://bscscan.com'],
                 },
               ],

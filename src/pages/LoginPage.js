@@ -13,11 +13,8 @@ const LoginPage = ({ connectWallet, account }) => {
   useEffect(() => {
     if (account) {
       localStorage.setItem('connectedAccount', account);
-      const savedProvider = localStorage.getItem('providerType');
-      console.log('LoginPage Provider:', savedProvider);
-      
-
-      navigate('/home'); // Redirect to /home when account is connected
+      localStorage.getItem('providerType');      
+      navigate('/home');
     }
   }, [account, navigate]);
 

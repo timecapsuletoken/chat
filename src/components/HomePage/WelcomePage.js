@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Typewriter } from 'react-simple-typewriter';
+import { Player } from '@lottiefiles/react-lottie-player';
+import messagesicons from '../../assets/animations/messagesicons.json';
 import Button from '@mui/material/Button';
 import ChatIcon from '@mui/icons-material/Chat';
 
@@ -8,6 +10,22 @@ const WelcomePage = ({ handleOpenModal }) => {
   return (
     <>
       <div className="welcome-card-wrapper">
+
+        <div className="background-decorations">
+          <div className="decorative-circle one">TCA</div>
+          <div className="decorative-circle two">dApp</div>
+          <div className="decorative-triangle one">Chat</div>
+          <div className="decorative-triangle two"></div>
+        </div>
+
+        <div className="welcome-card-icons">
+          <Player 
+            src={messagesicons} 
+            loop
+            autoplay
+            className="welcome-card-icon"
+          />
+      </div>
         <div className="welcome-card">
           <h2 style={{ textAlign: 'center' }}>
             Welcome to <br />

@@ -70,7 +70,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       });
 
       const coinbaseProvider = coinbaseWallet.makeWeb3Provider(
-        `https://bsc-dataseed.binance.org/?_=${Date.now()}`, // Binance Smart Chain
+        'https://bsc-dataseed.binance.org/', // Binance Smart Chain
         56
       );
 
@@ -146,7 +146,7 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
       });
 
       const coinbaseProvider = coinbaseWallet.makeWeb3Provider(
-        `https://bsc-dataseed.binance.org/?_=${Date.now()}`, // Binance Smart Chain
+        'https://bsc-dataseed.binance.org/', // Binance Smart Chain
         56
       );
 

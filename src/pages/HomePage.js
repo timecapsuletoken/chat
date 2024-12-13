@@ -7,7 +7,6 @@ import {
   fetchChats,
   fetchSettings,
   fetchNickname,
-  //hasUnreadMessages,
   handleSaveSettings,
   handleStartChat,
   handleDeleteChat,

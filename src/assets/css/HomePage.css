@@ -760,7 +760,6 @@
     box-sizing: border-box; /* Include padding and border in width/height */
   }
   
-  .welcome-card,
   .important-card {
     width: 80%;
     max-width: 600px;
@@ -777,14 +776,181 @@
   }
 
   .welcome-card-wrapper {
+    position: relative;
     display: inline-flex;
     flex-direction: column;
     align-content: center;
     justify-content: center;
     align-items: center;
+    width: 100%;
     height: 100%;
     gap: 20px;
   }
+
+  .welcome-card {
+    width: 80%;
+    max-width: 600px;
+    background-color: #4d4d4d;
+    border: solid 1px #333;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 18%);
+    position: relative; /* Ensure this card can have positioned pseudo-elements */
+    z-index: 10; /* Keep it above the decorative elements */
+    overflow: hidden; /* Prevent shapes from overflowing */
+}
+
+  .welcome-card-icon {
+    width: 100px;
+    height: 100px;
+  }
+
+  /* Decorative elements */
+.welcome-card::before, .welcome-card::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%; /* Makes it circular */
+  z-index: 0; /* Place below the content */
+  opacity: 0.5; /* Semi-transparent for effect */
+  pointer-events: none; /* Prevent interaction */
+}
+
+.welcome-card::before {
+  width: 120px;
+  height: 120px;
+  background: #20d0e3;
+  top: -40px;
+  left: -40px;
+  animation: float 6s infinite ease-in-out;
+}
+
+.welcome-card::after {
+  width: 80px;
+  height: 80px;
+  background: #ce00fc;
+  bottom: -30px;
+  right: -30px;
+  animation: float-reverse 6s infinite ease-in-out;
+}
+
+/* Animation for floating effect */
+@keyframes float {
+  0%, 100% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(-15px);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(15px);
+  }
+}
+
+/* Container for decorative elements */
+.background-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Prevent overflow outside the screen */
+  z-index: 0; /* Ensure it is behind the content */
+  pointer-events: none; /* Avoid interaction with elements */
+}
+
+/* External decorative elements */
+.decorative-circle, .decorative-triangle {
+  position: absolute;
+  z-index: 1;
+  opacity: 0.6;
+  animation: spin 10s linear infinite, floatAround 15s ease-in-out infinite;
+  pointer-events: none;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Circular decoration */
+.decorative-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.1);
+}
+
+.decorative-circle.one {
+  top: 20px;
+  left: 160px;
+  animation-duration: 8s, 15s;
+  background-color: #39cecf;
+  box-shadow: 0 0 20px 10px rgb(54 144 144 / 38%);
+}
+
+.decorative-circle.two {
+  bottom: 50px;
+  right: 70px;
+  animation-duration: 12s, 18s;
+}
+
+/* Triangular decoration */
+.decorative-triangle {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 80px solid rgba(255, 165, 0, 0.3);
+}
+
+.decorative-triangle.one {
+  top: -30px;
+  right: 20%;
+  animation-duration: 15s, 20s;
+}
+
+.decorative-triangle.two {
+  bottom: -40px;
+  left: 25%;
+  animation-duration: 10s, 12s;
+  border-bottom: 80px solid rgb(141 38 164 / 30%);
+}
+
+/* Spin animation for subtle rotation */
+@keyframes spin {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+/* Floating animation to move the elements around */
+@keyframes floatAround {
+  0% {
+      transform: translate(0, 0);
+  }
+  25% {
+      transform: translate(-20px, 15px);
+  }
+  50% {
+      transform: translate(20px, -10px);
+  }
+  75% {
+      transform: translate(-15px, -20px);
+  }
+  100% {
+      transform: translate(0, 0);
+  }
+}
   
   .logo-text {
     font-weight: bold;
