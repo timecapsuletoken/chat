@@ -15,6 +15,8 @@ import {
   handleUnblockAddress,
 } from '../utils/gunHelpers';
 
+import Snackbar from '../utils/Snackbar';
+
 import AboutModal from '../components/HomePage/Modals/AboutModal';
 import HelpModal from '../components/HomePage/Modals/HelpModal';
 import Sidebar from '../components/HomePage/Sidebar/Sidebar';
@@ -66,6 +68,10 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
 
   const [nickname, setNickname] = useState(''); // State to hold the nickname
   const [loading, setLoading] = useState(true); // Initial loading state is true
+
+  const showSnackBar = (message, severity) => {
+    Snackbar.handleShowSnackBar(message, severity);
+  };
 
   const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
 
@@ -278,6 +284,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
 
   const startChat = () => {
     handleStartChat(account, chatAddress, setChats, setSearchParams, setShowModal);
+    showSnackBar('Success, Chat Created!', 'success');
   };
 
   const deleteChat = (chatToDelete) => {

@@ -14,7 +14,7 @@ const WelcomePage = ({ handleOpenModal }) => {
         <div className="background-decorations">
           <div className="decorative-circle one">TCA</div>
           <div className="decorative-circle two">dApp</div>
-          <div className="decorative-triangle one">Chat</div>
+          <div className="decorative-triangle one"></div>
           <div className="decorative-triangle two"></div>
         </div>
 
