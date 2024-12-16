@@ -399,41 +399,51 @@ export const fetchNickname = (account, setNickname) => {
   };
 };
 
-export const findNickAvailability = async (account, nickname) => {
+export const hasUserSavedNickname = async (account) => {
   if (!account) {
-    console.warn("[WARN] Account is required to check nickname availability.");
-    return { disabled: true, available: false };
+    console.warn("[WARN] Account is required to check if the user has saved a nickname.");
+    return true; // Default to disabling input if no account is provided
   }
 
-  console.log(`[DEBUG] Checking nickname availability for: "${nickname}" and account: "${account}"`);
+  console.log(`[DEBUG] Checking if user has already saved a custom nickname for account: "${account}"`);
 
-  const nicknamesNode = gun.get('findWallet');
   const accountNode = gun.get(account);
 
   return new Promise((resolve) => {
-    // Step 1: Check if the user has already saved a custom nickname
     accountNode.get('nickname').once((data) => {
-      const currentNickname = data?.nickname;
+      const currentNickname = data;
       const defaultNickname = account.slice(-5);
 
       if (currentNickname && currentNickname !== defaultNickname) {
-        console.warn("[WARN] User has already saved a custom nickname. Disabling input.");
-        resolve({ disabled: true, available: false });
-        return;
+        console.warn("[WARN] User has already saved a custom nickname.");
+        resolve(true); // User has already saved a nickname
+      } else {
+        console.log("[DEBUG] User has not saved a custom nickname yet.");
+        resolve(false); // User has not saved a nickname
       }
+    });
+  });
+};
 
-      console.log("[DEBUG] User has not saved a custom nickname. Proceeding to check availability.");
+export const isNicknameAvailable = async (nickname) => {
+  if (!nickname) {
+    console.warn("[WARN] Nickname is required to check availability.");
+    return false; // Default to not available if no nickname is provided
+  }
 
-      // Step 2: Check if the requested nickname is available
-      nicknamesNode.get(nickname).once((data) => {
-        if (data && data.wallet) {
-          console.warn(`[WARN] Nickname "${nickname}" is already taken.`);
-          resolve({ disabled: false, available: false });
-        } else {
-          console.log(`[DEBUG] Nickname "${nickname}" is available.`);
-          resolve({ disabled: false, available: true });
-        }
-      });
+  console.log(`[DEBUG] Checking nickname availability for: "${nickname}"`);
+
+  const nicknamesNode = gun.get('findWallet');
+
+  return new Promise((resolve) => {
+    nicknamesNode.get(nickname).once((data) => {
+      if (data && data.wallet) {
+        console.warn(`[WARN] Nickname "${nickname}" is already taken.`);
+        resolve(false); // Nickname is not available
+      } else {
+        console.log(`[DEBUG] Nickname "${nickname}" is available.`);
+        resolve(true); // Nickname is available
+      }
     });
   });
 };
