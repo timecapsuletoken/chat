@@ -45,6 +45,7 @@ const Sidebar = ({
   unreadChats,
   nickname,
   setNickname,
+  showSnackBar,
   loading,
   isHovered,
   toggleSidebar,
@@ -106,6 +107,7 @@ const Sidebar = ({
           providerType={providerType}
           nickname={nickname}
           setNickname={setNickname}
+          showSnackBar={showSnackBar}
           loading={loading}   
           gun={gun}
           openWalletModal={openWalletModal}
@@ -251,6 +253,7 @@ Sidebar.propTypes = {
   unreadChats: PropTypes.instanceOf(Set).isRequired,
   nickname: PropTypes.string,
   setNickname: PropTypes.func.isRequired,
+  showSnackBar: PropTypes.func.isRequired, 
   loading: PropTypes.bool.isRequired,
   isHovered: PropTypes.bool.isRequired,
   closetoggleSidebar: PropTypes.func.isRequired,

@@ -36,10 +36,10 @@ import {
   ExitToApp as ExitToAppIcon,
 } from '@mui/icons-material';
 import { generateJazzicon } from '../../../utils/jazzAvatar';
-import { saveNicknameToGun } from '../../../utils/gunHelpers';
+import { findNickAvailability, saveNicknameToGun } from '../../../utils/gunHelpers';
 import { switchWallet } from '../../../utils/wallet';
 
-const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, setNickname, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
+const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, setNickname, showSnackBar, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const menuOpen = Boolean(menuAnchorEl);
   const [loading, setLoading] = useState(true);
@@ -47,6 +47,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
   // Nickname Functionalities
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');
+  const [disabled, setDisabled] = useState(false); // State for button disabled status
 
   // Session Information
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
@@ -85,6 +86,15 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
     setBrowserInfo(navigator.userAgent);
   }, [account, nickname]);  
 
+  useEffect(() => {
+    const checkIfNicknameIsSaved = async () => {
+      const { disabled } = await findNickAvailability(account, newNickname); // Call the function
+      setDisabled(disabled); // Update the state
+    };
+  
+    checkIfNicknameIsSaved();
+  }, [account, newNickname]);
+
   // Session Information Modal Logic
   const handleCloseSessionModal = () => setIsSessionModalOpen(false);
   const handleOpenSessionModal = () => setIsSessionModalOpen(true);
@@ -95,12 +105,27 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
   };
 
   // Save nickname to Gun
-  const saveNickname = () => {
+  const saveNickname = async () => {
+
+    const { disabled, available } = await findNickAvailability(account, newNickname);
+
+    if (disabled) {
+      showSnackBar('You have already saved a custom nickname. The input is disabled.', 'error');
+      return;
+    }
+  
+    if (!available) {
+      showSnackBar('Nickname is already taken. Please choose another one.', 'error');
+      return;
+    }
+
     saveNicknameToGun(account, newNickname, (ack) => {
       if (ack.err) {
         console.error('Failed to save nickname:', ack.err);
+        showSnackBar('Failed to save nickname','error');
       } else {
         console.log('Nickname saved successfully:', newNickname);
+        showSnackBar(`${account.slice(-5)} Nickname saved as: ${newNickname}`,'success');
         setNewNickname(''); // Clear the input field
         setNickname(newNickname); // Update local nickname state
         setIsNicknameModalOpen(false); // Close modal
@@ -289,7 +314,13 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center' }}>
           <Button variant="outlined" fullWidth onClick={() => setIsNicknameModalOpen(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" fullWidth onClick={saveNickname}>
+          <Button 
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={!disabled ? saveNickname : null}
+            disabled={disabled}
+          >
             Save
           </Button>
         </DialogActions>

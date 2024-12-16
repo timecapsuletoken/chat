@@ -112,11 +112,16 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     }
   
     const unreadSet = new Set();
-    const listeners = [];
+    const activeListeners = new Map(); // Track active listeners
   
     console.log("[DEBUG] Setting up real-time unread messages monitoring.");
   
     for (const chatAddress of chats) {
+      if (activeListeners.has(chatAddress)) {
+        console.log(`[DEBUG] Listener already exists for chat: ${chatAddress}`);
+        continue;
+      }
+  
       const receiverNode = gun.get(`chats/${account}/messages/${chatAddress}`);
       console.log(`[DEBUG] Listening to messages for chat: ${chatAddress}`);
   
@@ -126,25 +131,30 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         console.log(`[DEBUG] Processing message ID: ${id} for chatAddress: ${chatAddress}`, message);
   
         if (message.status === 'unread') {
-          console.log(`[DEBUG] Adding chat with unread messages: ${chatAddress}`);
-          unreadSet.add(chatAddress);
+          if (!unreadSet.has(chatAddress)) {
+            console.log(`[DEBUG] Adding chat with unread messages: ${chatAddress}`);
+            unreadSet.add(chatAddress);
+            setUnreadChats(new Set([...unreadSet]));
+          }
         } else if (message.status === 'read' && unreadSet.has(chatAddress)) {
           console.log(`[DEBUG] Removing chat with read messages: ${chatAddress}`);
           unreadSet.delete(chatAddress);
+          setUnreadChats(new Set([...unreadSet]));
         }
-  
-        setUnreadChats(new Set([...unreadSet]));
-        console.log("[DEBUG] Updated unreadChats in HomePage:", Array.from(unreadSet));
       });
   
-      listeners.push(listener);
+      activeListeners.set(chatAddress, listener);
     }
   
     return () => {
       console.log("[DEBUG] Cleaning up listeners for unread messages.");
-      listeners.forEach((listener) => listener.off());
+      activeListeners.forEach((listener, chatAddress) => {
+        console.log(`[DEBUG] Cleaning up listener for chat: ${chatAddress}`);
+        listener.off();
+      });
+      activeListeners.clear();
     };
-  }, [account, chats, setUnreadChats]);    
+  }, [account, chats, setUnreadChats]);   
   
   useEffect(() => {
     const debounceFetch = setTimeout(() => {
@@ -176,13 +186,14 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   
   const saveSettings = () => {
     const settings = {
-      notificationsEnabled,
-      soundAlertsEnabled,
-      desktopNotificationsEnabled,
-      blockedAddresses,
+      notificationsEnabled: notificationsEnabled || false,
+      soundAlertsEnabled: soundAlertsEnabled || false,
+      desktopNotificationsEnabled: desktopNotificationsEnabled || false,
+      blockedAddresses: blockedAddresses || [], // Default to an empty array if undefined
     };
-    handleSaveSettings(account, settings);
-  };
+  
+    handleSaveSettings(account, settings, showSnackBar);
+  };  
 
   const toggleBlockedModal = () => {
     console.log("Blocked addresses before saving:", blockedAddresses);
@@ -283,12 +294,11 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   };
 
   const startChat = () => {
-    handleStartChat(account, chatAddress, setChats, setSearchParams, setShowModal);
-    showSnackBar('Success, Chat Created!', 'success');
+    handleStartChat(account, chatAddress, setChats, setSearchParams, setShowModal, showSnackBar);
   };
 
   const deleteChat = (chatToDelete) => {
-    handleDeleteChat(account, chatToDelete, setChats);
+    handleDeleteChat(account, chatToDelete, setChats, showSnackBar);
     navigate('/home');
   };
 
@@ -297,11 +307,11 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   };
 
   const blockAddress = (address) => {
-    handleBlockAddress(account, address, setBlockedAddresses);
+    handleBlockAddress(account, address, setBlockedAddresses, showSnackBar);
   };
 
   const unblockAddress = (address) => {
-    handleUnblockAddress(account, address, setBlockedAddresses);
+    handleUnblockAddress(account, address, setBlockedAddresses, showSnackBar);
   };
 
   return (
@@ -321,6 +331,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         nickname={nickname}
         setNickname={setNickname}
         loading={loading}
+        showSnackBar={showSnackBar}
         isHovered={isHovered}
         toggleSidebar={toggleSidebar}
         closetoggleSidebar={closetoggleSidebar}

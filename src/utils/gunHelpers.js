@@ -136,7 +136,7 @@ export const fetchSettings = async (account, setSettings) => {
 };  
 
 // Save user settings
-export const handleSaveSettings = (account, settings) => {
+export const handleSaveSettings = (account, settings, showSnackBar) => {
     if (!account) {
       console.error("No account provided for saving settings.");
       return;
@@ -158,17 +158,20 @@ export const handleSaveSettings = (account, settings) => {
     gun.get(account).put(transformedSettings, (ack) => {
       if (ack.err) {
         console.error("Failed to save settings:", ack.err);
+        showSnackBar && showSnackBar('Failed to save settings','error');
       } else {
         console.log("Settings saved successfully:", transformedSettings);
+        showSnackBar && showSnackBar('Settings saved successfully','success');
       }
     });
 };  
 
 // Block a specific address
-export const handleBlockAddress = (account, address, setBlockedAddresses) => {
+export const handleBlockAddress = (account, address, setBlockedAddresses, showSnackBar) => {
     const trimmedAddress = address;
     if (!trimmedAddress || trimmedAddress === account) {
       console.warn("Invalid address to block:", address);
+      showSnackBar && showSnackBar('Invalid address', 'error');
       return;
     }
   
@@ -178,8 +181,10 @@ export const handleBlockAddress = (account, address, setBlockedAddresses) => {
     gun.get(account).get('blockedAddresses').get(trimmedAddress).put(true, (ack) => {
       if (ack.err) {
         console.error("Failed to block address:", ack.err);
+        showSnackBar && showSnackBar('Failed to block address', 'error');
       } else {
         console.log("Blocked address saved successfully:", trimmedAddress);
+        showSnackBar && showSnackBar(`Address ${trimmedAddress.slice(-5)} has been Blocked`, 'success');
         setBlockedAddresses((prev) =>
           Array.isArray(prev) ? [...prev, trimmedAddress] : [trimmedAddress]
         );
@@ -188,9 +193,10 @@ export const handleBlockAddress = (account, address, setBlockedAddresses) => {
 };    
 
 // Unblock a specific address
-export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
+export const handleUnblockAddress = (account, address, setBlockedAddresses, showSnackBar) => {
     if (!account || !address) {
       console.error("Invalid account or address provided for unblocking.");
+      showSnackBar && showSnackBar('Invalid account or address provided for unblocking','error');
       return;
     }
   
@@ -200,9 +206,11 @@ export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
     gun.get(account).get('blockedAddresses').get(address).put(null, (ack) => {
       if (ack.err) {
         console.error("Failed to unblock address:", ack.err);
+        showSnackBar && showSnackBar('Failed to unblock address','error');
       } else {
         console.log("Address successfully unblocked:", address);
-  
+        showSnackBar && showSnackBar(`Address ${address.slice(-5)} has been unblocked`,'success');
+
         // Update the local state only after successful database deletion
         setBlockedAddresses((prev) =>
           prev.filter((blockedAddress) => blockedAddress !== address)
@@ -212,17 +220,18 @@ export const handleUnblockAddress = (account, address, setBlockedAddresses) => {
 };  
 
 // Start a new chat
-export const handleStartChat = (account, chatAddress, setChats, setSearchParams, setShowModal) => {
+export const handleStartChat = (account, chatAddress, setChats, setSearchParams, setShowModal, showSnackBar) => {
   const trimmedAddress = chatAddress;
 
   if (account === chatAddress)
   {
-    alert("You can not Speak to yourself:", chatAddress);
+    showSnackBar && showSnackBar("You can not Speak to yourself", 'warning');
     return;
   }
 
   if (!trimmedAddress || trimmedAddress === account) {
     console.warn("Invalid chat address:", chatAddress);
+    showSnackBar && showSnackBar("Invalid chat address", 'warning');
     return;
   }
 
@@ -231,14 +240,14 @@ export const handleStartChat = (account, chatAddress, setChats, setSearchParams,
   senderChatsNode.set(trimmedAddress, (senderAck) => {
     if (senderAck.err) {
       console.error("Failed to add chat for sender:", senderAck.err);
+      showSnackBar && showSnackBar("Failed to Create a chat", 'error');
     } else {
       console.log(`Chat added for sender: ${account} with ${trimmedAddress}`);
-
+      showSnackBar && showSnackBar(`Chat created for ${trimmedAddress.slice(-5)}`, 'success');
       // Update the UI for the sender
       setChats((prev) => [...new Set([...prev, trimmedAddress])]);
       setSearchParams({ chatwith: trimmedAddress });
       setShowModal(false);
-
     }
   });
 };
@@ -249,7 +258,7 @@ export const handleChatItemClick = (chatAddress, setSearchParams) => {
 };
 
 // Fully delete a chat, its metadata, and associated keys
-export const handleDeleteChat = (account, chatAddress, setChats) => {
+export const handleDeleteChat = (account, chatAddress, setChats, showSnackBar) => {
   const userChatsNode = gun.get(account).get('chats');
   const messagesBasePath = `chats/${chatAddress}/messages`;
 
@@ -267,8 +276,10 @@ export const handleDeleteChat = (account, chatAddress, setChats) => {
         messagesNode.get(messageKey).put(null, (msgAck) => {
           if (msgAck.err) {
             console.error(`Failed to delete message with Key = ${messageKey}:`, msgAck.err);
+            showSnackBar && showSnackBar('Failed to hide','error');
           } else {
             console.log(`Message deleted: Key = ${messageKey}`);
+            showSnackBar && showSnackBar('Message has been hidden','success');
           }
         });
       });
@@ -336,21 +347,25 @@ export const handleClearChatHistory = (account, setChats) => {
 // Fetch the nickname
 export const fetchNickname = (account, setNickname) => {
   if (!account) {
-    console.warn("Account is required to fetch nickname.");
+    console.warn("[WARN] Account is required to fetch nickname.");
     return;
   }
 
-  console.log("Fetching nickname for account:", account.slice(-4));
+  console.log(`[DEBUG] Fetching nickname for account: ${account.slice(-4)}`);
 
-  const nicknameNode = gun.get(account).get('nickname');
+  const nicknameNode = gun.get(account).get("nickname");
 
   nicknameNode.once(
     (data) => {
-      if (!data || !data.nickname) {
+      if (data) {
+        // Data is the nickname directly
+        console.log(`[DEBUG] Nickname fetched: "${data}" for account: ${account}`);
+        setNickname(data);
+      } else {
+        // No nickname exists, assign and save the default nickname
         const defaultNickname = account.slice(-5);
-        console.log(`[DEBUG] Saving default nickname: ${defaultNickname}`);
+        console.warn(`[WARN] No nickname found. Assigning default nickname: "${defaultNickname}"`);
 
-        // Save default nickname and mapping
         gun.get(account).put({ nickname: defaultNickname }, (ack) => {
           if (ack.err) {
             console.error(`[ERROR] Failed to save default nickname for account: ${account}`, ack.err);
@@ -360,27 +375,67 @@ export const fetchNickname = (account, setNickname) => {
           console.log(`[DEBUG] Default nickname "${defaultNickname}" saved for account: ${account}`);
           setNickname(defaultNickname);
 
-          saveNicknameToGun(account, defaultNickname, (ack) => {
-            if (ack.err) {
-              console.error(`[ERROR] Failed to save mapping for nickname: "${defaultNickname}"`, ack.err);
+          // Save the reverse mapping
+          saveNicknameToGun(account, defaultNickname, (mappingAck) => {
+            if (mappingAck.err) {
+              console.error(
+                `[ERROR] Failed to save reverse mapping for default nickname: "${defaultNickname}"`,
+                mappingAck.err
+              );
             } else {
-              console.log(`[DEBUG] Mapping saved for nickname: "${defaultNickname}"`);
+              console.log(`[DEBUG] Reverse mapping saved for default nickname: "${defaultNickname}"`);
             }
           });
         });
-      } else {
-        const nickname = data[''] || data;
-        console.log(`Resolved nickname for account ${account.slice(-4)}:`, nickname);
-        setNickname(nickname);
       }
     },
     { err: (err) => console.error(`[ERROR] Failed to fetch nickname for account: ${account}`, err) }
   );
 
+  // Cleanup function to detach listeners
   return () => {
-    console.log("Cleaning up nickname subscription for account:", account.slice(-4));
+    console.log(`[DEBUG] Cleaning up nickname subscription for account: ${account.slice(-4)}`);
     nicknameNode.off();
   };
+};
+
+export const findNickAvailability = async (account, nickname) => {
+  if (!account) {
+    console.warn("[WARN] Account is required to check nickname availability.");
+    return { disabled: true, available: false };
+  }
+
+  console.log(`[DEBUG] Checking nickname availability for: "${nickname}" and account: "${account}"`);
+
+  const nicknamesNode = gun.get('findWallet');
+  const accountNode = gun.get(account);
+
+  return new Promise((resolve) => {
+    // Step 1: Check if the user has already saved a custom nickname
+    accountNode.get('nickname').once((data) => {
+      const currentNickname = data?.nickname;
+      const defaultNickname = account.slice(-5);
+
+      if (currentNickname && currentNickname !== defaultNickname) {
+        console.warn("[WARN] User has already saved a custom nickname. Disabling input.");
+        resolve({ disabled: true, available: false });
+        return;
+      }
+
+      console.log("[DEBUG] User has not saved a custom nickname. Proceeding to check availability.");
+
+      // Step 2: Check if the requested nickname is available
+      nicknamesNode.get(nickname).once((data) => {
+        if (data && data.wallet) {
+          console.warn(`[WARN] Nickname "${nickname}" is already taken.`);
+          resolve({ disabled: false, available: false });
+        } else {
+          console.log(`[DEBUG] Nickname "${nickname}" is available.`);
+          resolve({ disabled: false, available: true });
+        }
+      });
+    });
+  });
 };
 
 export const saveNicknameToGun = (account, nickname, callback) => {

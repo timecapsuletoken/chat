@@ -25,3 +25,5 @@ yarn-error.log*
 radata/*
 radata/!
 radata/%1C
+
+relay.js

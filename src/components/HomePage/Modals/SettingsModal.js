@@ -72,8 +72,6 @@ const SettingsModal = ({
             <button
               onClick={() => {
                 handleSaveSettings();
-                // Uncomment if you want to close modal after saving
-                // toggleSettingsModal();
               }}
             >
               Save Settings
