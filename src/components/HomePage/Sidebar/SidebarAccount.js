@@ -15,11 +15,14 @@ import {
   Button,
   Typography,
   Divider,
+  Chip,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Avatar,
+  InputAdornment,
+  FormControl,
 } from '@mui/material';
 
 // Material-UI Icons
@@ -34,6 +37,7 @@ import {
   Computer as ComputerIcon,
   Person2 as Person2Icon,
   ExitToApp as ExitToAppIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 import { generateJazzicon } from '../../../utils/jazzAvatar';
 import { hasUserSavedNickname, isNicknameAvailable, saveNicknameToGun } from '../../../utils/gunHelpers';
@@ -43,6 +47,9 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const menuOpen = Boolean(menuAnchorEl);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [warning, setWarning] = useState(false); // New state for warning
+  const [success, setSuccess] = useState(false);
 
   // Nickname Functionalities
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
@@ -106,20 +113,58 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
     switchWallet(providerType, switchAccount, switchToBSC);
   };
 
-  // Save nickname to Gun
-  const saveNickname = async () => {
-    if (disabled) {
-      showSnackBar('You have already saved a custom nickname. The input is disabled.', 'error');
+  const handleAvailabilityCheck = async () => {
+    if (!newNickname) {
+      setError('Nickname cannot be empty.');
+      setWarning(false);
+      setSuccess(false);
+      showSnackBar('Nickname cannot be empty.', 'error');
+      return;
+    }
+
+    // Step 2: Validate nickname format (letters and numbers only, exactly 5 characters)
+    const isValidFormat = /^[a-zA-Z0-9]{4,5}$/.test(newNickname); // 4 to 5 alphanumeric characters
+    if (!isValidFormat) {
+      setError('Nickname must be exactly 5 letters or numbers.');
+      setWarning(false);
+      setSuccess(false);
+      showSnackBar('Nickname must be exactly 5 letters or numbers.', 'error');
       return;
     }
   
     const available = await isNicknameAvailable(newNickname);
   
     if (!available) {
-      showSnackBar('Nickname is already taken. Please choose another one.', 'error');
+      setError('');
+      setWarning('This nickname is already taken.');
+      setSuccess(false);
+      showSnackBar('Nickname is already taken. Please choose another one.', 'warning');
+    } else {
+      setError('');
+      setWarning(false);
+      setSuccess(true);
+      showSnackBar('Nickname is available.', 'success');
+    }
+  };  
+
+  const handleSaveNickname = async () => {
+    // Step 1: Validate nickname input
+    if (!newNickname) {
+      setError('Nickname cannot be empty.');
+      setSuccess(false);
       return;
     }
   
+    if (disabled) {
+      showSnackBar('You have already saved a custom nickname. The input is disabled.', 'error');
+      return;
+    }
+  
+    // Step 3: Clear error state and indicate success
+    setError('');
+    setSuccess(true);
+  
+    // Step 4: Save nickname to Gun
     saveNicknameToGun(account, newNickname, (ack) => {
       if (ack.err) {
         console.error('Failed to save nickname:', ack.err);
@@ -282,37 +327,109 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
         }}
       >
         <DialogTitle sx={{ textAlign: 'center' }}>Edit Nickname</DialogTitle>
+        <Divider
+            sx={{
+              my: 2, // Adds vertical margin (top and bottom) to the Divider
+              '&::before, &::after': {
+                borderColor: '#fff',
+              },
+            }}
+          >
+            <Chip
+              label="Nicknames can be updated only once"
+              size="medium"
+              sx={{
+                color: '#fff', // Text color
+                backgroundColor: 'transparent', // Transparent background for the chip
+                border: '1px solid #fff', // Optional border for the chip
+              }}
+            />
+          </Divider>
         <DialogContent>
+        <FormControl fullWidth variant="outlined" sx={{ mt: 1 }}>
           <TextField
+            id="nickname-input"
             label="Nickname"
-            id="outlined-basic" 
             variant="outlined"
-            disabled={disabled}
             value={newNickname}
             onChange={(e) => setNewNickname(e.target.value)}
-            color="#fff"
+            disabled={disabled}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                       onClick={!disabled ? handleAvailabilityCheck : null}
+                       edge="end"
+                       disabled={disabled} // Disables the button
+                       sx={{
+                         color: disabled ? '#aaa' : '#fff', // Adjust icon color when disabled
+                       }}
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+            error={Boolean(error)} // Adds automatic red border on error
             sx={{
-              mt: 1,
               '& .MuiOutlinedInput-root': {
-                color: '#fff', // Text color
+                color: disabled ? '#aaa' : '#fff', // Input text color when disabled
                 '& fieldset': {
-                  borderColor: '#fff', // Default border color
+                  borderColor: disabled
+                    ? '#aaa' // Border color when disabled
+                    : error
+                    ? 'red' // Error state border
+                    : success
+                    ? 'green' // Success state border
+                    : warning
+                    ? '#ff9800' // Warning state border (yellow-orange)
+                    : '#fff', // Default border color
                 },
                 '&:hover fieldset': {
-                  borderColor: '#ddd', // Border color on hover
+                  borderColor: disabled
+                    ? '#aaa' // Hover border color when disabled
+                    : error
+                    ? 'red'
+                    : success
+                    ? '#00e676'
+                    : warning
+                    ? '#ff9800' // Hover border for warning state
+                    : '#ddd', // Default hover border
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#fff', // Border color when focused
+                  borderColor: disabled
+                    ? '#aaa' // Focus border color when disabled
+                    : error
+                    ? 'red'
+                    : success
+                    ? '#00e676'
+                    : warning
+                    ? '#ff9800' // Focused border for warning state
+                    : '#fff', // Default focus border
                 },
               },
               '& .MuiInputBase-input': {
-                color: '#fff', // Input text color
+                color: disabled ? '#aaa' : '#fff', // Input text color
               },
               '& .MuiInputLabel-root': {
-                color: '#fff', // Placeholder text color
+                color: disabled
+                  ? '#aaa' // Label text color when disabled
+                  : error
+                  ? 'red' // Label color for error
+                  : success
+                  ? 'green' // Label color for success
+                  : warning
+                  ? '#ff9800' // Label color for warning
+                  : '#fff', // Default label color
               },
-            }} 
+              '& .Mui-disabled': {
+                opacity: 0.7, // Subdued styling for disabled state
+              },
+            }}          
           />
+        </FormControl>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center' }}>
           <Button variant="outlined" fullWidth onClick={() => setIsNicknameModalOpen(false)}>Cancel</Button>
@@ -320,8 +437,8 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
             variant="contained"
             color="primary"
             fullWidth
-            onClick={!disabled ? saveNickname : null}
-            disabled={disabled}
+            onClick={!disabled ? handleSaveNickname : null}
+            disabled={!success} // Disable button unless name is available
           >
             Save
           </Button>
