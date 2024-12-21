@@ -329,7 +329,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
         <DialogTitle sx={{ textAlign: 'center' }}>Edit Nickname</DialogTitle>
         <Divider
             sx={{
-              my: 2, // Adds vertical margin (top and bottom) to the Divider
+              my: 0, // Adds vertical margin (top and bottom) to the Divider
               '&::before, &::after': {
                 borderColor: '#fff',
               },

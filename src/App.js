@@ -1,15 +1,18 @@
 import React, { useState,useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { connectWallet } from './utils/wallet';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import LoginNavbar from './components/LoginNavbar';
+import HomePage from './pages/HomePage';
+import ChatPage from './pages/ChatPage';
+
 import Navbar from './components/Navbar';
 import WelcomeSection from './components/WelcomeSection';
 import FeaturesSection from './components/FeaturesSection';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
-import LoginPage from './pages/LoginPage';
-import LoginNavbar from './components/LoginNavbar';
-import HomePage from './pages/HomePage';
-import ChatPage from './pages/ChatPage';
+
 import './App.css';
 
 function App() {
@@ -89,6 +92,12 @@ function App() {
         <Routes>
           <Route path="/" element={
             <>
+              <LandingPage />
+            </>
+          } />
+
+          <Route path="/index2" element={
+            <>
               <Navbar />
               <WelcomeSection />
               <FeaturesSection />
@@ -96,6 +105,7 @@ function App() {
               <Footer />
             </>
           } />
+
           <Route path="/login" element={
             <>
               <LoginNavbar />
