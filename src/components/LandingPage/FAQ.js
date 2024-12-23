@@ -51,7 +51,7 @@ export default function FAQ() {
             aria-controls="panel1d-content"
             id="panel1d-header"
           >
-            <Typography component="h3" variant="subtitle2">
+            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 'bold' }}>
               How is my data secured in this dApp?
             </Typography>
           </AccordionSummary>
@@ -59,7 +59,7 @@ export default function FAQ() {
             <Typography
               variant="body2"
               gutterBottom
-              sx={{ maxWidth: { sm: '100%', md: '70%' } }}
+              sx={{ maxWidth: { sm: '100%', md: '70%' }, color: 'text.primary' }}
             >
               Your data is encrypted and stored using decentralized technology, ensuring that only you and your intended recipients can access it. We use Gun.js to maintain peer-to-peer connections, eliminating centralized storage vulnerabilities.
             </Typography>
@@ -74,7 +74,7 @@ export default function FAQ() {
             aria-controls="panel2d-content"
             id="panel2d-header"
           >
-            <Typography component="h3" variant="subtitle2">
+            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 'bold' }}>
               Can I use the dApp on multiple devices?
             </Typography>
           </AccordionSummary>
@@ -82,7 +82,7 @@ export default function FAQ() {
             <Typography
               variant="body2"
               gutterBottom
-              sx={{ maxWidth: { sm: '100%', md: '70%' } }}
+              sx={{ maxWidth: { sm: '100%', md: '70%' }, color: 'text.primary' }}
             >
               Yes! Our dApp supports seamless multi-device synchronization, allowing you to continue your activities across multiple devices securely and in real-time.
             </Typography>
@@ -97,7 +97,7 @@ export default function FAQ() {
             aria-controls="panel3d-content"
             id="panel3d-header"
           >
-            <Typography component="h3" variant="subtitle2">
+            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 'bold' }}>
               Do I need a crypto wallet to use the dApp?
             </Typography>
           </AccordionSummary>
@@ -105,7 +105,7 @@ export default function FAQ() {
             <Typography
               variant="body2"
               gutterBottom
-              sx={{ maxWidth: { sm: '100%', md: '70%' } }}
+              sx={{ maxWidth: { sm: '100%', md: '70%' }, color: 'text.primary' }}
             >
                 Yes, your crypto wallet serves as your secure identity. It’s used for authentication and
                 personalization, ensuring a streamlined and secure experience without requiring additional
@@ -132,7 +132,7 @@ export default function FAQ() {
             aria-controls="panel4d-content"
             id="panel4d-header"
           >
-            <Typography component="h3" variant="subtitle2">
+            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 'bold' }}>
               What happens if I lose my device?
             </Typography>
           </AccordionSummary>
@@ -140,7 +140,7 @@ export default function FAQ() {
             <Typography
               variant="body2"
               gutterBottom
-              sx={{ maxWidth: { sm: '100%', md: '70%' } }}
+              sx={{ maxWidth: { sm: '100%', md: '70%' }, color: 'text.primary' }}
             >
               Since the dApp is decentralized, your data and identity remain intact. Simply reconnect using your wallet on a new device, and you’ll regain access to your chats and settings.
             </Typography>
@@ -155,7 +155,7 @@ export default function FAQ() {
             aria-controls="panel5d-content"
             id="panel5d-header"
           >
-            <Typography component="h3" variant="subtitle2">
+            <Typography component="h3" variant="subtitle2" sx={{ fontWeight: 'bold' }}>
              Is the dApp truly private?
             </Typography>
           </AccordionSummary>
@@ -163,7 +163,7 @@ export default function FAQ() {
             <Typography
               variant="body2"
               gutterBottom
-              sx={{ maxWidth: { sm: '100%', md: '70%' } }}
+              sx={{ maxWidth: { sm: '100%', md: '70%' }, color: 'text.primary' }}
             >
               Absolutely. The dApp is designed with privacy in mind. Messages and data are encrypted end-to-end, ensuring that no one—not even us—can access your private information.
             </Typography>

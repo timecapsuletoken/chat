@@ -56,12 +56,12 @@ export default function Highlights() {
   return (
     <Box
       id="highlights"
-      sx={{
+      sx={(theme) => ({
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        color: 'white',
-        bgcolor: 'grey.900',
-      }}
+        color: theme.palette.text.primary, // Adapts to light or dark mode
+        bgcolor: theme.palette.background.default, // Dynamic background color
+      })}
     >
       <Container
         sx={{
@@ -78,10 +78,10 @@ export default function Highlights() {
             textAlign: { sm: 'left', md: 'center' },
           }}
         >
-          <Typography component="h2" variant="h4" gutterBottom>
+          <Typography component="h2" variant="h4" gutterBottom sx={{ color: 'text.primary' }}>
             Highlights
           </Typography>
-          <Typography variant="body1" sx={{ color: 'grey.400' }}>
+          <Typography variant="body1" sx={(theme) => ({ color: theme.palette.text.secondary })}>
             Explore the standout features of our dApp that make it unique. From unparalleled privacy to lightning-fast performance and seamless multi-device synchronization, these highlights showcase the best of what our decentralized application has to offer. Designed with innovation and user empowerment at its core, each feature is crafted to elevate your experience in the decentralized world.
           </Typography>
         </Box>
@@ -93,20 +93,21 @@ export default function Highlights() {
                 component={Card}
                 spacing={1}
                 useFlexGap
-                sx={{
-                  color: 'inherit',
+                sx={(theme) => ({
+                  color: theme.palette.text.primary,
                   p: 3,
                   height: '100%',
-                  borderColor: 'hsla(220, 25%, 25%, 0.3)',
-                  backgroundColor: 'grey.800',
-                }}
+                  borderColor: theme.palette.divider,
+                  backgroundColor: theme.palette.background.paper, // Dynamic card background
+                  boxShadow: theme.shadows[1],
+                })}
               >
                 <Box sx={{ opacity: '50%' }}>{item.icon}</Box>
                 <div>
-                  <Typography gutterBottom sx={{ fontWeight: 'medium' }}>
+                  <Typography gutterBottom sx={{ fontWeight: 'medium', color: 'text.primary' }}>
                     {item.title}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'grey.400' }}>
+                  <Typography variant="body2" sx={(theme) => ({ color: theme.palette.text.secondary })}>
                     {item.description}
                   </Typography>
                 </div>

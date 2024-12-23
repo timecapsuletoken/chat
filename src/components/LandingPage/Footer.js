@@ -134,7 +134,7 @@ export default function Footer() {
         >
           <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
             <SitemarkIcon />
-            <Typography variant="body2" gutterBottom sx={{ fontWeight: 600, mt: 2 }}>
+            <Typography variant="body2" gutterBottom sx={{ fontWeight: 600, mt: 2, color: 'text.primary' }}>
               Join the newsletter
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
@@ -176,7 +176,7 @@ export default function Footer() {
             gap: 1,
           }}
         >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+          <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Product
           </Typography>
           <Link color="text.secondary" variant="body2" href="#">
@@ -202,7 +202,7 @@ export default function Footer() {
             gap: 1,
           }}
         >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+          <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Company
           </Typography>
           <Link color="text.secondary" variant="body2" href="#">
@@ -222,7 +222,7 @@ export default function Footer() {
             gap: 1,
           }}
         >
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+          <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Legal
           </Typography>
           <Link color="text.secondary" variant="body2" href="#">
