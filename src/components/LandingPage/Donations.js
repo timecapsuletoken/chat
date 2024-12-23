@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import Confetti from 'react-confetti';
+import ConfettiExplosion from 'react-confetti-explosion';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
@@ -58,7 +58,7 @@ const donationTiers = [
 
 export default function Donations() {
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: 'success' });
-  const [showConfetti, setShowConfetti] = React.useState(false);
+  const [isExploding, setIsExploding] = React.useState(false);
 
   const handleDonate = async (price) => {
     try {
@@ -80,8 +80,8 @@ export default function Donations() {
         ),
         severity: 'success',
       });
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 10000);
+      setIsExploding(true);
+      //setTimeout(() => setIsExploding(false), 10000);
     } catch (error) {
       setSnackbar({
         open: true,
@@ -108,7 +108,14 @@ export default function Donations() {
         gap: { xs: 3, sm: 6 },
       }}
     >
-    {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+      {isExploding && (
+        <ConfettiExplosion
+          force={0.6}
+          duration={3000}
+          particleCount={250}
+          width={1600}
+        />
+      )}
       <Box
         sx={{
           width: { sm: '100%', md: '60%' },

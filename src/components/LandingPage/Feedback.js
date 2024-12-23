@@ -7,6 +7,9 @@ import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
@@ -112,89 +115,132 @@ export default function FeedbackSection() {
                 }}
             >
                 <CardContent>
-                <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                    <TextField
-                    fullWidth
-                    name="name"
-                    label="Your Name"
-                    variant="outlined"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    sx={{ '& .MuiInputBase-input': { color: 'text.primary' } }}
-                    />
-                    <TextField
+                <Box component="form" sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                <TextField 
+                  id="filled-basic" 
+                  name="name"
+                  fullWidth
+                  onChange={handleInputChange}
+                  value={formData.name}
+                  label="Your Name" 
+                  variant="filled" 
+                  sx={{
+                    width: '250px',
+                    '& .MuiFilledInput-root': {
+                      backgroundColor: '#1c1c1c', // Set custom background color
+                      borderRadius: '4px', // Optional: Rounded corners
+                      '&:hover': {
+                        backgroundColor: '#2c2c2c', // Darker background on hover
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                      },
+                    },
+                  }}
+                />
+                  <TextField
+                    id="filled-basic"
+                    variant="filled"
                     fullWidth
                     name="email"
                     label="Your Email"
-                    variant="outlined"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    sx={{ '& .MuiInputBase-input': { color: 'text.primary' } }}
-                    />
+                    sx={{
+                      width: '250px',
+                      '& .MuiFilledInput-root': {
+                        backgroundColor: '#1c1c1c', // Set custom background color
+                        borderRadius: '4px', // Optional: Rounded corners
+                        '&:hover': {
+                          backgroundColor: '#2c2c2c', // Darker background on hover
+                        },
+                        '&.Mui-focused': {
+                          backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                        },
+                      },
+                    }}
+                  />
                 </Box>
-                <TextField
-                    fullWidth
-                    select
-                    label="Feedback Type"
+                <FormControl 
+                  variant="filled" 
+                  fullWidth 
+                  required 
+                  sx={{
+                    mb: 2,
+                    '& .MuiFilledInput-root': {
+                      backgroundColor: '#1c1c1c', // Set custom background color
+                      borderRadius: '4px', // Optional rounded corners
+                      '&:hover': {
+                        backgroundColor: '#2c2c2c', // Darker background on hover
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: '#1c1c1c', // Keep background consistent on focus
+                      },
+                    },
+                  }}                
+                >
+                  <InputLabel id="demo-simple-select-filled-label">Feedback Type</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-filled-label"
+                    id="demo-simple-select-filled"
                     value={feedbackType}
                     onChange={(e) => setFeedbackType(e.target.value)}
-                    sx={{ mb: 2 }}
-                    required
-                >
+                  >
                     {feedbackTypes.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
+                      <MenuItem key={option.value} value={option.value}>
                         {option.label}
-                    </MenuItem>
+                      </MenuItem>
                     ))}
-                </TextField>
+                  </Select>
+                </FormControl>
                 <TextField
-                    fullWidth
-                    name="message"
-                    label="Your Message"
-                    multiline
-                    variant="outlined"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    sx={{ mb: 2 }}
-                    required
+                  fullWidth
+                  required
+                  name="message"
+                  id="outlined-multiline-static"
+                  label="Your Message"
+                  multiline
+                  rows={4}
+                  value={formData.message}
+                  variant="filled"
+                  onChange={handleInputChange}
+                  sx={{
+                    marginBottom: '16px',
+                    '& .MuiFilledInput-root': {
+                      backgroundColor: '#1c1c1c', // Set custom background color
+                      borderRadius: '4px', // Add rounded corners
+                      '&:hover': {
+                        backgroundColor: '#2c2c2c', // Change background on hover
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: '#1c1c1c', // Keep background consistent on focus
+                      },
+                    },
+                  }}                         
                 />
-                <TextField
-                    fullWidth
-                    name="fileUrl"
-                    label="Attachment URL"
-                    placeholder="Paste your image URL here"
-                    variant="outlined"
-                    value={formData.fileUrl}
-                    onChange={handleInputChange}
-                    sx={{
-                    mb: 2,
-                    '& .MuiInputBase-input': { color: 'text.primary' },
-                    '& .MuiFormLabel-root': { fontSize: '0.9rem', color: 'text.secondary' },
-                    }}
+                <TextField 
+                  id="filled-basic" 
+                  name="fileUrl"
+                  fullWidth
+                  onChange={handleInputChange}
+                  value={formData.fileUrl}
+                  label="Attachment URL" 
+                  variant="filled" 
+                  helperText="upload to https://prnt.sc/ and paste the URL in the input above"
+                  sx={{
+                    '& .MuiFilledInput-root': {
+                      backgroundColor: '#1c1c1c', // Set custom background color
+                      borderRadius: '4px', // Optional: Rounded corners
+                      '&:hover': {
+                        backgroundColor: '#2c2c2c', // Darker background on hover
+                      },
+                      '&.Mui-focused': {
+                        backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                      },
+                    },
+                  }}
                 />
-                <Typography
-                    variant="caption"
-                    sx={{
-                    display: 'block',
-                    color: 'text.secondary',
-                    textAlign: 'center',
-                    mt: 1,
-                    }}
-                >
-                    If you want to include a file, upload it to{' '}
-                    <Typography
-                    component="a"
-                    href="https://prnt.sc/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{ color: 'primary.main', textDecoration: 'none' }}
-                    >
-                    https://prnt.sc/
-                    </Typography>{' '}
-                    and paste the URL in the input above.
-                </Typography>
                 <Divider sx={{ marginBottom: '20px'}} />
                 </CardContent>
                 <CardActions>

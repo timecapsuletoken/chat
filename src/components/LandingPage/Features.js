@@ -231,7 +231,7 @@ export default function Features() {
                   {icon}
 
                   <Typography variant="h6">{title}</Typography>
-                  <Typography variant="body2">{description}</Typography>
+                  <Typography variant="body2" sx={{ color: 'text.primary' }}>{description}</Typography>
                 </Box>
               </Box>
             ))}
