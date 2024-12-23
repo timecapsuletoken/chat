@@ -2,12 +2,12 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { inputsCustomizations } from '../LandingPage/customizations/inputs'; //
-import { dataDisplayCustomizations } from '../LandingPage/customizations/dataDisplay'; //
-import { feedbackCustomizations } from '../LandingPage/customizations/feedback'; //
-import { navigationCustomizations } from '../LandingPage/customizations/navigation'; //
+import { inputsCustomizations } from '../LandingPage/customizations/inputs';
+import { dataDisplayCustomizations } from '../LandingPage/customizations/dataDisplay';
+import { feedbackCustomizations } from '../LandingPage/customizations/feedback';
+import { navigationCustomizations } from '../LandingPage/customizations/navigation';
 import { surfacesCustomizations } from '../LandingPage/customizations/surfaces';
-import { colorSchemes, typography, shadows, shape } from '../LandingPage/themePrimitives'; //
+import { colorSchemes, typography, shadows, shape } from '../LandingPage/themePrimitives';
 
 function AppTheme(props) {
   const { children, disableCustomTheme, themeComponents } = props;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -10,6 +11,7 @@ import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Sitemark from '../LandingPage/SitemarkIcon';
 import ColorModeIconDropdown from '../LandingPage/ColorModeIconDropdown';
@@ -32,7 +34,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
-
+  const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
@@ -51,19 +53,24 @@ export default function AppAppBar() {
       <Container maxWidth="lg">
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
-            <Sitemark />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            <Sitemark sx={{ justifyContent: 'start' }} />
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
               <Button variant="text" color="info" size="small">
                 <a href="#features">Features</a>
               </Button>
+              {/*
               <Button variant="text" color="info" size="small">
                 <a href="#testimonials">Testimonials</a>
               </Button>
+              */}
               <Button variant="text" color="info" size="small">
                 <a href="#highlights">Highlights</a>
               </Button>
               <Button variant="text" color="info" size="small">
                 <a href="#donations">Donations</a>
+              </Button>
+              <Button variant="text" color="info" size="small">
+                <a href="#feedback">Feedback</a>
               </Button>
               <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
                 <a href="#faq">FAQ</a>
@@ -80,11 +87,14 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            <Button color="primary" variant="text" size="small">
-              Sign in
-            </Button>
-            <Button color="primary" variant="contained" size="small">
-              Sign up
+            <Button 
+              color="primary" 
+              variant="contained" 
+              size="small" 
+              startIcon={<AccountBalanceWalletIcon />}
+              onClick={() => navigate('/login')} 
+            >
+              Connect Wallet
             </Button>
             <ColorModeIconDropdown />
           </Box>

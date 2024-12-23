@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { motion } from 'framer-motion';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -13,6 +14,11 @@ import { FaDiscord } from "react-icons/fa";
 import { RiBnbFill } from "react-icons/ri";
 import TwitterIcon from '@mui/icons-material/X';
 import SitemarkIcon from '../LandingPage/SitemarkIcon';
+import TCAicon1 from '../../assets/images/logos/logo.png';
+import TCAicon2 from '../../assets/images/logos/devlogo.png';
+import TCAicon3 from '../../assets/images/logos/frontendlogo.png';
+import TCAicon4 from '../../assets/images/logos/communitylogo.png';
+import TCAicon5 from '../../assets/images/logos/contributor.png';
 
 function Copyright() {
   return (
@@ -27,8 +33,79 @@ function Copyright() {
   );
 }
 
+const bouncingImages = [
+  { src: TCAicon1, alt: 'Logo 1' },
+  { src: TCAicon2, alt: 'Logo 2' },
+  { src: TCAicon3, alt: 'Logo 3' },
+  { src: TCAicon4, alt: 'Logo 4' },
+  { src: TCAicon5, alt: 'Logo 5' },
+];
+
 export default function Footer() {
+
+  const footerRef = React.useRef(null);
+  const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
+
+  // Capture the footer dimensions
+  React.useEffect(() => {
+    if (footerRef.current) {
+      const { offsetWidth, offsetHeight } = footerRef.current;
+      setDimensions({ width: offsetWidth, height: offsetHeight });
+    }
+  }, [footerRef]);
+
   return (
+  <Box
+    ref={footerRef}
+    sx={{ position: 'relative', overflow: 'hidden', width: '100%', height: '100%' }}
+  >
+    {/* Animated Floating Images */}
+    <Box
+      sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -1,
+        overflow: 'hidden',
+      }}
+    >
+      {bouncingImages.map((image, index) => (
+        <motion.img
+          key={index}
+          src={image.src}
+          alt={image.alt}
+          style={{
+            position: 'absolute',
+            width: '60px',
+            height: '60px',
+          }}
+          initial={{
+            x: Math.random() * dimensions.width, // Random initial position within width
+            y: Math.random() * dimensions.height, // Random initial position within height
+          }}
+          animate={{
+            x: [
+              Math.random() * dimensions.width, // Constrain movement horizontally
+              Math.random() * dimensions.width,
+              Math.random() * dimensions.width,
+            ],
+            y: [
+              Math.random() * dimensions.height, // Constrain movement vertically
+              Math.random() * dimensions.height,
+              Math.random() * dimensions.height,
+            ],
+          }}
+          transition={{
+            duration: 5 + Math.random() * 3, // Randomize speed
+            repeat: Infinity,
+            repeatType: 'mirror',
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </Box>
     <Container
       sx={{
         display: 'flex',
@@ -226,5 +303,6 @@ export default function Footer() {
         </Stack>
       </Box>
     </Container>
+  </Box>
   );
 }

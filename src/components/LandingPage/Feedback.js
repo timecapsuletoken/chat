@@ -69,12 +69,13 @@ export default function FeedbackSection() {
     <Container
         id="feedback"
         sx={{
-            pt: { xs: 4, sm: 8 },
-            pb: { xs: 6, sm: 12 },
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: { xs: 3, sm: 4 },
+          pt: { xs: 4, sm: 12 },
+          pb: { xs: 8, sm: 16 },
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: { xs: 3, sm: 6 },
         }}
         >
         <Box
@@ -99,7 +100,7 @@ export default function FeedbackSection() {
         <Grid
             container
             spacing={3}
-            sx={{ justifyContent: 'center', width: '100%' }}
+            sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}
         >
             <Grid item xs={12} md={6}>
             <Card
