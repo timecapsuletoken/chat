@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Confetti from 'react-confetti';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
@@ -19,7 +20,7 @@ import { donate } from '../LandingPage/utils/donationScript'; // Ensure this pat
 const donationTiers = [
   {
     title: 'Supporter',
-    price: 5,
+    price: 0.1,
     description: [
       'Show your love for decentralized tech',
       'Access to exclusive updates',
@@ -57,15 +58,30 @@ const donationTiers = [
 
 export default function Donations() {
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: 'success' });
+  const [showConfetti, setShowConfetti] = React.useState(false);
 
   const handleDonate = async (price) => {
     try {
       const result = await donate(price);
       setSnackbar({
         open: true,
-        message: `Donation successful! Transaction Hash: ${result.transactionHash}`,
+        message: (
+          <>
+            Donation successful! Transaction Hash:{" "}
+            <a
+              href={`https://testnet.bscscan.com/tx/${result.transactionHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#ffffff', textDecoration: 'underline' }}
+            >
+              {result.transactionHash.slice(0, 6)}...{result.transactionHash.slice(-4)}
+            </a>
+          </>
+        ),
         severity: 'success',
       });
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 10000);
     } catch (error) {
       setSnackbar({
         open: true,
@@ -92,6 +108,7 @@ export default function Donations() {
         gap: { xs: 3, sm: 6 },
       }}
     >
+    {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />}
       <Box
         sx={{
           width: { sm: '100%', md: '60%' },
@@ -201,11 +218,34 @@ export default function Donations() {
       </Grid>
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        autoHideDuration={5000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%', backgroundColor: snackbar.severity === 'success' ? 'green.main' : undefined }}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{
+            width: '100%',
+            alignItems: 'center',
+            ...(snackbar.severity === 'success' && {
+              backgroundColor: 'rgba(76, 175, 79, 0.4) !important', // Transparent success green
+              border: '1px solid rgba(76, 175, 79, 0.55) !important',
+              color: '#ffffff !important', // White text
+              '& .MuiAlert-icon': {
+                color: '#ffffff !important', // White icon
+              },
+            }),
+            ...(snackbar.severity === 'error' && {
+              backgroundColor: 'rgba(244, 67, 54, 0.4) !important', // Transparent error red
+              border: '1px solid rgba(244, 67, 54, 0.55) !important',
+              color: '#ffffff !important', // White text
+              '& .MuiAlert-icon': {
+                color: '#ffffff !important', // White icon
+              },
+            }),
+          }}          
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
