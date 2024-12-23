@@ -39,6 +39,20 @@ export default function AppAppBar() {
     setOpen(newOpen);
   };
 
+  const handleScrollToSection = (sectionId) => {
+    // Navigate to the root if needed
+    if (window.location.pathname !== '/') {
+      navigate('/');
+    }
+    // Scroll to the section smoothly
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 0); // Timeout ensures the DOM is ready after navigation
+  };
+
   return (
     <AppBar
       position="fixed"
@@ -54,29 +68,29 @@ export default function AppAppBar() {
         <StyledToolbar variant="dense" disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0 }}>
             <Sitemark sx={{ justifyContent: 'start' }} />
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
-              <Button variant="text" color="info" size="small">
-                <a href="#features">Features</a>
+            <Box 
+              sx={{ 
+                display: { xs: 'none', md: 'flex' }, 
+                justifyContent: 'center',
+                flex: 1,
+              }}
+            >
+              <Button variant="text" color="info" size="small" onClick={() => handleScrollToSection('features')}>
+                Features
               </Button>
               {/*
               <Button variant="text" color="info" size="small">
                 <a href="#testimonials">Testimonials</a>
               </Button>
               */}
-              <Button variant="text" color="info" size="small">
-                <a href="#highlights">Highlights</a>
+              <Button variant="text" color="info" size="small" onClick={() => handleScrollToSection('highlights')}>
+                Highlights
               </Button>
-              <Button variant="text" color="info" size="small">
-                <a href="#donations">Donations</a>
+              <Button variant="text" color="info" size="small" onClick={() => handleScrollToSection('donations')}>
+                Donations
               </Button>
-              <Button variant="text" color="info" size="small">
-                <a href="#feedback">Feedback</a>
-              </Button>
-              <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
-                <a href="#faq">FAQ</a>
-              </Button>
-              <Button variant="text" color="info" size="small" sx={{ minWidth: 0 }}>
-                Blog
+              <Button variant="text" color="info" size="small" onClick={() => handleScrollToSection('feedback')}>
+                Feedback
               </Button>
             </Box>
           </Box>

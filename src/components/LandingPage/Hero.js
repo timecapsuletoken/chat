@@ -2,10 +2,10 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
+import { useNavigate } from 'react-router-dom'; 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ChatImage from '../../assets/images/TCA_dApp.webp';
+import ChatImage from '../../assets/images/LandingPage/TCA_dApp_Home.gif';
 import { styled } from '@mui/material/styles';
 
 const StyledBox = styled('img')(({ theme }) => ({
@@ -17,15 +17,15 @@ const StyledBox = styled('img')(({ theme }) => ({
   outlineColor: 'hsla(220, 25%, 80%, 0.2)',
   border: '1px solid',
   borderColor: (theme.vars || theme).palette.grey[200],
-  boxShadow: '0 0 12px 8px hsla(220, 25%, 80%, 0.2)',
+  boxShadow: '0 0 12px 8px hsl(267deg 55% 46% / 30%)',
   backgroundImage: `url(${ChatImage})`,
-  backgroundSize: 'cover',
-  objectFit: 'contain',
+  //backgroundSize: 'cover',
+  //objectFit: 'contain',
   [theme.breakpoints.up('sm')]: {
     marginTop: theme.spacing(10),
   },
   ...theme.applyStyles('dark', {
-    boxShadow: '0 0 24px 12px hsla(210, 100%, 25%, 0.2)',
+    boxShadow: '0 0 24px 12px hsl(267deg 55% 46% / 30%)',
     backgroundImage: `url(${ChatImage})`,
     outlineColor: 'hsla(220, 20%, 42%, 0.1)',
     borderColor: (theme.vars || theme).palette.grey[700],
@@ -33,6 +33,9 @@ const StyledBox = styled('img')(({ theme }) => ({
 }));
 
 export default function Hero() {
+
+    const navigate = useNavigate();
+  
   return (
     <Box
       id="hero"
@@ -40,10 +43,10 @@ export default function Hero() {
         width: '100%',
         backgroundRepeat: 'no-repeat',
         backgroundImage:
-          'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(210, 100%, 90%), transparent)',
+          'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(267deg 55% 46% / 50%), transparent)',
         ...theme.applyStyles('dark', {
           backgroundImage:
-            'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(197.27deg 86.84% 30%), transparent)',
+            'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(267deg 55% 46% / 50%), transparent)',
         }),
       })}
     >
@@ -107,8 +110,9 @@ export default function Hero() {
               size="small"
               sx={{ minWidth: 'fit-content' }}
               fullWidth
+              onClick={() => navigate('/home')}
             >
-              Start now
+              Start to Chat now
             </Button>
           </Stack>
           <Typography
@@ -116,17 +120,13 @@ export default function Hero() {
             color="text.secondary"
             sx={{ textAlign: 'center' }}
           >
-            By clicking &quot;Start now&quot; you agree to our&nbsp;
-            <Link href="#" color="primary">
-              Terms & Conditions
-            </Link>
-            .
+            A Decentralized way to Communicate.
           </Typography>
         </Stack>
         <StyledBox
           src={ChatImage}
           alt="Dashboard Image"
-          sx={{ height: 'auto', maxHeight: 700 }}
+          sx={{ height: 'auto', maxHeight: 700, width: '100%' }}
         />
       </Container>
     </Box>

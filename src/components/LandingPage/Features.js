@@ -13,6 +13,9 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 //import DevicesIcon from '@mui/icons-material/Devices';
 import HubIcon from '@mui/icons-material/Hub';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import ChattingImage from '../../assets/images/LandingPage/web3.gif';
+import secureWNetwork from '../../assets/images/LandingPage/safety.gif';
+import DecDRelay from '../../assets/images/LandingPage/web3-rubiscube.gif';
 
 const items = [
   {
@@ -20,16 +23,16 @@ const items = [
     title: 'Decentralized Chat',
     description:
       'Communicate securely with friends and colleagues using a fully decentralized, peer-to-peer messaging system. Your data is encrypted and never stored on centralized servers.',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/dash-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/dash-dark.png")`,
+    imageLight: `url("${ChattingImage}")`,
+    imageDark: `url("${ChattingImage}")`,
   },
   {
     icon: <AccountBalanceWalletIcon />,
     title: 'Secure Wallet Integration',
     description:
       'Seamlessly connect with your crypto wallet to manage your identity and chat securely. No need for extra signups — your wallet is your gateway.',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/mobile-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/mobile-dark.png")`,
+    imageLight: `url("${secureWNetwork}")`,
+    imageDark: `url("${secureWNetwork}")`,
   },
   /*
   {
@@ -46,8 +49,8 @@ const items = [
     title: 'Decentralized Data Relay',
     description:
       'Your data is stored and synchronized using a private Gun.js relay, ensuring optimal performance without sacrificing decentralization.',
-    imageLight: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/devices-light.png")`,
-    imageDark: `url("${process.env.TEMPLATE_IMAGE_URL || 'https://mui.com'}/static/images/templates/templates-images/devices-dark.png")`,
+    imageLight: `url("${DecDRelay}")`,
+    imageDark: `url("${DecDRelay}")`,
   },
 ];
 
@@ -258,9 +261,11 @@ export default function Features() {
             <Box
               sx={(theme) => ({
                 m: 'auto',
-                width: 420,
-                height: 500,
+                width: '100%',
+                height: '100%',
                 backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
                 backgroundImage: 'var(--items-imageLight)',
                 ...theme.applyStyles('dark', {
                   backgroundImage: 'var(--items-imageDark)',

@@ -4,6 +4,7 @@ import Divider from '@mui/material/Divider';
 import AppAppBar from '../components/LandingPage/AppAppBar';
 import Hero from '../components/LandingPage/Hero';
 import LogoCollection from '../components/LandingPage/LogoCollection';
+import HowItWorks from '../components/LandingPage/HowItWorks';
 import Highlights from '../components/LandingPage/Highlights';
 import Donations from '../components/LandingPage/Donations';
 import Feedback from '../components/LandingPage/Feedback';
@@ -25,6 +26,8 @@ export default function MarketingPage(props) {
         <Features />
         {/*<Divider />*/}
         {/*<Testimonials />*/}
+        <Divider />
+        <HowItWorks />
         <Divider />
         <Highlights />
         <Divider />
