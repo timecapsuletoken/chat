@@ -8,14 +8,18 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-//import Link from '@mui/material/Link';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
+
+import { donate } from '../LandingPage/utils/donationScript'; // Ensure this path is correct
 
 const donationTiers = [
   {
     title: 'Supporter',
-    price: '5',
+    price: 5,
     description: [
       'Show your love for decentralized tech',
       'Access to exclusive updates',
@@ -27,19 +31,19 @@ const donationTiers = [
   },
   {
     title: 'Contributor',
-    price: '20',
+    price: 20,
     description: [
       'All benefits of Supporter',
       'Your name in our supporters list',
       'Contribute to scaling the app',
     ],
     buttonText: 'Donate $20',
-    buttonVariant: 'contained',
-    buttonColor: 'secondary',
+    buttonVariant: 'outlined',
+    buttonColor: 'primary',
   },
   {
     title: 'Champion',
-    price: '50',
+    price: 50,
     description: [
       'All benefits of Contributor',
       'Priority support and feature requests',
@@ -52,6 +56,29 @@ const donationTiers = [
 ];
 
 export default function Donations() {
+  const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: 'success' });
+
+  const handleDonate = async (price) => {
+    try {
+      const result = await donate(price);
+      setSnackbar({
+        open: true,
+        message: `Donation successful! Transaction Hash: ${result.transactionHash}`,
+        severity: 'success',
+      });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: error.message || 'An unknown error occurred.',
+        severity: 'error',
+      });
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <Container
       id="donations"
@@ -80,8 +107,7 @@ export default function Donations() {
           Donations
         </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          Your support helps keep our decentralized app free, secure, and growing. Every contribution
-          helps cover server costs, improve features, and support the community.
+          Your support helps keep our decentralized app free, secure, and growing. Every contribution helps cover server costs, improve features, and support the community.
         </Typography>
       </Box>
       <Grid
@@ -103,8 +129,8 @@ export default function Donations() {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 4,
-                boxShadow: tier.title === 'Contributor' ? '0 8px 12px rgba(0,0,0,0.2)' : '',
-                border: tier.title === 'Contributor' ? '2px solid #ff4081' : '1px solid #ddd',
+                boxShadow: '0 8px 12px rgba(0,0,0,0.2)',
+                border: '1px solid #ddd',
               }}
             >
               <CardContent>
@@ -120,6 +146,9 @@ export default function Donations() {
                   <Typography component="h3" variant="h6">
                     {tier.title}
                   </Typography>
+                  {tier.title === 'Supporter' && (
+                    <VolunteerActivism color="warning" />
+                  )}
                   {tier.title === 'Contributor' && (
                     <FavoriteIcon color="secondary" />
                   )}
@@ -161,7 +190,7 @@ export default function Donations() {
                   fullWidth
                   variant={tier.buttonVariant}
                   color={tier.buttonColor}
-                  onClick={() => alert(`Thank you for donating ${tier.price}!`)}
+                  onClick={() => handleDonate(tier.price)} // Trigger the donate function
                 >
                   {tier.buttonText}
                 </Button>
@@ -170,6 +199,16 @@ export default function Donations() {
           </Grid>
         ))}
       </Grid>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%', backgroundColor: snackbar.severity === 'success' ? 'green.main' : undefined }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

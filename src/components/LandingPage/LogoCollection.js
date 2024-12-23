@@ -64,7 +64,7 @@ export default function LogoCollection() {
       >
         Enabled by Cutting-Edge Solutions
       </Typography>
-      <Grid container spacing={2} sx={{ justifyContent: 'center', mt: 2 }}>
+      <Grid container spacing={2} sx={{ justifyContent: 'center', mt: 2, mx: 'auto', width: 'calc(100% - 16px)' }}>
         {logos.map((logo, index) => (
           <Grid item key={index}>
             <motion.img
