@@ -3,6 +3,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/system';
+import { motion } from 'framer-motion';
+
 // White Logos
 import BNBWhiteLogo from '../../assets/images/logos/partners/bnb-chain-white.svg';
 import MetaMaskWhiteLogo from '../../assets/images/logos/partners/metamask-white.svg';
@@ -18,14 +20,35 @@ import TrustWalletBlackLogo from '../../assets/images/logos/partners/trust-walle
 import EthBlackLogo from '../../assets/images/logos/partners/ethereum-black.svg';
 import GunJsBlackLogo from '../../assets/images/logos/partners/gunjs-black.svg';
 
-const whiteLogos = [ BNBWhiteLogo, EthWhiteLogo, MetaMaskWhiteLogo, CoinbaseWhiteLogo, TrustWalletWhiteLogo, GunJsWhiteLogo ];
-const darkLogos = [ BNBBlackLogo, EthBlackLogo, MetaMaskBlackLogo, CoinbaseBlackLogo, TrustWalletBlackLogo, GunJsBlackLogo ];
+const whiteLogos = [
+  BNBWhiteLogo,
+  EthWhiteLogo,
+  MetaMaskWhiteLogo,
+  CoinbaseWhiteLogo,
+  TrustWalletWhiteLogo,
+  GunJsWhiteLogo,
+];
+
+const darkLogos = [
+  BNBBlackLogo,
+  EthBlackLogo,
+  MetaMaskBlackLogo,
+  CoinbaseBlackLogo,
+  TrustWalletBlackLogo,
+  GunJsBlackLogo,
+];
+
 const logoStyle = {
   width: '100px',
   height: '30px',
   margin: '32px 32px',
-  opacity: 0.7,
   objectFit: 'contain',
+};
+
+const motionVariants = {
+  initial: { opacity: 0, scale: 0.8 },
+  animate: { opacity: 1, scale: 1 },
+  hover: { scale: 1.1, rotate: 2 },
 };
 
 export default function LogoCollection() {
@@ -33,22 +56,31 @@ export default function LogoCollection() {
   const logos = theme.palette.mode === 'light' ? darkLogos : whiteLogos;
 
   return (
-    <Box id="logoCollection" sx={{ py: 4 }}>
+    <Box id="logoCollection" sx={{ py: 4, textAlign: 'center' }}>
       <Typography
         component="p"
         variant="subtitle2"
-        align="center"
-        sx={{ color: 'text.secondary' }}
+        sx={{ color: 'text.secondary', fontWeight: 'bold' }}
       >
-        Working With The Best Apps
+        Enabled by Cutting-Edge Solutions
       </Typography>
-      <Grid container sx={{ justifyContent: 'center', mt: 0.5, opacity: 0.6 }}>
+      <Grid container spacing={2} sx={{ justifyContent: 'center', mt: 2 }}>
         {logos.map((logo, index) => (
           <Grid item key={index}>
-            <img
+            <motion.img
               src={logo}
               alt={`Trusted partner ${index + 1}`}
               style={logoStyle}
+              variants={motionVariants}
+              initial="initial"
+              whileInView="animate"
+              whileHover="hover"
+              transition={{
+                duration: 0.5,
+                type: 'spring',
+                stiffness: 200,
+                delay: index * 0.1,
+              }}
             />
           </Grid>
         ))}

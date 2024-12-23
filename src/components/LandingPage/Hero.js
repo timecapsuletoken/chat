@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ChatImage from '../../assets/images/LandingPage/TCA_dApp_Home.gif';
+import ChatIcon from '@mui/icons-material/Chat'; 
 import { styled } from '@mui/material/styles';
 
 const StyledBox = styled('img')(({ theme }) => ({
@@ -111,8 +112,9 @@ export default function Hero() {
               sx={{ minWidth: 'fit-content' }}
               fullWidth
               onClick={() => navigate('/home')}
+              endIcon={<ChatIcon />}
             >
-              Start to Chat now
+              Go Chatting now
             </Button>
           </Stack>
           <Typography
