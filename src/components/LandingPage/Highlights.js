@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { styled, keyframes } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
@@ -12,6 +13,45 @@ import SecurityIcon from '@mui/icons-material/Security';
 import GridViewIcon from '@mui/icons-material/GridView';
 import DevicesIcon from '@mui/icons-material/Devices';
 import HandshakeIcon from '@mui/icons-material/Handshake';
+
+// Define the gradient ball animation
+const gradientAnimation = keyframes`
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(100px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+`;
+
+// Styled component for the gradient ball
+const GradientBall = styled('div')(({ theme }) => ({
+  width: '250px',
+  height: '250px',
+  background: 'radial-gradient(114.99% 94.16% at 72.92% 82.18%, #111 47.39%, #091534 68.23%, #a24dd6 86.63%)',
+  borderRadius: '50%',
+  position: 'absolute',
+  right: '20px',
+  bottom: '50%',
+  zIndex: 100,
+  opacity: 0.8,
+  animation: `${gradientAnimation} 6s infinite linear`,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+}));
+
+// Styled component for the text inside the ball
+const BallText = styled('span')(({ theme }) => ({
+  color: theme.palette.primary.main, // Dynamic color
+  fontSize: '30px',
+  textAlign: 'center',
+  //fontWeight: 'bold',
+  zIndex: 1,
+}));
 
 const items = [
   {
@@ -63,6 +103,15 @@ export default function Highlights() {
         bgcolor: theme.palette.background.default, // Dynamic background color
       })}
     >
+      <Box
+        sx={{
+          position: 'relative',
+        }}
+      >
+        <GradientBall>
+          <BallText>TCA</BallText>
+        </GradientBall>
+      </Box>
       <Container
         sx={{
           position: 'relative',

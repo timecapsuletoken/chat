@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 
 // Configuration to toggle between testnet and mainnet
 const config = {
-  network: 'testnet', // Change to 'mainnet' for production
+  network: 'mainnet', // Change to 'mainnet' for production
   testnet: {
     rpcUrl: 'https://bsc-testnet.bnbchain.org/',
     chainId: '0x61', // Chain ID for BSC Testnet

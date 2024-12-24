@@ -19,6 +19,7 @@ import TCAicon2 from '../../assets/images/logos/devlogo.png';
 import TCAicon3 from '../../assets/images/logos/frontendlogo.png';
 import TCAicon4 from '../../assets/images/logos/communitylogo.png';
 import TCAicon5 from '../../assets/images/logos/contributor.png';
+import TCAicon6 from '../../assets/images/LandingPage/objects/feature-shape-2-3.png';
 
 function Copyright() {
   return (
@@ -39,6 +40,7 @@ const bouncingImages = [
   { src: TCAicon3, alt: 'Logo 3' },
   { src: TCAicon4, alt: 'Logo 4' },
   { src: TCAicon5, alt: 'Logo 5' },
+  { src: TCAicon6, alt: 'Logo 6' },
 ];
 
 export default function Footer() {

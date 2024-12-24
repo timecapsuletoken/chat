@@ -7,7 +7,7 @@ import MuiChip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { styled } from '@mui/material/styles';
+import { styled, keyframes } from '@mui/material/styles';
 
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 //import DevicesIcon from '@mui/icons-material/Devices';
@@ -16,6 +16,37 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ChattingImage from '../../assets/images/LandingPage/web3.gif';
 import secureWNetwork from '../../assets/images/LandingPage/safety.gif';
 import DecDRelay from '../../assets/images/LandingPage/web3-rubiscube.gif';
+
+import featureShape2 from '../../assets/images/LandingPage/objects/feature-shape-2-1.svg';
+
+// Define the orbiting animation
+const orbitAnimation = keyframes`
+  0% {
+    transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg) translateX(50px) rotate(-180deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+`;
+
+// Styled component for the orbiting image
+const OrbitingImage = styled('img')(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '-20%',
+  transform: 'translate(-50%, -50%)',
+  width: '150px',
+  height: '150px',
+  animation: `${orbitAnimation} 10s linear infinite`,
+  pointerEvents: 'none', // Prevent interaction
+  [theme.breakpoints.up('md')]: {
+    width: '200px',
+    height: '200px',
+  },
+}));
 
 const items = [
   {
@@ -159,7 +190,10 @@ export default function Features() {
   const selectedFeature = items[selectedItemIndex];
 
   return (
-    <Container id="features" sx={{ py: { xs: 8, sm: 16 } }}>
+    <Container id="features" sx={{ py: { xs: 8, sm: 16 }, width: '100%' }}>
+      <Box sx={{ position: 'relative' }}>
+        <OrbitingImage src={featureShape2} alt="Orbiting Feature Decoration" />
+      </Box>
       <Box sx={{ width: { sm: '100%', md: '60%' } }}>
         <Typography
           component="h2"

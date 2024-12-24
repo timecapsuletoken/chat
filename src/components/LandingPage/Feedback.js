@@ -103,15 +103,15 @@ export default function FeedbackSection() {
             Share your thoughts and help us improve. Your feedback matters to us.
             </Typography>
         </Box>
-          <Grid
-              container
-              //spacing={3}
-              sx={{ 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                width: '100%' 
-              }}
-          >
+      <Grid
+        container
+        //spacing={3}
+        sx={{ 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          width: '100%' 
+        }}
+      >
             <Grid item xs={12} md={6} lg={10}>
               <Card
                   sx={{
@@ -272,7 +272,7 @@ export default function FeedbackSection() {
                   )}
               </Card>
             </Grid>
-        </Grid>
+      </Grid>
     </Container>
   );
 }
