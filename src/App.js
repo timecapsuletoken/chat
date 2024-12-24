@@ -1,11 +1,17 @@
 import React, { useState,useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { connectWallet } from './utils/wallet';
-import LandingPage from './pages/LandingPage';
+import LandingPage from './pages/LandingPage/LandingPage';
 import LoginPage from './pages/LoginPage';
 import LoginNavbar from './components/LoginNavbar';
 import HomePage from './pages/HomePage';
 import ChatPage from './pages/ChatPage';
+
+import CookiePolicy from './pages/LandingPage/legalDocs/CookiePolicy';
+import Disclaimer from './pages/LandingPage/legalDocs/Disclaimer';
+import PrivacyPolicy from './pages/LandingPage/legalDocs/PrivacyPolicy';
+import RiskDisclosure from './pages/LandingPage/legalDocs/RiskDisclosure';
+import TermsAndConditions from './pages/LandingPage/legalDocs/TermsAndConditions';
 
 import Navbar from './components/Navbar';
 import WelcomeSection from './components/WelcomeSection';
@@ -94,8 +100,38 @@ function App() {
             <>
               <LandingPage />
             </>
-          } />
-
+          }
+          />
+          <Route path="/cookie-policy" element={
+            <>
+              <CookiePolicy />
+            </>
+          }
+          />
+          <Route path="/disclaimer" element={
+            <>
+              <Disclaimer />
+            </>
+          }
+          />
+          <Route path="/privacy-policy" element={
+            <>
+              <PrivacyPolicy />
+            </>
+          }
+          />
+          <Route path="/risk-disclosure" element={
+            <>
+              <RiskDisclosure />
+            </>
+          }
+          />
+          <Route path="/terms-and-conditions" element={
+            <>
+              <TermsAndConditions />
+            </>
+          }
+          /> 
           <Route path="/index2" element={
             <>
               <Navbar />

@@ -212,11 +212,20 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Legal
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
-            Terms
+          <Link color="text.secondary" variant="body2" href="/terms-and-conditions">
+            Terms & Conditions
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Privacy
+          <Link color="text.secondary" variant="body2" href="/privacy-policy">
+            Privacy Policy
+          </Link>
+          <Link color="text.secondary" variant="body2" href="/cookie-policy">
+            Cookie Policy
+          </Link>
+          <Link color="text.secondary" variant="body2" href="/disclaimer">
+            Disclaimer
+          </Link>
+          <Link color="text.secondary" variant="body2" href="/risk-disclosure">
+            Risk Disclosure
           </Link>
           <Link color="text.secondary" variant="body2" href="https://www.timecapsuletoken.com/contact">
             Contact
