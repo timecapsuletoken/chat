@@ -79,12 +79,16 @@ export default function FeedbackSection() {
           flexDirection: 'column',
           alignItems: 'center',
           gap: { xs: 3, sm: 6 },
+          maxWidth: { xs: '100%', md: '1200px' }, // Adjust maxWidth for larger screens
+          width: '100%',
         }}
         >
         <Box
             sx={{
             textAlign: 'center',
-            width: { xs: '100%', md: '60%' },
+            width: '100%',
+            maxWidth: { xs: '100%', md: '60%', lg: '90%' }, // Larger grid on large screens
+            mx: 'auto', // Center horizontally
             }}
         >
             <Typography
@@ -99,57 +103,138 @@ export default function FeedbackSection() {
             Share your thoughts and help us improve. Your feedback matters to us.
             </Typography>
         </Box>
-
-        <Grid
-            container
-            spacing={3}
-            sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}
-        >
-            <Grid item xs={12} md={6}>
-            <Card
-                sx={{
-                p: 3,
-                boxShadow: '0 8px 12px rgba(0,0,0,0.1)',
-                border: '1px solid',
-                borderColor: 'divider',
-                }}
-            >
-                <CardContent>
-                <Box component="form" sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                <TextField 
-                  id="filled-basic" 
-                  name="name"
-                  fullWidth
-                  required
-                  onChange={handleInputChange}
-                  value={formData.name}
-                  label="Your Name" 
-                  variant="filled" 
+          <Grid
+              container
+              //spacing={3}
+              sx={{ 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                width: '100%' 
+              }}
+          >
+            <Grid item xs={12} md={6} lg={10}>
+              <Card
                   sx={{
-                    width: '250px',
-                    '& .MuiFilledInput-root': {
-                      backgroundColor: '#1c1c1c', // Set custom background color
-                      borderRadius: '4px', // Optional: Rounded corners
-                      '&:hover': {
-                        backgroundColor: '#2c2c2c', // Darker background on hover
-                      },
-                      '&.Mui-focused': {
-                        backgroundColor: '#1c1c1c', // Keep background consistent when focused
-                      },
-                    },
+                  p: 3,
+                  boxShadow: '0 8px 12px rgba(0,0,0,0.1)',
+                  border: '1px solid',
+                  borderColor: 'divider',
                   }}
-                />
-                  <TextField
-                    id="filled-basic"
-                    variant="filled"
-                    fullWidth
-                    name="email"
-                    label="Your Email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
+              >
+                  <CardContent>
+                  <Box component="form" sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                    <TextField 
+                      id="filled-basic" 
+                      name="name"
+                      fullWidth
+                      required
+                      onChange={handleInputChange}
+                      value={formData.name}
+                      label="Your Name" 
+                      variant="filled" 
+                      sx={{
+                        '& .MuiFilledInput-root': {
+                          backgroundColor: '#1c1c1c', // Set custom background color
+                          borderRadius: '4px', // Optional: Rounded corners
+                          '&:hover': {
+                            backgroundColor: '#2c2c2c', // Darker background on hover
+                          },
+                          '&.Mui-focused': {
+                            backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                          },
+                        },
+                      }}
+                    />
+                    <TextField
+                      id="filled-basic"
+                      variant="filled"
+                      fullWidth
+                      name="email"
+                      label="Your Email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      sx={{
+                        '& .MuiFilledInput-root': {
+                          backgroundColor: '#1c1c1c', // Set custom background color
+                          borderRadius: '4px', // Optional: Rounded corners
+                          '&:hover': {
+                            backgroundColor: '#2c2c2c', // Darker background on hover
+                          },
+                          '&.Mui-focused': {
+                            backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                          },
+                        },
+                      }}
+                    />
+                  </Box>
+                  <FormControl 
+                    variant="filled" 
+                    fullWidth 
+                    required 
                     sx={{
-                      width: '250px',
+                      mb: 2,
+                      '& .MuiFilledInput-root': {
+                        backgroundColor: '#1c1c1c', // Set custom background color
+                        borderRadius: '4px', // Optional rounded corners
+                        '&:hover': {
+                          backgroundColor: '#2c2c2c', // Darker background on hover
+                        },
+                        '&.Mui-focused': {
+                          backgroundColor: '#1c1c1c', // Keep background consistent on focus
+                        },
+                      },
+                    }}                
+                  >
+                    <InputLabel id="demo-simple-select-filled-label">Feedback Type</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-filled-label"
+                      id="demo-simple-select-filled"
+                      value={feedbackType}
+                      onChange={(e) => setFeedbackType(e.target.value)}
+                    >
+                      {feedbackTypes.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    fullWidth
+                    required
+                    name="message"
+                    id="outlined-multiline-static"
+                    label="Your Message"
+                    multiline
+                    rows={4}
+                    value={formData.message}
+                    variant="filled"
+                    onChange={handleInputChange}
+                    sx={{
+                      marginBottom: '16px',
+                      '& .MuiFilledInput-root': {
+                        backgroundColor: '#1c1c1c', // Set custom background color
+                        borderRadius: '4px', // Add rounded corners
+                        '&:hover': {
+                          backgroundColor: '#2c2c2c', // Change background on hover
+                        },
+                        '&.Mui-focused': {
+                          backgroundColor: '#1c1c1c', // Keep background consistent on focus
+                        },
+                      },
+                    }}                         
+                  />
+                  <TextField 
+                    id="filled-basic" 
+                    name="fileUrl"
+                    fullWidth
+                    onChange={handleInputChange}
+                    value={formData.fileUrl}
+                    label="Attachment URL" 
+                    variant="filled" 
+                    helperText="upload to https://prnt.sc/ and paste the URL in the input above"
+                    sx={{
                       '& .MuiFilledInput-root': {
                         backgroundColor: '#1c1c1c', // Set custom background color
                         borderRadius: '4px', // Optional: Rounded corners
@@ -162,110 +247,30 @@ export default function FeedbackSection() {
                       },
                     }}
                   />
-                </Box>
-                <FormControl 
-                  variant="filled" 
-                  fullWidth 
-                  required 
-                  sx={{
-                    mb: 2,
-                    '& .MuiFilledInput-root': {
-                      backgroundColor: '#1c1c1c', // Set custom background color
-                      borderRadius: '4px', // Optional rounded corners
-                      '&:hover': {
-                        backgroundColor: '#2c2c2c', // Darker background on hover
-                      },
-                      '&.Mui-focused': {
-                        backgroundColor: '#1c1c1c', // Keep background consistent on focus
-                      },
-                    },
-                  }}                
-                >
-                  <InputLabel id="demo-simple-select-filled-label">Feedback Type</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-filled-label"
-                    id="demo-simple-select-filled"
-                    value={feedbackType}
-                    onChange={(e) => setFeedbackType(e.target.value)}
+                  <Divider sx={{ marginBottom: '20px'}} />
+                  </CardContent>
+                  <CardActions>
+                  <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      endIcon={<SendIcon />}
+                      onClick={handleSubmit}
+                      disabled={loading}
                   >
-                    {feedbackTypes.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <TextField
-                  fullWidth
-                  required
-                  name="message"
-                  id="outlined-multiline-static"
-                  label="Your Message"
-                  multiline
-                  rows={4}
-                  value={formData.message}
-                  variant="filled"
-                  onChange={handleInputChange}
-                  sx={{
-                    marginBottom: '16px',
-                    '& .MuiFilledInput-root': {
-                      backgroundColor: '#1c1c1c', // Set custom background color
-                      borderRadius: '4px', // Add rounded corners
-                      '&:hover': {
-                        backgroundColor: '#2c2c2c', // Change background on hover
-                      },
-                      '&.Mui-focused': {
-                        backgroundColor: '#1c1c1c', // Keep background consistent on focus
-                      },
-                    },
-                  }}                         
-                />
-                <TextField 
-                  id="filled-basic" 
-                  name="fileUrl"
-                  fullWidth
-                  onChange={handleInputChange}
-                  value={formData.fileUrl}
-                  label="Attachment URL" 
-                  variant="filled" 
-                  helperText="upload to https://prnt.sc/ and paste the URL in the input above"
-                  sx={{
-                    '& .MuiFilledInput-root': {
-                      backgroundColor: '#1c1c1c', // Set custom background color
-                      borderRadius: '4px', // Optional: Rounded corners
-                      '&:hover': {
-                        backgroundColor: '#2c2c2c', // Darker background on hover
-                      },
-                      '&.Mui-focused': {
-                        backgroundColor: '#1c1c1c', // Keep background consistent when focused
-                      },
-                    },
-                  }}
-                />
-                <Divider sx={{ marginBottom: '20px'}} />
-                </CardContent>
-                <CardActions>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    endIcon={<SendIcon />}
-                    onClick={handleSubmit}
-                    disabled={loading}
-                >
-                    {loading ? 'Submitting...' : 'Submit Feedback'}
-                </Button>
-                </CardActions>
-                {successMessage && (
-                <Typography
-                    variant="body2"
-                    align="center"
-                    sx={{ mt: 2, color: loading ? 'text.disabled' : 'success.main' }}
-                >
-                    {successMessage}
-                </Typography>
-                )}
-            </Card>
+                      {loading ? 'Submitting...' : 'Submit Feedback'}
+                  </Button>
+                  </CardActions>
+                  {successMessage && (
+                  <Typography
+                      variant="body2"
+                      align="center"
+                      sx={{ mt: 2, color: loading ? 'text.disabled' : 'success.main' }}
+                  >
+                      {successMessage}
+                  </Typography>
+                  )}
+              </Card>
             </Grid>
         </Grid>
     </Container>
