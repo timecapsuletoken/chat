@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom'; 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ChatImage from '../../assets/images/LandingPage/TCA_dApp_Home.gif';
+import ChatImage from '../../assets/images/LandingPage/chat_communicating.gif';
 import ChatIcon from '@mui/icons-material/Chat'; 
 import { styled } from '@mui/material/styles';
 
@@ -18,7 +18,7 @@ const StyledBox = styled('img')(({ theme }) => ({
   outlineColor: 'hsla(220, 25%, 80%, 0.2)',
   border: '1px solid',
   borderColor: (theme.vars || theme).palette.grey[200],
-  boxShadow: '0 0 12px 8px hsl(267deg 55% 46% / 30%)',
+  boxShadow: '0 0 12px 8px hsl(279.15deg 90.64% 53.92% / 30%)',
   backgroundImage: `url(${ChatImage})`,
   //backgroundSize: 'cover',
   //objectFit: 'contain',
@@ -26,7 +26,7 @@ const StyledBox = styled('img')(({ theme }) => ({
     marginTop: theme.spacing(10),
   },
   ...theme.applyStyles('dark', {
-    boxShadow: '0 0 24px 12px hsl(267deg 55% 46% / 30%)',
+    boxShadow: '0 0 24px 12px hsl(279.15deg 90.64% 53.92% / 30%)',
     backgroundImage: `url(${ChatImage})`,
     outlineColor: 'hsla(220, 20%, 42%, 0.1)',
     borderColor: (theme.vars || theme).palette.grey[700],
@@ -44,10 +44,10 @@ export default function Hero() {
         width: '100%',
         backgroundRepeat: 'no-repeat',
         backgroundImage:
-          'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(267deg 55% 46% / 50%), transparent)',
+          'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(279.15deg 90.64% 53.92% / 50%), transparent)',
         ...theme.applyStyles('dark', {
           backgroundImage:
-            'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(267deg 55% 46% / 50%), transparent)',
+            'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(279.15deg 90.64% 53.92% / 50%), transparent)',
         }),
       })}
     >
@@ -82,7 +82,7 @@ export default function Hero() {
                 fontSize: 'inherit',
                 color: 'primary.main',
                 ...theme.applyStyles('dark', {
-                  color: 'primary.light',
+                  color: 'primary.main',
                 }),
               })}
             >

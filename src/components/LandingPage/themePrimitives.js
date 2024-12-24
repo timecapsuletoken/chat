@@ -6,15 +6,15 @@ const customShadows = [...defaultTheme.shadows];
 
 export const brand = {
   50: 'hsl(282, 89%, 95%)',
-  100: 'hsl(282, 89%, 92%)',
+  100: 'hsl(282, 89%, 90%)',
   200: 'hsl(282, 89%, 80%)',
-  300: 'hsl(282, 89%, 65%)',
-  400: 'hsl(282, 89%, 48%)',
-  500: 'hsl(282, 89%, 42%)',
-  600: 'hsl(282, 89%, 55%)',
-  700: 'hsl(282, 89%, 35%)',
-  800: 'hsl(282, 89%, 16%)',
-  900: 'hsl(282, 89%, 21%)',  
+  300: 'hsl(282, 89%, 70%)',
+  400: 'hsl(282, 89%, 60%)',
+  500: 'hsl(282, 89%, 50%)',
+  600: 'hsl(282, 89%, 40%)',
+  700: 'hsl(282, 89%, 30%)',
+  800: 'hsl(282, 89%, 20%)',
+  900: 'hsl(282, 89%, 10%)',  
 };
 
 export const gray = {
@@ -353,6 +353,21 @@ export const typography = {
   subtitle2: {
     fontSize: defaultTheme.typography.pxToRem(14),
     fontWeight: 500,
+  },
+  gradientText: {
+    letterSpacing: '-0.02em',
+    background: 'linear-gradient(90deg, #07e6f5 -18.55%, #aa1ff4 113.09%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    MozBackgroundClip: 'text',
+    MozTextFillColor: 'transparent',
+    backgroundClip: 'text', // Fallback for browsers supporting standard CSS
+    textFillColor: 'transparent',
+    display: 'inline-block',
+    marginTop: '-0.4em',
+    position: 'relative',
+    top: '-6px',
+    marginBottom: '0',
   },
   body1: {
     fontSize: defaultTheme.typography.pxToRem(14),

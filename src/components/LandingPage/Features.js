@@ -13,9 +13,9 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 //import DevicesIcon from '@mui/icons-material/Devices';
 import HubIcon from '@mui/icons-material/Hub';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import ChattingImage from '../../assets/images/LandingPage/web3.gif';
-import secureWNetwork from '../../assets/images/LandingPage/safety.gif';
-import DecDRelay from '../../assets/images/LandingPage/web3-rubiscube.gif';
+import ChattingImage from '../../assets/images/LandingPage/objects/web3.gif';
+import DecDRelay from '../../assets/images/LandingPage/objects/chip-folder.png';
+import secureWNetwork from '../../assets/images/LandingPage/objects/key-folder.png';
 
 import featureShape2 from '../../assets/images/LandingPage/objects/feature-shape-2-1.svg';
 
@@ -197,9 +197,8 @@ export default function Features() {
       <Box sx={{ width: { sm: '100%', md: '60%' } }}>
         <Typography
           component="h2"
-          variant="h4"
+          variant="gradientText"
           gutterBottom
-          sx={{ color: 'text.primary' }}
         >
           dApp Features
         </Typography>

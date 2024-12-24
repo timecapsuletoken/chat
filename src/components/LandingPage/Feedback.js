@@ -93,9 +93,8 @@ export default function FeedbackSection() {
         >
             <Typography
             component="h2"
-            variant="h4"
+            variant="gradientText"
             gutterBottom
-            sx={{ color: 'text.primary' }}
             >
             We Value Your Feedback
             </Typography>

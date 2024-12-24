@@ -127,7 +127,7 @@ export default function Highlights() {
             textAlign: { sm: 'left', md: 'center' },
           }}
         >
-          <Typography component="h2" variant="h4" gutterBottom sx={{ color: 'text.primary' }}>
+          <Typography component="h2" variant="gradientText" gutterBottom>
             Highlights
           </Typography>
           <Typography variant="body1" sx={(theme) => ({ color: theme.palette.text.secondary })}>

@@ -124,9 +124,8 @@ export default function Donations() {
       >
         <Typography
           component="h2"
-          variant="h4"
+          variant="gradientText"
           gutterBottom
-          sx={{ color: 'text.primary' }}
         >
           Donations
         </Typography>

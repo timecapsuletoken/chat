@@ -70,9 +70,8 @@ export default function HowItWorks() {
       >
         <Typography
           component="h2"
-          variant="h4"
+          variant="gradientText"
           gutterBottom
-          sx={{ color: 'text.primary' }}
         >
           How It Works
         </Typography>
