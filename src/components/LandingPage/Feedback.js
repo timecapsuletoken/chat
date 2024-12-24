@@ -120,6 +120,7 @@ export default function FeedbackSection() {
                   id="filled-basic" 
                   name="name"
                   fullWidth
+                  required
                   onChange={handleInputChange}
                   value={formData.name}
                   label="Your Name" 

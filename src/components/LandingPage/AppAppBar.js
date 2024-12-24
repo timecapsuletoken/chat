@@ -135,21 +135,23 @@ export default function AppAppBar() {
                 </Box>
 
                 <MenuItem>Features</MenuItem>
-                <MenuItem>Testimonials</MenuItem>
+                <MenuItem>How It Works</MenuItem>
                 <MenuItem>Highlights</MenuItem>
-                <MenuItem>Pricing</MenuItem>
+                <MenuItem>Donations</MenuItem>
                 <MenuItem>FAQ</MenuItem>
-                <MenuItem>Blog</MenuItem>
+                <MenuItem>Contact</MenuItem>
                 <Divider sx={{ my: 3 }} />
                 <MenuItem>
-                  <Button color="primary" variant="contained" fullWidth>
-                    Sign up
-                  </Button>
-                </MenuItem>
-                <MenuItem>
-                  <Button color="primary" variant="outlined" fullWidth>
-                    Sign in
-                  </Button>
+                    <Button 
+                      fullWidth
+                      color="primary" 
+                      variant="contained" 
+                      size="small" 
+                      startIcon={<AccountBalanceWalletIcon />}
+                      onClick={() => navigate('/login')} 
+                    >
+                      Connect Wallet
+                    </Button>
                 </MenuItem>
               </Box>
             </Drawer>

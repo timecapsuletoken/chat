@@ -1,18 +1,18 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { motion } from 'framer-motion';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { FaDiscord } from "react-icons/fa";
 import { RiBnbFill } from "react-icons/ri";
 import TwitterIcon from '@mui/icons-material/X';
+import ChatIcon from '@mui/icons-material/Chat'; 
 import SitemarkIcon from '../LandingPage/SitemarkIcon';
 import TCAicon1 from '../../assets/images/logos/logo.png';
 import TCAicon2 from '../../assets/images/logos/devlogo.png';
@@ -42,7 +42,7 @@ const bouncingImages = [
 ];
 
 export default function Footer() {
-
+  const navigate = useNavigate();
   const footerRef = React.useRef(null);
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
 
@@ -135,36 +135,23 @@ export default function Footer() {
           <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
             <SitemarkIcon />
             <Typography variant="body2" gutterBottom sx={{ fontWeight: 600, mt: 2, color: 'text.primary' }}>
-              Join the newsletter
+              Your Gateway to Private Messaging
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-              Subscribe for weekly updates. No spams ever!
+              Experience seamless and secure communication powered by blockchain technology. Stay connected, stay private
             </Typography>
-            <InputLabel htmlFor="email-newsletter">Email</InputLabel>
+            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, fontWeight: 'bold' }}>Secure. Fast. Decentralized.</Typography>
             <Stack direction="row" spacing={1} useFlexGap>
-              <TextField
-                id="email-newsletter"
-                hiddenLabel
-                size="small"
-                variant="outlined"
-                fullWidth
-                aria-label="Enter your email address"
-                placeholder="Your email address"
-                slotProps={{
-                  htmlInput: {
-                    autoComplete: 'off',
-                    'aria-label': 'Enter your email address',
-                  },
-                }}
-                sx={{ width: '250px' }}
-              />
               <Button
                 variant="contained"
                 color="primary"
                 size="small"
-                sx={{ flexShrink: 0 }}
+                sx={{ minWidth: 'fit-content' }}
+                fullWidth
+                onClick={() => navigate('/home')}
+                endIcon={<ChatIcon />}
               >
-                Subscribe
+                Go Chatting now
               </Button>
             </Stack>
           </Box>
@@ -179,19 +166,16 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Product
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="#features">
             Features
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Testimonials
+          <Link color="text.secondary" variant="body2" href="#how-it-works">
+            How It Works
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="#highlights">
             Highlights
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Pricing
-          </Link>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="#faq">
             FAQs
           </Link>
         </Box>
@@ -205,14 +189,17 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Company
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://www.timecapsuletoken.com/">
             About us
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Careers
+          <Link color="text.secondary" variant="body2" href="#donations">
+            Donations
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
-            Press
+          <Link color="text.secondary" variant="body2" href="#feedback">
+            Feedback
+          </Link>
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://www.timecapsuletoken.com/assets/pdfs/whitepaper.pdf">
+            Whitepaper
           </Link>
         </Box>
         <Box
@@ -231,7 +218,7 @@ export default function Footer() {
           <Link color="text.secondary" variant="body2" href="#">
             Privacy
           </Link>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="https://www.timecapsuletoken.com/contact">
             Contact
           </Link>
         </Box>

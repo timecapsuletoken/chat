@@ -20,7 +20,7 @@ import { donate } from '../LandingPage/utils/donationScript'; // Ensure this pat
 const donationTiers = [
   {
     title: 'Supporter',
-    price: 0.1,
+    price: 5,
     description: [
       'Show your love for decentralized tech',
       'Access to exclusive updates',
