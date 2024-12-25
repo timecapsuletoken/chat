@@ -10,6 +10,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Chip from '@mui/material/Chip';
 import ConfettiExplosion from 'react-confetti-explosion';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -135,7 +136,7 @@ export default function Donations() {
       </Box>
       <Grid
         container
-        spacing={3}
+        //spacing={3}
         sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}
       >
         {donationTiers.map((tier) => (
@@ -145,10 +146,11 @@ export default function Donations() {
             sm={tier.title === 'Champion' ? 12 : 6}
             md={4}
             key={tier.title}
+            sx={{ p: 2 }}
           >
             <Card
               sx={{
-                p: 2,
+                p: 4,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 4,
@@ -189,10 +191,10 @@ export default function Donations() {
                     ${tier.price}
                   </Typography>
                   <Typography component="h3" variant="h6">
-                    &nbsp; one-time
+                    &nbsp; <Chip variant="outlined" label="one-time" size="small" color="text.primary"/>
                   </Typography>
                 </Box>
-                <Divider sx={{ my: 2, opacity: 0.8, borderColor: 'divider' }} />
+                <Divider sx={{ my: 2, opacity: 0.8, borderColor: 'text.secondary' }} />
                 {tier.description.map((line) => (
                   <Box
                     key={line}
@@ -201,7 +203,7 @@ export default function Donations() {
                     <Typography
                       variant="subtitle2"
                       component={'span'}
-                      sx={{ color: 'text.secondary' }}
+                      sx={{ color: 'text.primary' }}
                     >
                       {line}
                     </Typography>

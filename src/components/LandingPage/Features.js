@@ -17,7 +17,7 @@ import ChattingImage from '../../assets/images/LandingPage/objects/web3.gif';
 import DecDRelay from '../../assets/images/LandingPage/objects/chip-folder.png';
 import secureWNetwork from '../../assets/images/LandingPage/objects/key-folder.png';
 
-import featureShape2 from '../../assets/images/LandingPage/objects/feature-shape-2-1.svg';
+import featureShape2 from '../../assets/images/LandingPage/objects/feature-shape-2-1.png';
 
 // Define the orbiting animation
 const orbitAnimation = keyframes`

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SvgIcon from '@mui/material/SvgIcon';
-import { ReactComponent as BlackLogoSvg } from '../../assets/images/logos/BlackTCALogo.svg';
-import { ReactComponent as WhiteLogoSvg } from '../../assets/images/logos/WhiteTCALogo.svg';
+import { ReactComponent as BlackLogoSvg } from '../../assets/images/logos/BlackTCALogoBETA.svg';
+import { ReactComponent as WhiteLogoSvg } from '../../assets/images/logos/WhiteTCALogoBETA.svg';
 import { useColorScheme } from '@mui/material/styles';
 
 export default function SitemarkIcon() {

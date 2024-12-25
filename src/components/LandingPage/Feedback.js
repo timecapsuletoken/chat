@@ -41,7 +41,7 @@ const OrbitingImage = styled('img')(({ theme }) => ({
   height: 'auto',
   animation: `${orbitAnimation} 10s linear infinite`,
   pointerEvents: 'none',
-  zIndex: 1000,
+  zIndex: 1,
   [theme.breakpoints.up('md')]: {
     width: '150px',
     height: 'auto',
@@ -122,10 +122,10 @@ export default function FeedbackSection() {
           left: 0,
           width: '100%',
           height: '100%',
-          zIndex: 1000,
+          zIndex: -10,
         }}
       >
-        <OrbitingImage src={featureShape2} alt="Orbiting Decoration" />
+        <OrbitingImage src={featureShape2} alt="Orbiting Decoration" sx={{ filter: 'hue-rotate(160deg)' }} />
       </Box>
         <Box
             sx={{
