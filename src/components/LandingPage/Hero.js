@@ -1,13 +1,12 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import { useNavigate } from 'react-router-dom'; 
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ChatImage from '../../assets/images/LandingPage/chat_communicating.gif';
 import ChatIcon from '@mui/icons-material/Chat'; 
 import { styled } from '@mui/material/styles';
+import GradientRotatingButton from '../../components/LandingPage/utils/GradientRotatingButton';
 
 const StyledBox = styled('img')(({ theme }) => ({
   alignSelf: 'center',
@@ -33,10 +32,7 @@ const StyledBox = styled('img')(({ theme }) => ({
   }),
 }));
 
-export default function Hero() {
-
-  const navigate = useNavigate();
-  
+export default function Hero() {  
   return (
     <Box
       id="hero"
@@ -105,18 +101,14 @@ export default function Hero() {
             useFlexGap
             sx={{ pt: 2, width: { xs: '100%', sm: '350px' } }}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              sx={{ minWidth: 'fit-content' }}
-              fullWidth
-              onClick={() => navigate('/home')}
-              endIcon={<ChatIcon />}
-            >
-              Go Chatting now
-            </Button>
+            <GradientRotatingButton
+              text="Go Chatting now"
+              destination="/home"
+              icon={<ChatIcon />}
+              iconPosition="end"
+            />
           </Stack>
+
           <Typography
             variant="caption"
             color="text.secondary"

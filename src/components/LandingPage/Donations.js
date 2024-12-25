@@ -60,23 +60,6 @@ const donationTiers = [
 export default function Donations() {
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: 'success' });
   const [isExploding, setIsExploding] = React.useState(false);
-  
-  React.useEffect(() => {
-    const cards = document.querySelectorAll('.rotating-card');
-
-    cards.forEach((card, index) => {
-      let angle = 0;
-
-      const updateAnimation = () => {
-        angle = (angle + 1) % 360;
-        card.style.setProperty('--angle', `${angle + index * 120}deg`);
-        requestAnimationFrame(updateAnimation);
-      };
-
-      card.style.setProperty('--angle', '0deg');
-      requestAnimationFrame(updateAnimation);
-    });
-  }, []);
 
   const handleDonate = async (price) => {
     try {
@@ -166,7 +149,7 @@ export default function Donations() {
             sx={{ p: 2 }}
           >
             <Card
-              className="rotating-card"
+              className="rotating-color"
               sx={(theme) => ({
                 p: 4,
                 display: 'flex',
