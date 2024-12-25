@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -16,6 +15,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
 import { FaDonate } from "react-icons/fa";
+import GradientRotatingButton from '../../components/LandingPage/utils/GradientRotatingButton';
 import { donate } from '../LandingPage/utils/donationScript';
 
 const donationTiers = [
@@ -70,7 +70,7 @@ export default function Donations() {
           <>
             Donation successful! Transaction Hash:{" "}
             <a
-              href={`https://testnet.bscscan.com/tx/${result.transactionHash}`}
+              href={`https://bscscan.com/tx/${result.transactionHash}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: '#ffffff', textDecoration: 'underline' }}
@@ -214,15 +214,12 @@ export default function Donations() {
                 ))}
               </CardContent>
               <CardActions>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color='primary'
-                  endIcon={<FaDonate />}
+                <GradientRotatingButton
+                  text={tier.buttonText}
+                  icon={<FaDonate />}
+                  iconPosition="start"
                   onClick={() => handleDonate(tier.price)} // Trigger the donate function
-                >
-                  {tier.buttonText}
-                </Button>
+                />
               </CardActions>
             </Card>
           </Grid>

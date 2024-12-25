@@ -8,7 +8,6 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ForumIcon from '@mui/icons-material/Forum';
 import MapsUgcIcon from '@mui/icons-material/MapsUgc';
 
-// Custom Connector
 const CustomConnector = styled(StepConnector)(({ theme }) => ({
   '&.MuiStepConnector-root': {
     top: 22, // Adjust the vertical alignment of the connector
@@ -16,9 +15,19 @@ const CustomConnector = styled(StepConnector)(({ theme }) => ({
   '& .MuiStepConnector-line': {
     height: 3,
     border: 0,
-    backgroundColor:
-      theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[300],
     borderRadius: 1,
+    background: `linear-gradient(90deg, #07e6f5, ${theme.palette.primary.main}, #07e6f5)`,
+    backgroundSize: '200% 100%', // Double the size for smooth animation
+    backgroundRepeat: 'no-repeat',
+    animation: 'loading-bar 3s linear infinite',
+  },
+  '@keyframes loading-bar': {
+    '0%': {
+      backgroundPosition: '100% 0%',
+    },
+    '100%': {
+      backgroundPosition: '0% 100%',
+    },
   },
 }));
 
