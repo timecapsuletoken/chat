@@ -12,17 +12,17 @@ const steps = [
   {
     label: 'Connect Your Wallet',
     description: 'Use your favorite crypto wallet like MetaMask or Coinbase Wallet to securely log in.',
-    icon: <AccountBalanceWalletIcon />,
+    icon: <AccountBalanceWalletIcon sx={{ color: 'info.light' }} />,
   },
   {
     label: 'Start a Chat',
     description: 'Enter a wallet address to initiate a secure and private conversation.',
-    icon: <ChatBubbleOutlineIcon />,
+    icon: <ChatBubbleOutlineIcon sx={{ color: 'info.light' }} />,
   },
   {
     label: 'Send a Message',
     description: 'Type and send encrypted messages directly to the recipient’s wallet.',
-    icon: <SendIcon />,
+    icon: <SendIcon sx={{ color: 'info.light' }} />,
   },
 ];
 
@@ -92,7 +92,7 @@ export default function HowItWorks() {
                   />
                 )}
               >
-                <Typography variant="h6">{step.label}</Typography>
+                <Typography variant="h6" sx={{ color: 'text.primary' }}>{step.label}</Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                   {step.description}
                 </Typography>

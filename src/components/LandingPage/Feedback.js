@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { keyframes, styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -15,6 +16,37 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import SendIcon from '@mui/icons-material/Send';
 import emailjs from 'emailjs-com';
+import featureShape2 from '../../assets/images/LandingPage/objects/feature-shape-2-2.png';
+
+// Define the orbiting animation
+const orbitAnimation = keyframes`
+  0% {
+    transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg) translateX(50px) rotate(-180deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+`;
+
+// Styled component for the orbiting image
+const OrbitingImage = styled('img')(({ theme }) => ({
+  position: 'absolute',
+  top: '10%',
+  left: '0%',
+  transform: 'translate(-50%, -50%)',
+  width: '60px',
+  height: 'auto',
+  animation: `${orbitAnimation} 10s linear infinite`,
+  pointerEvents: 'none',
+  zIndex: 1000,
+  [theme.breakpoints.up('md')]: {
+    width: '60px',
+    height: 'auto',
+  },
+}));
 
 const feedbackTypes = [
   { value: 'general', label: 'General Feedback' },
@@ -83,6 +115,18 @@ export default function FeedbackSection() {
           width: '100%',
         }}
         >
+          <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1000,
+        }}
+      >
+        <OrbitingImage src={featureShape2} alt="Orbiting Decoration" />
+      </Box>
         <Box
             sx={{
             textAlign: 'center',

@@ -14,7 +14,7 @@ import ConfettiExplosion from 'react-confetti-explosion';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
-
+import { FaDonate } from "react-icons/fa";
 import { donate } from '../LandingPage/utils/donationScript'; // Ensure this path is correct
 
 const donationTiers = [
@@ -26,7 +26,7 @@ const donationTiers = [
       'Access to exclusive updates',
       'Support server maintenance',
     ],
-    buttonText: 'Donate $5',
+    buttonText: 'Donate',
     buttonVariant: 'outlined',
     buttonColor: 'primary',
   },
@@ -38,7 +38,7 @@ const donationTiers = [
       'Your name in our supporters list',
       'Contribute to scaling the app',
     ],
-    buttonText: 'Donate $20',
+    buttonText: 'Donate',
     buttonVariant: 'outlined',
     buttonColor: 'primary',
   },
@@ -50,7 +50,7 @@ const donationTiers = [
       'Priority support and feature requests',
       'Be a part of decentralization history',
     ],
-    buttonText: 'Donate $50',
+    buttonText: 'Donate',
     buttonVariant: 'outlined',
     buttonColor: 'primary',
   },
@@ -211,8 +211,9 @@ export default function Donations() {
               <CardActions>
                 <Button
                   fullWidth
-                  variant={tier.buttonVariant}
-                  color={tier.buttonColor}
+                  variant="contained"
+                  color='primary'
+                  endIcon={<FaDonate />}
                   onClick={() => handleDonate(tier.price)} // Trigger the donate function
                 >
                   {tier.buttonText}
