@@ -27,7 +27,7 @@ export const gray = {
   600: 'hsl(0, 0%, 40%)',
   700: 'hsl(0, 0%, 30%)',
   800: 'hsl(0, 0%, 20%)',
-  900: 'hsl(0, 0%, 10%)',
+  900: 'hsl(0deg 0% 10.2%)',
 };
 
 export const green = {

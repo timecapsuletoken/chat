@@ -93,6 +93,7 @@ const items = [
 ];
 
 export default function Highlights() {
+
   return (
     <Box
       id="highlights"
@@ -138,6 +139,7 @@ export default function Highlights() {
           {items.map((item, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
               <Stack
+                className="rotating-color"
                 direction="column"
                 component={Card}
                 spacing={1}
@@ -146,8 +148,9 @@ export default function Highlights() {
                   color: theme.palette.text.primary,
                   p: 3,
                   height: '100%',
-                  borderColor: theme.palette.divider,
-                  backgroundColor: theme.palette.background.paper, // Dynamic card background
+                  borderRadius: 2,
+                  border: '1px solid transparent',
+                  background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
                   boxShadow: theme.shadows[1],
                 })}
               >

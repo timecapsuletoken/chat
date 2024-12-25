@@ -14,8 +14,12 @@ import Features from '../../components/LandingPage/Features';
 import FAQ from '../../components/LandingPage/FAQ';
 import Footer from '../../components/LandingPage/Footer';
 import AppTheme from '../../components/LandingPage/AppTheme';
+import { useGradientRotadingEffect } from '../../components/LandingPage/utils/useGradientRotadingEffect'; // Import the custom hook
 
 export default function MarketingPage(props) {
+
+  useGradientRotadingEffect();
+  
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />

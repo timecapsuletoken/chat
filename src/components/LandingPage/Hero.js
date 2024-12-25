@@ -13,15 +13,13 @@ const StyledBox = styled('img')(({ theme }) => ({
   alignSelf: 'center',
   width: '100%',
   marginTop: theme.spacing(8),
-  borderRadius: (theme.vars || theme).shape.borderRadius,
   outline: '6px solid',
   outlineColor: 'hsla(220, 25%, 80%, 0.2)',
-  border: '1px solid',
-  borderColor: (theme.vars || theme).palette.grey[200],
   boxShadow: '0 0 12px 8px hsl(279.15deg 90.64% 53.92% / 30%)',
-  backgroundImage: `url(${ChatImage})`,
-  //backgroundSize: 'cover',
-  //objectFit: 'contain',
+  borderRadius: 6,
+  border: '1px solid transparent',
+  background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+  backgroundImage: `url(${ChatImage})`,  
   [theme.breakpoints.up('sm')]: {
     marginTop: theme.spacing(10),
   },
@@ -29,13 +27,15 @@ const StyledBox = styled('img')(({ theme }) => ({
     boxShadow: '0 0 24px 12px hsl(279.15deg 90.64% 53.92% / 30%)',
     backgroundImage: `url(${ChatImage})`,
     outlineColor: 'hsla(220, 20%, 42%, 0.1)',
-    borderColor: (theme.vars || theme).palette.grey[700],
+    borderRadius: 6,
+    border: '1px solid transparent',
+    background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
   }),
 }));
 
 export default function Hero() {
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   
   return (
     <Box
@@ -126,9 +126,14 @@ export default function Hero() {
           </Typography>
         </Stack>
         <StyledBox
+          className="rotating-color"
           src={ChatImage}
           alt="Dashboard Image"
-          sx={{ height: 'auto', maxHeight: 700, width: '100%' }}
+          sx={{ 
+            height: 'auto', 
+            maxHeight: 700, 
+            width: '100%'
+          }}
         />
       </Container>
     </Box>

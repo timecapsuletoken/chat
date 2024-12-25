@@ -286,13 +286,16 @@ export default function Features() {
           }}
         >
           <Card
-            variant="outlined"
-            sx={{
+            className="rotating-color"
+            sx={(theme) => ({
               height: '100%',
               width: '100%',
               display: { xs: 'none', sm: 'flex' },
               pointerEvents: 'none',
-            }}
+              borderRadius: 2,
+              border: '1px solid transparent',
+              background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+            })}
           >
             <Box
               sx={(theme) => ({

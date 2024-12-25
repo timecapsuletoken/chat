@@ -175,9 +175,7 @@ export default function Donations() {
                 borderRadius: 2,
                 position: 'relative',
                 border: '1px solid transparent',
-                background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), ${theme.palette.primary.main}, ${theme.palette.secondary.light}) border-box`,
-                //background: `linear-gradient(#131219, #131219) padding-box, linear-gradient(var(--angle, 0deg), #070707, #687aff) border-box`,
-
+                background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,
               })}
             >
               <CardContent>

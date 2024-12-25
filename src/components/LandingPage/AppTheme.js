@@ -1,7 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-
 import { inputsCustomizations } from '../LandingPage/customizations/inputs';
 import { dataDisplayCustomizations } from '../LandingPage/customizations/dataDisplay';
 import { feedbackCustomizations } from '../LandingPage/customizations/feedback';

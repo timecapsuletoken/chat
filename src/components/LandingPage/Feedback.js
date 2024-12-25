@@ -56,6 +56,7 @@ const feedbackTypes = [
 
 export default function FeedbackSection() {
   const [feedbackType, setFeedbackType] = React.useState('general');
+  
   const [formData, setFormData] = React.useState({
     name: '',
     email: '',
@@ -102,38 +103,38 @@ export default function FeedbackSection() {
 
   return (
     <Container
-        id="feedback"
-        sx={{
-          pt: { xs: 4, sm: 12 },
-          pb: { xs: 8, sm: 16 },
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: { xs: 3, sm: 6 },
-          maxWidth: { xs: '100%', md: '1200px' }, // Adjust maxWidth for larger screens
-          width: '100%',
-        }}
-        >
-          <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: -10,
-        }}
-      >
-        <OrbitingImage src={featureShape2} alt="Orbiting Decoration" sx={{ filter: 'hue-rotate(160deg)' }} />
-      </Box>
+      id="feedback"
+      sx={{
+        pt: { xs: 4, sm: 12 },
+        pb: { xs: 8, sm: 16 },
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: { xs: 3, sm: 6 },
+        maxWidth: { xs: '100%', md: '1200px' }, // Adjust maxWidth for larger screens
+        width: '100%',
+      }}
+    >
         <Box
-            sx={{
-            textAlign: 'center',
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
             width: '100%',
-            maxWidth: { xs: '100%', md: '60%', lg: '90%' }, // Larger grid on large screens
-            mx: 'auto', // Center horizontally
-            }}
+            height: '100%',
+            zIndex: -10,
+          }}
+        >
+          <OrbitingImage src={featureShape2} alt="Orbiting Decoration" sx={{ filter: 'hue-rotate(160deg)' }} />
+        </Box>
+        <Box
+          sx={{
+          textAlign: 'center',
+          width: '100%',
+          maxWidth: { xs: '100%', md: '60%', lg: '90%' }, // Larger grid on large screens
+          mx: 'auto', // Center horizontally
+          }}
         >
             <Typography
             component="h2"
@@ -152,17 +153,19 @@ export default function FeedbackSection() {
         sx={{ 
           alignItems: 'center', 
           justifyContent: 'center', 
-          width: '100%' 
+          width: '100%',
         }}
       >
             <Grid item xs={12} md={6} lg={10}>
               <Card
-                  sx={{
-                  p: 3,
-                  boxShadow: '0 8px 12px rgba(0,0,0,0.1)',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  }}
+                  className="rotating-color"
+                  sx={(theme) => ({
+                    p: 3,
+                    boxShadow: '0 8px 12px rgba(0,0,0,0.1)',
+                    borderRadius: 2,
+                    border: '1px solid transparent',
+                    background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+                  })}
               >
                   <CardContent>
                   <Box component="form" sx={{ display: 'flex', gap: 2, mb: 2 }}>

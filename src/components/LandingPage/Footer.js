@@ -229,7 +229,7 @@ export default function Footer() {
           <Link color="text.secondary" variant="body2" href="/risk-disclosure">
             Risk Disclosure
           </Link>
-          <Link color="text.secondary" variant="body2" href="https://www.timecapsuletoken.com/contact">
+          <Link color="text.secondary" variant="body2" target="_blank" href="https://www.timecapsuletoken.com/contact">
             Contact
           </Link>
         </Box>
@@ -264,6 +264,7 @@ export default function Footer() {
         > 
           <IconButton
             color="inherit"
+            target="_blank"
             size="small"
             href="https://bscscan.com/token/0x31aaB810b51f499340FC1e1B08716d2bC92C7A56"
             aria-label="BSCSCAN"
@@ -273,6 +274,7 @@ export default function Footer() {
           </IconButton>
           <IconButton
             color="inherit"
+            target="_blank"
             size="small"
             href="https://www.instagram.com/tcacoin/"
             aria-label="Instagram"
@@ -282,6 +284,7 @@ export default function Footer() {
           </IconButton>
           <IconButton
             color="inherit"
+            target="_blank"
             size="small"
             href="https://x.com/TCACoin"
             aria-label="X"
@@ -291,6 +294,7 @@ export default function Footer() {
           </IconButton>
           <IconButton
             color="inherit"
+            target="_blank"
             size="small"
             href="https://discord.gg/wBkDaDvEgv"
             aria-label="Discord"

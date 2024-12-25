@@ -30,20 +30,37 @@ export default function FAQ() {
         gap: { xs: 3, sm: 6 },
       }}
     >
-      <Typography
-        component="h2"
-        variant="gradientText"
+      <Box
         sx={{
           width: { sm: '100%', md: '60%' },
           textAlign: { sm: 'left', md: 'center' },
         }}
       >
-        Frequently asked questions
-      </Typography>
+        <Typography
+          component="h2"
+          variant="gradientText"
+          sx={{
+            width: { sm: '100%', md: '60%' },
+            textAlign: { sm: 'left', md: 'center' },
+          }}
+        >
+          Frequently asked questions
+        </Typography>
+        <Typography variant="body1" sx={(theme) => ({ color: theme.palette.text.secondary })}>
+          Explore the most commonly asked questions about TimeCapsule Chat, from features and functionality to technical details. Whether you're new to our platform or a seasoned user, this section is designed to help you better understand how TimeCapsule Chat works.
+        </Typography>
+      </Box>
       <Box sx={{ width: '100%' }}>
         <Accordion
           expanded={expanded.includes('panel1')}
           onChange={handleChange('panel1')}
+          className="rotating-color"
+          sx={(theme) => ({
+            borderRadius: 0,
+            border: '1px solid transparent',
+            background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+            boxShadow: theme.shadows[1],
+          })}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -67,6 +84,13 @@ export default function FAQ() {
         <Accordion
           expanded={expanded.includes('panel2')}
           onChange={handleChange('panel2')}
+          className="rotating-color"
+          sx={(theme) => ({
+            borderRadius: 0,
+            border: '1px solid transparent',
+            background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+            boxShadow: theme.shadows[1],
+          })}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -90,6 +114,13 @@ export default function FAQ() {
         <Accordion
           expanded={expanded.includes('panel3')}
           onChange={handleChange('panel3')}
+          className="rotating-color"
+          sx={(theme) => ({
+            borderRadius: 0,
+            border: '1px solid transparent',
+            background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+            boxShadow: theme.shadows[1],
+          })}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -125,6 +156,13 @@ export default function FAQ() {
         <Accordion
           expanded={expanded.includes('panel4')}
           onChange={handleChange('panel4')}
+          className="rotating-color"
+          sx={(theme) => ({
+            borderRadius: 0,
+            border: '1px solid transparent',
+            background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+            boxShadow: theme.shadows[1],
+          })}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -148,6 +186,13 @@ export default function FAQ() {
         <Accordion
           expanded={expanded.includes('panel5')}
           onChange={handleChange('panel5')}
+          className="rotating-color"
+          sx={(theme) => ({
+            borderRadius: 0,
+            border: '1px solid transparent',
+            background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
+            boxShadow: theme.shadows[1],
+          })}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
