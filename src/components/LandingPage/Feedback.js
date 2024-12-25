@@ -16,7 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import SendIcon from '@mui/icons-material/Send';
 import emailjs from 'emailjs-com';
-import featureShape2 from '../../assets/images/LandingPage/objects/feature-shape-2-2.png';
+import featureShape2 from '../../assets/images/LandingPage/objects/bnbchain.svg';
 
 // Define the orbiting animation
 const orbitAnimation = keyframes`
@@ -37,13 +37,13 @@ const OrbitingImage = styled('img')(({ theme }) => ({
   top: '10%',
   left: '0%',
   transform: 'translate(-50%, -50%)',
-  width: '60px',
+  width: '50px',
   height: 'auto',
   animation: `${orbitAnimation} 10s linear infinite`,
   pointerEvents: 'none',
   zIndex: 1000,
   [theme.breakpoints.up('md')]: {
-    width: '60px',
+    width: '150px',
     height: 'auto',
   },
 }));
