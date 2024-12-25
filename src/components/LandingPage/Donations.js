@@ -16,7 +16,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
 import { FaDonate } from "react-icons/fa";
-import { donate } from '../LandingPage/utils/donationScript'; // Ensure this path is correct
+import { donate } from '../LandingPage/utils/donationScript';
 
 const donationTiers = [
   {
@@ -60,6 +60,23 @@ const donationTiers = [
 export default function Donations() {
   const [snackbar, setSnackbar] = React.useState({ open: false, message: '', severity: 'success' });
   const [isExploding, setIsExploding] = React.useState(false);
+  
+  React.useEffect(() => {
+    const cards = document.querySelectorAll('.rotating-card');
+
+    cards.forEach((card, index) => {
+      let angle = 0;
+
+      const updateAnimation = () => {
+        angle = (angle + 1) % 360;
+        card.style.setProperty('--angle', `${angle + index * 120}deg`);
+        requestAnimationFrame(updateAnimation);
+      };
+
+      card.style.setProperty('--angle', '0deg');
+      requestAnimationFrame(updateAnimation);
+    });
+  }, []);
 
   const handleDonate = async (price) => {
     try {
@@ -149,14 +166,19 @@ export default function Donations() {
             sx={{ p: 2 }}
           >
             <Card
-              sx={{
+              className="rotating-card"
+              sx={(theme) => ({
                 p: 4,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 4,
-                boxShadow: '0 8px 12px rgba(0,0,0,0.2)',
-                border: '1px solid #ddd',
-              }}
+                borderRadius: 2,
+                position: 'relative',
+                border: '1px solid transparent',
+                background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), ${theme.palette.primary.main}, ${theme.palette.secondary.light}) border-box`,
+                //background: `linear-gradient(#131219, #131219) padding-box, linear-gradient(var(--angle, 0deg), #070707, #687aff) border-box`,
+
+              })}
             >
               <CardContent>
                 <Box

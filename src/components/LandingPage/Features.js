@@ -132,8 +132,11 @@ function MobileLayout({ selectedItemIndex, handleItemClick, selectedFeature }) {
       <Card variant="outlined">
         <Box
           sx={(theme) => ({
-            mb: 2,
-            backgroundSize: 'cover',
+            m: 'auto',
+            width: '100%',
+            height: '100%',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
             minHeight: 280,
             backgroundImage: 'var(--items-imageLight)',
