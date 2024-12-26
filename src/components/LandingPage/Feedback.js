@@ -66,6 +66,23 @@ export default function FeedbackSection() {
   const [loading, setLoading] = React.useState(false);
   const [successMessage, setSuccessMessage] = React.useState('');
 
+  React.useEffect(() => {
+    const buttons = document.querySelectorAll('.rotating-gradient-wrapper');
+
+    buttons.forEach((button, index) => {
+      let angle = 0;
+
+      const updateAnimation = () => {
+        angle = (angle + 1) % 360;
+        button.style.setProperty('--angle', `${angle + index * 120}deg`);
+        requestAnimationFrame(updateAnimation);
+      };
+
+      button.style.setProperty('--angle', '0deg');
+      requestAnimationFrame(updateAnimation);
+    });
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -180,13 +197,14 @@ export default function FeedbackSection() {
                       variant="filled" 
                       sx={{
                         '& .MuiFilledInput-root': {
-                          backgroundColor: '#1c1c1c', // Set custom background color
+                          backgroundColor: (theme) => theme.palette.action.hover, // Set custom background color
                           borderRadius: '4px', // Optional: Rounded corners
                           '&:hover': {
-                            backgroundColor: '#2c2c2c', // Darker background on hover
+                            //backgroundColor: '#2c2c2c', // Darker background on hover
+                            backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                           },
                           '&.Mui-focused': {
-                            backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                            backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                           },
                         },
                       }}
@@ -202,13 +220,14 @@ export default function FeedbackSection() {
                       required
                       sx={{
                         '& .MuiFilledInput-root': {
-                          backgroundColor: '#1c1c1c', // Set custom background color
+                          backgroundColor: (theme) => theme.palette.action.hover, // Set custom background color
                           borderRadius: '4px', // Optional: Rounded corners
                           '&:hover': {
-                            backgroundColor: '#2c2c2c', // Darker background on hover
+                            //backgroundColor: '#2c2c2c', // Darker background on hover
+                            backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                           },
                           '&.Mui-focused': {
-                            backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                            backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                           },
                         },
                       }}
@@ -221,13 +240,14 @@ export default function FeedbackSection() {
                     sx={{
                       mb: 2,
                       '& .MuiFilledInput-root': {
-                        backgroundColor: '#1c1c1c', // Set custom background color
-                        borderRadius: '4px', // Optional rounded corners
+                        backgroundColor: (theme) => theme.palette.action.hover, // Set custom background color
+                        borderRadius: '4px', // Optional: Rounded corners
                         '&:hover': {
-                          backgroundColor: '#2c2c2c', // Darker background on hover
+                          //backgroundColor: '#2c2c2c', // Darker background on hover
+                          backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                         },
                         '&.Mui-focused': {
-                          backgroundColor: '#1c1c1c', // Keep background consistent on focus
+                          backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                         },
                       },
                     }}                
@@ -260,13 +280,14 @@ export default function FeedbackSection() {
                     sx={{
                       marginBottom: '16px',
                       '& .MuiFilledInput-root': {
-                        backgroundColor: '#1c1c1c', // Set custom background color
-                        borderRadius: '4px', // Add rounded corners
+                        backgroundColor: (theme) => theme.palette.action.hover, // Set custom background color
+                        borderRadius: '4px', // Optional: Rounded corners
                         '&:hover': {
-                          backgroundColor: '#2c2c2c', // Change background on hover
+                          //backgroundColor: '#2c2c2c', // Darker background on hover
+                          backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                         },
                         '&.Mui-focused': {
-                          backgroundColor: '#1c1c1c', // Keep background consistent on focus
+                          backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                         },
                       },
                     }}                         
@@ -282,13 +303,14 @@ export default function FeedbackSection() {
                     helperText="upload to https://prnt.sc/ and paste the URL in the input above"
                     sx={{
                       '& .MuiFilledInput-root': {
-                        backgroundColor: '#1c1c1c', // Set custom background color
+                        backgroundColor: (theme) => theme.palette.action.hover, // Set custom background color
                         borderRadius: '4px', // Optional: Rounded corners
                         '&:hover': {
-                          backgroundColor: '#2c2c2c', // Darker background on hover
+                          //backgroundColor: '#2c2c2c', // Darker background on hover
+                          backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                         },
                         '&.Mui-focused': {
-                          backgroundColor: '#1c1c1c', // Keep background consistent when focused
+                          backgroundColor: (theme) => theme.palette.background.default, // Set custom background color
                         },
                       },
                     }}
@@ -296,16 +318,33 @@ export default function FeedbackSection() {
                   <Divider sx={{ marginBottom: '20px'}} />
                   </CardContent>
                   <CardActions>
-                  <Button
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      endIcon={<SendIcon />}
-                      onClick={handleSubmit}
-                      disabled={loading}
-                  >
-                      {loading ? 'Submitting...' : 'Submit Feedback'}
-                  </Button>
+                    <Box
+                      className="rotating-gradient-wrapper"
+                      sx={(theme) => ({
+                        width: '100%',
+                        display: 'inline-block',
+                        padding: '1px', // Space for the gradient border
+                        borderRadius: '8px',
+                        background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+                      })}
+                    >
+                      <Button
+                          fullWidth
+                          endIcon={<SendIcon />}
+                          onClick={handleSubmit}
+                          disabled={loading}
+                          sx={{
+                            borderRadius: '8px',
+                            background: (theme) => `${theme.palette.background.default} !important`,
+                            color: (theme) => theme.palette.text.primary,
+                            '&:hover': {
+                              background: (theme) => `${theme.palette.action.hover} !important`,
+                            },
+                          }}
+                      >
+                          {loading ? 'Submitting...' : 'Submit Feedback'}
+                      </Button>
+                    </Box>
                   </CardActions>
                   {successMessage && (
                   <Typography

@@ -12,6 +12,7 @@ import Disclaimer from './pages/LandingPage/legalDocs/Disclaimer';
 import PrivacyPolicy from './pages/LandingPage/legalDocs/PrivacyPolicy';
 import RiskDisclosure from './pages/LandingPage/legalDocs/RiskDisclosure';
 import TermsAndConditions from './pages/LandingPage/legalDocs/TermsAndConditions';
+import TermsOfService from './pages/LandingPage/legalDocs/TermsOfService';
 
 import Navbar from './components/Navbar';
 import WelcomeSection from './components/WelcomeSection';
@@ -131,7 +132,13 @@ function App() {
               <TermsAndConditions />
             </>
           }
-          /> 
+          />
+          <Route path="/tos" element={
+            <>
+              <TermsOfService />
+            </>
+          }
+          />
           <Route path="/index2" element={
             <>
               <Navbar />

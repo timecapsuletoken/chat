@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom'; 
 import { motion } from 'framer-motion';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import GradientRotatingButton from '../../components/LandingPage/utils/GradientRotatingButton';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { FaDiscord } from "react-icons/fa";
 import { RiBnbFill } from "react-icons/ri";
@@ -25,7 +24,7 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="https://mui.com/">
+      <Link color="text.secondary" href="https://www.timecapsuletoken.com/">
         TimeCapsule
       </Link>
       &nbsp;
@@ -44,7 +43,6 @@ const bouncingImages = [
 ];
 
 export default function Footer() {
-  const navigate = useNavigate();
   const footerRef = React.useRef(null);
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
 
@@ -144,17 +142,12 @@ export default function Footer() {
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, fontWeight: 'bold' }}>Secure. Fast. Decentralized.</Typography>
             <Stack direction="row" spacing={1} useFlexGap>
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                sx={{ minWidth: 'fit-content' }}
-                fullWidth
-                onClick={() => navigate('/home')}
-                endIcon={<ChatIcon />}
-              >
-                Go Chatting now
-              </Button>
+              <GradientRotatingButton
+                text="Go Chatting now"
+                icon={<ChatIcon />}
+                iconPosition="end"
+                destination={'/home'} // Trigger the donate function
+              />
             </Stack>
           </Box>
         </Box>
@@ -217,9 +210,6 @@ export default function Footer() {
           <Link color="text.secondary" variant="body2" href="/terms-and-conditions">
             Terms & Conditions
           </Link>
-          <Link color="text.secondary" variant="body2" href="/privacy-policy">
-            Privacy Policy
-          </Link>
           <Link color="text.secondary" variant="body2" href="/cookie-policy">
             Cookie Policy
           </Link>
@@ -245,13 +235,13 @@ export default function Footer() {
         }}
       >
         <div>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/privacy-policy">
             Privacy Policy
           </Link>
           <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
             &nbsp;•&nbsp;
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link color="text.secondary" variant="body2" href="/tos">
             Terms of Service
           </Link>
           <Copyright />

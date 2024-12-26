@@ -3,7 +3,14 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
 
-const GradientRotatingButton = ({ text, destination = null, icon = null, iconPosition = 'start', onClick = null }) => {
+const GradientRotatingButton = ({ 
+  text, 
+  destination = null, 
+  icon = null, 
+  iconPosition = 'start', 
+  onClick = null ,
+  disabled = false,
+}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +52,7 @@ const GradientRotatingButton = ({ text, destination = null, icon = null, iconPos
     >
       <Button
         onClick={handleClick}
+        disabled={disabled} 
         size="small"
         fullWidth
         {...{ [iconPosition + 'Icon']: icon }} // Dynamically set startIcon or endIcon

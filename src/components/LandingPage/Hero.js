@@ -108,7 +108,6 @@ export default function Hero() {
               iconPosition="end"
             />
           </Stack>
-
           <Typography
             variant="caption"
             color="text.secondary"

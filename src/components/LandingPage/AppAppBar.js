@@ -15,6 +15,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Sitemark from '../LandingPage/SitemarkIcon';
 import ColorModeIconDropdown from '../LandingPage/ColorModeIconDropdown';
+import GradientRotatingButton from '../../components/LandingPage/utils/GradientRotatingButton';
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -96,15 +97,12 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            <Button 
-              color="primary" 
-              variant="contained" 
-              size="small" 
-              startIcon={<AccountBalanceWalletIcon />}
-              onClick={() => navigate('/login')} 
-            >
-              Connect Wallet
-            </Button>
+            <GradientRotatingButton
+                text="Connect Wallet"
+                icon={<AccountBalanceWalletIcon />}
+                iconPosition="start"
+                destination={'/login'}
+              />
             <ColorModeIconDropdown />
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
