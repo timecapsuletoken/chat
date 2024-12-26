@@ -126,8 +126,9 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
 
       if (accounts && accounts.length > 0) {
         console.log('Wallet switched to MetaMask account:', accounts[0]);
-        setAccount(accounts[0]);
-        localStorage.setItem('connectedAccount', accounts[0]); // Save account before reload
+        const checksumAddress = ethers.utils.getAddress(accounts[0]); // Convert to checksum format
+        setAccount(checksumAddress);
+        localStorage.setItem('connectedAccount', checksumAddress); // Save account before reload
         localStorage.setItem('providerType', 'MetaMask');
 
         // Switch to Binance Smart Chain
