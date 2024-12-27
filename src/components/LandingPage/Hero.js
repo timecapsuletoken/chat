@@ -3,12 +3,13 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import ChatImage from '../../assets/images/LandingPage/chat_communicating.gif';
+//import ChatImage from '../../assets/images/LandingPage/chat_communicating.gif';
+import ChatVideo from '../../assets/videos/TCA_Chatting.mp4';
 import ChatIcon from '@mui/icons-material/Chat'; 
 import { styled } from '@mui/material/styles';
 import GradientRotatingButton from '../../components/LandingPage/utils/GradientRotatingButton';
 
-const StyledBox = styled('img')(({ theme }) => ({
+const StyledVideo = styled('video')(({ theme }) => ({
   alignSelf: 'center',
   width: '100%',
   marginTop: theme.spacing(8),
@@ -18,13 +19,13 @@ const StyledBox = styled('img')(({ theme }) => ({
   borderRadius: 6,
   border: '1px solid transparent',
   background: `linear-gradient(${theme.palette.background.default}, ${theme.palette.background.default}) padding-box, linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main}) border-box`,  
-  backgroundImage: `url(${ChatImage})`,  
+  //backgroundImage: `url(${ChatImage})`,  
   [theme.breakpoints.up('sm')]: {
     marginTop: theme.spacing(10),
   },
   ...theme.applyStyles('dark', {
     boxShadow: '0 0 24px 12px hsl(279.15deg 90.64% 53.92% / 30%)',
-    backgroundImage: `url(${ChatImage})`,
+    //backgroundImage: `url(${ChatImage})`,
     outlineColor: 'hsla(220, 20%, 42%, 0.1)',
     borderRadius: 6,
     border: '1px solid transparent',
@@ -116,14 +117,19 @@ export default function Hero() {
             A Decentralized way to Communicate.
           </Typography>
         </Stack>
-        <StyledBox
+        <StyledVideo
           className="rotating-color"
-          src={ChatImage}
-          alt="Dashboard Image"
+          //src="https://storage.googleapis.com/tca_video/TCA_Chatting.mp4"
+          src={ChatVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          alt="Dashboard Video"
           sx={{ 
             height: 'auto', 
             maxHeight: 700, 
-            width: '100%'
+            width: '100%',
           }}
         />
       </Container>
