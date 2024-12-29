@@ -97,7 +97,7 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            <GradientRotatingButton
+              <GradientRotatingButton
                 text="Connect Wallet"
                 icon={<AccountBalanceWalletIcon />}
                 iconPosition="start"
@@ -108,7 +108,7 @@ export default function AppAppBar() {
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-              <MenuIcon />
+              <MenuIcon /> 
             </IconButton>
             <Drawer
               anchor="top"

@@ -52,7 +52,7 @@
     "web-vitals": "4.2.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "set HTTPS=true&&set SSL_CRT_FILE=C:\\Users\\ntsol\\Documents\\CryptoProjects\\chat\\certs\\localhost+3.pem&&set SSL_KEY_FILE=C:\\Users\\ntsol\\Documents\\CryptoProjects\\chat\\certs\\localhost+3-key.pem&&react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
@@ -76,6 +76,8 @@
     ]
   },
   "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-keywords": "^5.1.0",
     "eslint-config-react-app": "^7.0.1",
     "typescript": "4.9.5",
     "webpack": "^5.96.1"

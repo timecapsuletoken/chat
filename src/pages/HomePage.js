@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import gun from '../utils/gunSetup';
+import LockedScreen from '../utils/LockedScreen';
 
 import {
   fetchChats,
@@ -23,6 +24,7 @@ import Sidebar from '../components/HomePage/Sidebar/Sidebar';
 import StartChatModal from '../components/HomePage/Modals/StartChatModal';
 import WalletModal from '../components/HomePage/Modals/WalletModal';
 import SettingsModal from '../components/HomePage/Modals/SettingsModal';
+import PinModal from '../components/HomePage/Modals/PinModal';
 import BlockedModal from '../components/HomePage/Modals/BlockedModal';
 import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import WelcomePage from '../components/HomePage/WelcomePage';
@@ -60,14 +62,16 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false); // State for wallet modal
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [autoLockEnabled, setautoLockEnabled] = useState(false);
   const [soundAlertsEnabled, setSoundAlertsEnabled] = useState(false);
   const [desktopNotificationsEnabled, setDesktopNotificationsEnabled] = useState(false);
   const [blockedAddresses, setBlockedAddresses] = useState([]);
 
   const [nickname, setNickname] = useState(''); // State to hold the nickname
   const [loading, setLoading] = useState(true); // Initial loading state is true
+  const [isLocked, setIsLocked] = useState(false);
 
   const showSnackBar = (message, severity) => {
     Snackbar.handleShowSnackBar(message, severity);
@@ -81,13 +85,71 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     fetchSettings(account, (settings) => {
   
       // Apply other settings as needed
-      setNotificationsEnabled(settings.notificationsEnabled || false);
+      setautoLockEnabled(settings.autoLockEnabled || false);
       setSoundAlertsEnabled(settings.soundAlertsEnabled || false);
       setDesktopNotificationsEnabled(settings.desktopNotificationsEnabled || false);
       setBlockedAddresses(settings.blockedAddresses || []);
 
     });
   }, [account]);   
+
+  useEffect(() => {
+    const debounceFetch = setTimeout(() => {
+
+      if (!account) {
+        console.log("Redirecting to login");
+        setChats([]);
+        navigate('/login');
+        return;
+      }          
+
+      console.log("Initializing chats");
+      setLoading(false);
+      const cleanupChats = fetchChats(account, setChats);
+      // Fetch nickname
+      const cleanupNickname = fetchNickname(account, setNickname);
+      setLoading(true);
+      fetchSettingsData();
+
+      return () => {
+        console.log("Cleaning up chat subscriptions for account:", account);
+        if (cleanupChats) cleanupChats();
+        if (cleanupNickname) cleanupNickname();
+      };
+    }, 300); // Delay of 300ms to avoid rapid re-renders
+
+    return () => clearTimeout(debounceFetch); // Clear timeout on unmount
+  }, [account, navigate, fetchSettingsData]); 
+
+  useEffect(() => {
+    if (!autoLockEnabled) return;
+  
+    const loginTimestamp = JSON.parse(localStorage.getItem('user:cache:timestamp'))?.timestamp;
+    if (!loginTimestamp) {
+      console.error("Login timestamp not found. Cannot enable auto-lock.");
+      return;
+    }
+  
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - loginTimestamp; // Time elapsed since login
+    const lockTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
+    const remainingTime = lockTimeout - elapsedTime;
+  
+    if (remainingTime <= 0) {
+      // Lock immediately if time has already passed
+      console.log("Auto-lock time expired. Locking screen now.");
+      setIsLocked(true);
+    } else {
+      // Set a timeout to lock the screen when the remaining time expires
+      console.log(`Auto-lock enabled. Locking screen in ${remainingTime}ms.`);
+      const timer = setTimeout(() => {
+        setIsLocked(true);
+        console.log("Auto-lock activated. Screen is now locked.");
+      }, remainingTime);
+  
+      return () => clearTimeout(timer); // Clear timeout on component unmount
+    }
+  }, [autoLockEnabled]);  
 
   const formatNumber = (number) => {
     if (number >= 1e9) {
@@ -101,7 +163,30 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     }
   };     
 
-  const handleToggleNotifications = () => setNotificationsEnabled((prev) => !prev);
+  const handleToggleautoLockEnabled = () => {
+    setautoLockEnabled((prev) => {
+      const newState = !prev;
+  
+      // Save the timestamp when Auto-Lock is enabled
+      if (newState) {
+        localStorage.setItem(
+          'user:cache:timestamp',
+          JSON.stringify({ timestamp: Date.now() }) // Save current time
+        );
+        setIsPinModalOpen(true); 
+      }
+  
+      // Save the updated Auto-Lock setting to localStorage or backend
+      //saveSettings(); // This function ensures settings are persisted
+      //toggleSettingsModal(false);
+      return newState;
+    });
+  };
+
+  const handleClosePinModal = () => {
+    setIsPinModalOpen(false);
+  };
+  
   const handleToggleSoundAlerts = () => setSoundAlertsEnabled((prev) => !prev);
   const handleToggleDesktopNotifications = () => setDesktopNotificationsEnabled((prev) => !prev); 
 
@@ -154,39 +239,11 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       });
       activeListeners.clear();
     };
-  }, [account, chats, setUnreadChats]);   
+  }, [account, chats, setUnreadChats]);    
   
-  useEffect(() => {
-    const debounceFetch = setTimeout(() => {
-
-      if (!account) {
-        console.log("Redirecting to login");
-        setChats([]);
-        navigate('/login');
-        return;
-      }          
-
-      console.log("Initializing chats");
-      setLoading(false);
-      const cleanupChats = fetchChats(account, setChats);
-      // Fetch nickname
-      const cleanupNickname = fetchNickname(account, setNickname);
-      setLoading(true);
-      fetchSettingsData();
-
-      return () => {
-        console.log("Cleaning up chat subscriptions for account:", account);
-        if (cleanupChats) cleanupChats();
-        if (cleanupNickname) cleanupNickname();
-      };
-    }, 300); // Delay of 300ms to avoid rapid re-renders
-
-    return () => clearTimeout(debounceFetch); // Clear timeout on unmount
-  }, [account, navigate, fetchSettingsData]);  
-  
-  const saveSettings = () => {
+  const saveSettings = () => {  
     const settings = {
-      notificationsEnabled: notificationsEnabled || false,
+      autoLockEnabled: autoLockEnabled || false,
       soundAlertsEnabled: soundAlertsEnabled || false,
       desktopNotificationsEnabled: desktopNotificationsEnabled || false,
       blockedAddresses: blockedAddresses || [], // Default to an empty array if undefined
@@ -195,7 +252,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     handleSaveSettings(account, settings, showSnackBar);
   };  
 
-  const toggleBlockedModal = () => {
+  const toggleBlockedModal = () => {  
     console.log("Blocked addresses before saving:", blockedAddresses);
     setIsBlockedModalOpen(!isBlockedModalOpen);
     setIsSettingsModalOpen(false);
@@ -314,104 +371,114 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
     handleUnblockAddress(account, address, setBlockedAddresses, showSnackBar);
   };
 
-  return (
-    <div className="home-container">
-      <Sidebar
-        account={account}
-        disconnectWallet={disconnectWallet}
-        switchAccount={switchAccount}
-        switchToBSC={switchToBSC}
-        providerType={localStorage.getItem('providerType')} 
-        gun={gun}
-        isSidebarOpen={isSidebarOpen}
-        showDropdown={showDropdown}
-        chats={chats}
-        setChats={setChats}
-        unreadChats={unreadChats}
-        nickname={nickname}
-        setNickname={setNickname}
-        loading={loading}
-        showSnackBar={showSnackBar}
-        isHovered={isHovered}
-        toggleSidebar={toggleSidebar}
-        closetoggleSidebar={closetoggleSidebar}
-        toggleDropdown={toggleDropdown}
-        setIsHovered={setIsHovered}
-        openWalletModal={openWalletModal}
-        handleOpenModal={handleOpenModal}
-        handleChatItemClick={(chatAddress) => setSearchParams({ chatwith: chatAddress })}
-        deleteChat={deleteChat}
-        handleClearChatHistory={clearChatHistory}
-        navigate={navigate}
-        setShowAboutModal={setShowAboutModal}
-        setShowHelpModal={setShowHelpModal}
-        toggleSettingsModal={toggleSettingsModal}
-        closeSidebar={closeSidebar}
-      />
-      <StartChatModal
-        showModal={showModal}
-        handleCloseModal={handleCloseModal}
-        chatAddress={chatAddress}
-        setChatAddress={setChatAddress}
-        handleStartChat={startChat}
-        closeSidebar={closeSidebar}
-      />
-      <WalletModal
-        isWalletModalOpen={isWalletModalOpen}
-        closeWalletModal={closeWalletModal}
-        account={account || ''}
-        balance={balance}
-        tcaBalance={tcaBalance}
-        formatNumber={formatNumber}
-      />
-      <SettingsModal
-        isSettingsModalOpen={isSettingsModalOpen}
-        toggleSettingsModal={toggleSettingsModal}
-        notificationsEnabled={notificationsEnabled}
-        soundAlertsEnabled={soundAlertsEnabled}
-        desktopNotificationsEnabled={desktopNotificationsEnabled}
-        handleToggleNotifications={handleToggleNotifications}
-        handleToggleSoundAlerts={handleToggleSoundAlerts}
-        handleToggleDesktopNotifications={handleToggleDesktopNotifications}
-        toggleBlockedModal={toggleBlockedModal}
-        handleSaveSettings={saveSettings}
-      />
-      <BlockedModal
-        isBlockedModalOpen={isBlockedModalOpen}
-        toggleBlockedModal={toggleBlockedModal}
-        blockedAddresses={blockedAddresses}
-        handleUnblockAddress={unblockAddress}
-        handleBlockAddress={blockAddress}
-        handleSaveSettings={saveSettings}
-      />
-      <div className="main-content">
-        <SidebarToggle 
-          isSidebarOpen={isSidebarOpen} 
-          toggleSidebar={toggleSidebar} 
-        />
-        <AboutModal 
-          isOpen={showAboutModal} 
-          onClose={() => setShowAboutModal(false)} 
-        />
-        <HelpModal 
-          isOpen={showHelpModal} 
-          onClose={() => setShowHelpModal(false)} 
-        />
-        {currentChat ? (
-          <ChatWrapper
+  return isLocked ? (
+    <LockedScreen account={account} onUnlock={() => setIsLocked(false)} />
+  ) : (
+        <div className="home-container">
+          <Sidebar
             account={account}
-            toggleBlockedModal={toggleBlockedModal}
-            deleteChat={deleteChat}
+            disconnectWallet={disconnectWallet}
+            switchAccount={switchAccount}
+            switchToBSC={switchToBSC}
+            providerType={localStorage.getItem('providerType')} 
+            gun={gun}
+            isSidebarOpen={isSidebarOpen}
+            showDropdown={showDropdown}
+            chats={chats}
+            setChats={setChats}
+            unreadChats={unreadChats}
+            nickname={nickname}
+            setNickname={setNickname}
+            loading={loading}
+            showSnackBar={showSnackBar}
+            isHovered={isHovered}
+            toggleSidebar={toggleSidebar}
+            closetoggleSidebar={closetoggleSidebar}
+            toggleDropdown={toggleDropdown}
+            setIsHovered={setIsHovered}
             openWalletModal={openWalletModal}
+            handleOpenModal={handleOpenModal}
+            handleChatItemClick={(chatAddress) => setSearchParams({ chatwith: chatAddress })}
+            deleteChat={deleteChat}
+            handleClearChatHistory={clearChatHistory}
+            navigate={navigate}
+            setShowAboutModal={setShowAboutModal}
+            setShowHelpModal={setShowHelpModal}
+            toggleSettingsModal={toggleSettingsModal}
+            closeSidebar={closeSidebar}
+          />
+          <StartChatModal
+            showModal={showModal}
+            handleCloseModal={handleCloseModal}
+            chatAddress={chatAddress}
             setChatAddress={setChatAddress}
+            handleStartChat={startChat}
+            closeSidebar={closeSidebar}
+          />
+          <WalletModal
+            isWalletModalOpen={isWalletModalOpen}
+            closeWalletModal={closeWalletModal}
+            account={account || ''}
+            balance={balance}
+            tcaBalance={tcaBalance}
             formatNumber={formatNumber}
           />
-        ) : (
-          <WelcomePage handleOpenModal={handleOpenModal} />
-        )}
-      </div>
-    </div>
-  );
+          <SettingsModal
+            isSettingsModalOpen={isSettingsModalOpen}
+            toggleSettingsModal={toggleSettingsModal}
+            autoLockEnabled={autoLockEnabled}
+            soundAlertsEnabled={soundAlertsEnabled}
+            desktopNotificationsEnabled={desktopNotificationsEnabled}
+            handleToggleautoLockEnabled={handleToggleautoLockEnabled}
+            handleToggleSoundAlerts={handleToggleSoundAlerts}
+            handleToggleDesktopNotifications={handleToggleDesktopNotifications}
+            toggleBlockedModal={toggleBlockedModal}
+            handleSaveSettings={saveSettings}
+            account={account}
+          />
+          {isPinModalOpen && account && (
+            <PinModal
+              isOpen={isPinModalOpen}
+              account={account}
+              onClose={handleClosePinModal}
+            />
+          )}
+          <BlockedModal
+            isBlockedModalOpen={isBlockedModalOpen}
+            toggleBlockedModal={toggleBlockedModal}
+            blockedAddresses={blockedAddresses}
+            handleUnblockAddress={unblockAddress}
+            handleBlockAddress={blockAddress}
+            handleSaveSettings={saveSettings}
+          />
+          <div className="main-content">
+            <SidebarToggle 
+              isSidebarOpen={isSidebarOpen} 
+              toggleSidebar={toggleSidebar} 
+            />
+            <AboutModal 
+              isOpen={showAboutModal} 
+              onClose={() => setShowAboutModal(false)} 
+            />
+            <HelpModal 
+              isOpen={showHelpModal} 
+              onClose={() => setShowHelpModal(false)} 
+            />
+            {currentChat ? (
+              <ChatWrapper
+                account={account}
+                toggleBlockedModal={toggleBlockedModal}
+                deleteChat={deleteChat}
+                openWalletModal={openWalletModal}
+                setChatAddress={setChatAddress}
+                formatNumber={formatNumber}
+              />
+            ) : (
+              <WelcomePage handleOpenModal={handleOpenModal} />
+            )}
+          </div>
+        </div>
+      );
 };
 
 export default HomePage;

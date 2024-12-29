@@ -14,12 +14,6 @@ import RiskDisclosure from './pages/LandingPage/legalDocs/RiskDisclosure';
 import TermsAndConditions from './pages/LandingPage/legalDocs/TermsAndConditions';
 import TermsOfService from './pages/LandingPage/legalDocs/TermsOfService';
 
-import Navbar from './components/Navbar';
-import WelcomeSection from './components/WelcomeSection';
-import FeaturesSection from './components/FeaturesSection';
-import FAQSection from './components/FAQSection';
-import Footer from './components/Footer';
-
 import './App.css';
 
 function App() {
@@ -139,16 +133,6 @@ function App() {
             </>
           }
           />
-          <Route path="/index2" element={
-            <>
-              <Navbar />
-              <WelcomeSection />
-              <FeaturesSection />
-              <FAQSection />
-              <Footer />
-            </>
-          } />
-
           <Route path="/login" element={
             <>
               <LoginNavbar />

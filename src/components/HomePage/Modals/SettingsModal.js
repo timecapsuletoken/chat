@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 const SettingsModal = ({
   isSettingsModalOpen,
   toggleSettingsModal,
-  notificationsEnabled,
+  autoLockEnabled,
   soundAlertsEnabled,
   desktopNotificationsEnabled,
-  handleToggleNotifications,
+  handleToggleautoLockEnabled,
   handleToggleSoundAlerts,
   handleToggleDesktopNotifications,
   toggleBlockedModal,
@@ -22,18 +22,17 @@ const SettingsModal = ({
         <button className="close-button" onClick={toggleSettingsModal}>×</button>
         <div className="settings-sections">
           <div className="notification_settings">
-            <h3>Notification Settings</h3>
+            <h3>Dashboard Settings</h3>
             <label>
               <input
                 type="checkbox"
-                checked={notificationsEnabled}
-                onChange={handleToggleNotifications}
+                checked={autoLockEnabled}
+                onChange={handleToggleautoLockEnabled}
               />
-              Enable Notifications
+              Enable Auto-Lock Screen
               <span>
-                When "Unchecked", you won't receive notifications. (Note: Chrome's Autoplay Policy
-                blocks sound notifications until you have interacted with the page via a click,
-                tap, etc.)
+                The dApp will <strong>Auto-Lock</strong> your Screen for 30 minutes after this <strong>setting is saved</strong>. Unlocking requires a PIN
+                generated from your Wallet Address adjusted with a Sophisticated Algorithm that makes it UNIQUE and Unbreakable.
               </span>
             </label>
             <label>
@@ -72,6 +71,7 @@ const SettingsModal = ({
             <button
               onClick={() => {
                 handleSaveSettings();
+                toggleSettingsModal();
               }}
             >
               Save Settings
@@ -86,10 +86,10 @@ const SettingsModal = ({
 SettingsModal.propTypes = {
   isSettingsModalOpen: PropTypes.bool.isRequired,
   toggleSettingsModal: PropTypes.func.isRequired,
-  notificationsEnabled: PropTypes.bool.isRequired,
+  autoLockEnabled: PropTypes.bool.isRequired,
   soundAlertsEnabled: PropTypes.bool.isRequired,
   desktopNotificationsEnabled: PropTypes.bool.isRequired,
-  handleToggleNotifications: PropTypes.func.isRequired,
+  handleToggleautoLockEnabled: PropTypes.func.isRequired,
   handleToggleSoundAlerts: PropTypes.func.isRequired,
   handleToggleDesktopNotifications: PropTypes.func.isRequired,
   toggleBlockedModal: PropTypes.func.isRequired,

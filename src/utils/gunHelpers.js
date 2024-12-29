@@ -124,7 +124,7 @@ export const fetchSettings = async (account, setSettings) => {
           });          
 
       setSettings({
-        notificationsEnabled: data.notificationsEnabled || false,
+        autoLockEnabled: data.autoLockEnabled || false,
         soundAlertsEnabled: data.soundAlertsEnabled || false,
         desktopNotificationsEnabled: data.desktopNotificationsEnabled || false,
         blockedAddresses: blockedAddressesArray,
@@ -218,6 +218,13 @@ export const handleUnblockAddress = (account, address, setBlockedAddresses, show
       }
     });
 };  
+
+export const generatePinFromAddress = (account) => {
+  if (account.length !== 42 || !account.startsWith("0x")) {
+    throw new Error("Invalid Ethereum address");
+  }
+  return `${account[4]}${account[13]}${account[26]}${account[39]}`.toUpperCase();
+};
 
 // Start a new chat
 export const handleStartChat = (account, chatAddress, setChats, setSearchParams, setShowModal, showSnackBar) => {

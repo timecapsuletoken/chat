@@ -354,6 +354,7 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
             value={newNickname}
             onChange={(e) => setNewNickname(e.target.value)}
             disabled={disabled}
+            inert={disabled ? 'true' : undefined} // Use a string for `inert`          
             slotProps={{
               input: {
                 endAdornment: (
@@ -361,7 +362,8 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
                     <IconButton
                        onClick={!disabled ? handleAvailabilityCheck : null}
                        edge="end"
-                       disabled={disabled} // Disables the button
+                       disabled={disabled}
+                       inert={disabled ? 'true' : undefined} // Use a string for `inert`
                        sx={{
                          color: disabled ? '#aaa' : '#fff', // Adjust icon color when disabled
                        }}
@@ -438,7 +440,8 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
             color="primary"
             fullWidth
             onClick={!disabled ? handleSaveNickname : null}
-            disabled={!success} // Disable button unless name is available
+            disabled={!success}
+            inert={!success ? 'true' : undefined} // Use a string for `inert`          
           >
             Save
           </Button>
