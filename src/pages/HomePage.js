@@ -30,6 +30,7 @@ import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import WelcomePage from '../components/HomePage/WelcomePage';
 import ChatWrapper from '../components/HomePage/ChatWrapper';
 import useBrowserNotification from '../hooks/useBrowserNotification';
+import { initializeAudio, playNotificationSound } from '../hooks/useAudioNotification';
 
 import '../assets/css/HomePage.css';
 
@@ -293,9 +294,12 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
             if (Notification.permission === "granted") {
               showNotification("New Message", {
                 body: `You have a new message from ${chatAddress.slice(-5)}!`,
-                icon: '/logo.png', // Optional icon for the notification
+                icon: '/assets/images/logo.png', // Optional icon for the notification
               });     
             }   
+            if (soundAlertsEnabled === true) {
+              playNotificationSound(); 
+            }
           }
         } else if (message.status === 'read' && unreadSet.has(chatAddress)) {
           console.log(`[DEBUG] Removing chat with read messages: ${chatAddress}`);
@@ -315,7 +319,11 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       });
       activeListeners.clear();
     };
-  }, [account, chats, setUnreadChats, showNotification]);    
+  }, [account, chats, setUnreadChats, showNotification, soundAlertsEnabled]);    
+
+  useEffect(() => {
+    initializeAudio(); // Preload sound when the app starts
+  }, []);  
   
   const saveSettings = () => {  
     const settings = {
