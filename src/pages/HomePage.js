@@ -124,32 +124,68 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   useEffect(() => {
     if (!autoLockEnabled) return;
   
-    const loginTimestamp = JSON.parse(localStorage.getItem('user:cache:timestamp'))?.timestamp;
-    if (!loginTimestamp) {
-      console.error("Login timestamp not found. Cannot enable auto-lock.");
-      return;
-    }
+    const lockTimeout = 1 * 60 * 1000; // 2 minutes in milliseconds
   
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - loginTimestamp; // Time elapsed since login
-    const lockTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
-    const remainingTime = lockTimeout - elapsedTime;
+    let timer;
   
-    if (remainingTime <= 0) {
-      // Lock immediately if time has already passed
-      console.log("Auto-lock time expired. Locking screen now.");
-      setIsLocked(true);
-    } else {
-      // Set a timeout to lock the screen when the remaining time expires
+    const resetTimestamp = () => {
+      const currentTime = Date.now();
+      localStorage.setItem('screen:auto:lock:timestamp', JSON.stringify({ timestamp: currentTime }));
+    };
+  
+    const startAutoLockCountdown = () => {
+      const savedTimestamp = JSON.parse(localStorage.getItem('screen:auto:lock:timestamp'))?.timestamp;
+      if (!savedTimestamp) {
+        console.error("Timestamp not found. Cannot enable auto-lock.");
+        return;
+      }
+  
+      const currentTime = Date.now();
+      const elapsedTime = currentTime - savedTimestamp; // Time elapsed since last interaction
+      const remainingTime = lockTimeout - elapsedTime;
+  
+      if (remainingTime <= 0) {
+        console.log("Auto-lock time expired. Locking screen now.");
+        setIsLocked(true);
+        return;
+      }
+  
       console.log(`Auto-lock enabled. Locking screen in ${remainingTime}ms.`);
-      const timer = setTimeout(() => {
+      clearTimeout(timer); // Clear any previous timeout
+      timer = setTimeout(() => {
         setIsLocked(true);
         console.log("Auto-lock activated. Screen is now locked.");
       }, remainingTime);
+    };
   
-      return () => clearTimeout(timer); // Clear timeout on component unmount
-    }
-  }, [autoLockEnabled]);  
+    const activityHandler = () => {
+      if (isLocked) return; // Ignore events when screen is locked
+      resetTimestamp(); // Update timestamp on interaction
+      startAutoLockCountdown(); // Restart countdown
+    };
+  
+    const addEventListeners = () => {
+      window.addEventListener('mousemove', activityHandler);
+      window.addEventListener('keydown', activityHandler);
+      window.addEventListener('click', activityHandler);
+    };
+  
+    const removeEventListeners = () => {
+      window.removeEventListener('mousemove', activityHandler);
+      window.removeEventListener('keydown', activityHandler);
+      window.removeEventListener('click', activityHandler);
+    };
+  
+    // Start countdown and add listeners
+    startAutoLockCountdown();
+    addEventListeners();
+  
+    // Cleanup on unmount or when auto-lock is disabled
+    return () => {
+      clearTimeout(timer);
+      removeEventListeners();
+    };
+  }, [autoLockEnabled, isLocked]);  
 
   const formatNumber = (number) => {
     if (number >= 1e9) {
@@ -170,7 +206,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       // Save the timestamp when Auto-Lock is enabled
       if (newState) {
         localStorage.setItem(
-          'user:cache:timestamp',
+          'screen:auto:lock:timestamp',
           JSON.stringify({ timestamp: Date.now() }) // Save current time
         );
         setIsPinModalOpen(true); 
@@ -372,7 +408,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   };
 
   return isLocked ? (
-    <LockedScreen account={account} onUnlock={() => setIsLocked(false)} />
+    <LockedScreen account={account} disconnectWallet={disconnectWallet} onUnlock={() => setIsLocked(false)} />
   ) : (
         <div className="home-container">
           <Sidebar

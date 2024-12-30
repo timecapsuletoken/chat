@@ -98,7 +98,7 @@ const WelcomePage = ({ handleOpenModal }) => {
               fontWeight: 'bold',
               textTransform: 'none',
               '&:hover': {
-                background: '#1a1a1a',
+                background: '#4d4d4d',
               },
             }}
           >

@@ -65,7 +65,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 const LockedScreen = (props) => {
-  const { account, onUnlock } = props;
+  const { account, disconnectWallet, onUnlock } = props;
   console.log('Account received in LockedScreen:', account); // Debugging: Log the account
   
   const [pinInput, setPinInput] = React.useState('');
@@ -76,6 +76,11 @@ const LockedScreen = (props) => {
   const handleForgotPasswordClick = () => {
     setAnimate(true); // Trigger the wiggle animation
     setTimeout(() => setAnimate(false), 600); // Reset the animation after 0.6 seconds
+  };
+
+  const handleReLogin = () => {
+    // Trigger the wallet disconnect function
+    disconnectWallet();
   };
 
   const generatePinFromAddress = (account) => {
@@ -96,9 +101,9 @@ const LockedScreen = (props) => {
   const handleUnlock = (event) => {
     event.preventDefault();
     if (pinInput === generatedPin) {
-      // Update the user:cache:timestamp in localStorage
+      // Update the screen:auto:lock:timestamp in localStorage
       const currentTimestamp = Date.now();
-      localStorage.setItem('user:cache:timestamp', JSON.stringify({ timestamp: currentTimestamp }));
+      localStorage.setItem('screen:auto:lock:timestamp', JSON.stringify({ timestamp: currentTimestamp }));
       onUnlock(); // Callback to unlock the HomePage
     } else {
       setError('Invalid PIN. Please try again.');
@@ -186,7 +191,7 @@ const LockedScreen = (props) => {
                 sx={{ alignSelf: 'center' }}
                 onClick={handleForgotPasswordClick} // Attach the click handler
             >
-                Forgot your password?
+                Forgot your PIN?
             </Link>
           </Box>
           <Divider>or</Divider>
@@ -204,7 +209,7 @@ const LockedScreen = (props) => {
                     text="Sign in"
                     icon={<LoginIcon />}
                     iconPosition="end"
-                    destination={'/login'}
+                    onClick={handleReLogin}
                 />
             </motion.div>
           </Box>

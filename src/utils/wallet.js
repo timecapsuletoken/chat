@@ -41,7 +41,10 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
           const checksumAddress = ethers.utils.getAddress(accounts[0]); // Convert to checksum format
           setAccount(checksumAddress);
           localStorage.setItem('providerType', providerType);
-      
+          localStorage.setItem(
+            'screen:auto:lock:timestamp',
+            JSON.stringify({ timestamp: Date.now() }) // Save current time
+          );
           // Check the current chain and switch to Binance Smart Chain if necessary
           const provider = new ethers.providers.Web3Provider(ethereum);
           const chainId = await provider.send('eth_chainId', []);
