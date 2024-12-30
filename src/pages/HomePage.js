@@ -29,6 +29,7 @@ import BlockedModal from '../components/HomePage/Modals/BlockedModal';
 import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import WelcomePage from '../components/HomePage/WelcomePage';
 import ChatWrapper from '../components/HomePage/ChatWrapper';
+import useBrowserNotification from '../hooks/useBrowserNotification';
 
 import '../assets/css/HomePage.css';
 
@@ -72,6 +73,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const [nickname, setNickname] = useState(''); // State to hold the nickname
   const [loading, setLoading] = useState(true); // Initial loading state is true
   const [isLocked, setIsLocked] = useState(false);
+  const { showNotification } = useBrowserNotification();
 
   const showSnackBar = (message, severity) => {
     Snackbar.handleShowSnackBar(message, severity);
@@ -124,7 +126,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   useEffect(() => {
     if (!autoLockEnabled) return;
   
-    const lockTimeout = 1 * 60 * 1000; // 2 minutes in milliseconds
+    const lockTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
   
     let timer;
   
@@ -150,7 +152,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
         return;
       }
   
-      console.log(`Auto-lock enabled. Locking screen in ${remainingTime}ms.`);
+      //console.log(`Auto-lock enabled. Locking screen in ${remainingTime}ms.`);
       clearTimeout(timer); // Clear any previous timeout
       timer = setTimeout(() => {
         setIsLocked(true);
@@ -186,6 +188,38 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       removeEventListeners();
     };
   }, [autoLockEnabled, isLocked]);  
+
+  useEffect(() => {
+    const requestNotificationPermission = async () => {
+      if (!("Notification" in window)) {
+        console.error("This browser does not support desktop notifications.");
+        return;
+      }
+  
+      if (Notification.permission === "default") {
+        try {
+          const permission = await Notification.requestPermission();
+          if (permission === "granted") {
+            console.log("Notification permission granted.");
+          } else {
+            console.warn("Notification permission denied.");
+          }
+        } catch (error) {
+          console.error("Error while requesting notification permission:", error);
+        }
+      } else if (Notification.permission === "granted") {
+        console.log("Notification permission already granted.");
+      } else {
+        console.warn(
+          "Notification permission already denied. Please enable it manually in browser settings."
+        );
+      }
+    };
+  
+    if (desktopNotificationsEnabled) {
+      requestNotificationPermission();
+    }
+  }, [desktopNotificationsEnabled]);  
 
   const formatNumber = (number) => {
     if (number >= 1e9) {
@@ -256,6 +290,12 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
             console.log(`[DEBUG] Adding chat with unread messages: ${chatAddress}`);
             unreadSet.add(chatAddress);
             setUnreadChats(new Set([...unreadSet]));
+            if (Notification.permission === "granted") {
+              showNotification("New Message", {
+                body: `You have a new message from ${chatAddress.slice(-5)}!`,
+                icon: '/logo.png', // Optional icon for the notification
+              });     
+            }   
           }
         } else if (message.status === 'read' && unreadSet.has(chatAddress)) {
           console.log(`[DEBUG] Removing chat with read messages: ${chatAddress}`);
@@ -275,7 +315,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
       });
       activeListeners.clear();
     };
-  }, [account, chats, setUnreadChats]);    
+  }, [account, chats, setUnreadChats, showNotification]);    
   
   const saveSettings = () => {  
     const settings = {
