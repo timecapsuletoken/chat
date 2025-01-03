@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@coinbase/wallet-sdk": "^4.0.3",
+    "@coinbase/wallet-sdk": "^4.2.4",
     "@emotion/react": "11.13.5",
     "@emotion/styled": "11.13.5",
     "@lottiefiles/dotlottie-react": "^0.11.1",
@@ -19,7 +19,6 @@
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.0.1",
     "@web3-react/injected-connector": "^6.0.7",
-    "@web3-react/walletlink-connector": "^6.2.14",
     "animated-backgrounds": "1.1.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
