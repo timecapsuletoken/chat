@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
 import SitemarkIcon from '../components/LandingPage/SitemarkIcon';
 import AppTheme from '../components/LandingPage/AppTheme';
@@ -19,6 +20,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import KeyIcon from '@mui/icons-material/Key';
 import { motion } from 'framer-motion';
 import GradientRotatingButton from '../components/LandingPage/utils/GradientRotatingButton';
+import { generateJazzicon } from '../utils/jazzAvatar';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -65,13 +67,12 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 const LockedScreen = (props) => {
-  const { account, disconnectWallet, onUnlock } = props;
-  console.log('Account received in LockedScreen:', account); // Debugging: Log the account
-  
+  const { account, disconnectWallet, onUnlock } = props;  
   const [pinInput, setPinInput] = React.useState('');
   const [error, setError] = React.useState('');
   const [generatedPin, setGeneratedPin] = React.useState('');
   const [animate, setAnimate] = React.useState(false);
+  const avatarRef = React.useRef(null);
 
   const handleForgotPasswordClick = () => {
     setAnimate(true); // Trigger the wiggle animation
@@ -95,6 +96,10 @@ const LockedScreen = (props) => {
       const pin = generatePinFromAddress(account);
       setGeneratedPin(pin); // Save the generated PIN to state
       console.log('Generated PIN:', pin); // Log the PIN
+    }
+    
+    if (account && avatarRef.current) {
+      generateJazzicon(account, avatarRef.current, 40);
     }
   }, [account]);
 
@@ -147,6 +152,25 @@ const LockedScreen = (props) => {
             >
                 Screen Locked
             </Typography>
+          </Box>
+          <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                height: '100%', // Ensure it spans the full height of the parent
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              Wallet Address:
+            </Typography>
+            <Chip
+              avatar={<Avatar ref={avatarRef} />}
+              label={account}
+              variant="outlined"
+            />
           </Box>
           <Box
             component="form"

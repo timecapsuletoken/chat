@@ -9,6 +9,9 @@ const ChatWrapper = ({
   openWalletModal,
   setChatAddress,
   formatNumber,
+  isSidebarOpen, 
+  toggleSidebar,
+  toggleSidebarText,
 }) => {
   return (
     <ChatPage
@@ -18,6 +21,9 @@ const ChatWrapper = ({
       openWalletModal={openWalletModal}
       setChatAddress={setChatAddress}
       formatNumber={formatNumber}
+      isSidebarOpen={isSidebarOpen} 
+      toggleSidebar={toggleSidebar}   
+      toggleSidebarText="Dashboard"
     />
   );
 };
@@ -29,6 +35,7 @@ ChatWrapper.propTypes = {
   openWalletModal: PropTypes.func.isRequired,
   setChatAddress: PropTypes.func.isRequired,
   formatNumber: PropTypes.func.isRequired,
+  toggleSidebarText: PropTypes.string.isRequired,
 };
 
 export default ChatWrapper;

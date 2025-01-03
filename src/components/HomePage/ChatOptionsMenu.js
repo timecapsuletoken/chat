@@ -74,9 +74,10 @@ const ChatOptionsMenu = ({
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         variant="contained"
-        endIcon={<KeyboardArrowDownIcon />}
         sx={{ 'background': '#1c1c1c', }}
-      >Options </Button>
+      >
+        <KeyboardArrowDownIcon />
+      </Button>
       <Menu
         id="chat-options-menu"
         anchorEl={anchorEl}

@@ -5,12 +5,34 @@ import MetaMaskSDK from '@metamask/sdk';
 
 export const connectWallet = async (providerType, switchToBSC, setAccount) => {
   try {
+
+    const handleAppFocus = async (ethereum, setAccount) => {
+      if (document.visibilityState === 'visible') {
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        if (accounts && accounts.length > 0) {
+          const checksumAddress = ethers.utils.getAddress(accounts[0]);
+          setAccount(checksumAddress);
+          localStorage.setItem('connectedAccount', checksumAddress);
+        }
+      }
+    };
+    
     if (providerType === 'MetaMask') {
+
+      const visibilityHandler = () => handleAppFocus(ethereum, setAccount);
+      document.addEventListener('visibilitychange', visibilityHandler);
+    
+      // Ensure cleanup after a successful connection
+      const cleanupListener = () => {
+        document.removeEventListener('visibilitychange', visibilityHandler);
+      };
+    
       // Initialize MetaMask SDK
       const MMSDK = new MetaMaskSDK({
         appName: 'YourAppName',
         theme: 'dark',
         network: 'bsc-mainnet',
+        storageType: 'session', // Optional: Use session storage for state persistence
       });
 
       // Await SDK initialization
@@ -34,17 +56,32 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       );
 
       if (accountsPermission) {
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        const checkConnection = async (ethereum, setAccount, retryCount = 3) => {
+          for (let i = 0; i < retryCount; i++) {
+            const accounts = await ethereum.request({ method: 'eth_accounts' });
+            if (accounts && accounts.length > 0) {
+              const checksumAddress = ethers.utils.getAddress(accounts[0]);
+              setAccount(checksumAddress);
+              localStorage.setItem('connectedAccount', checksumAddress);
+              return true;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
+          }
+          return false;
+        };
+
+        const connectionSuccess = await checkConnection(ethereum, setAccount);
+        if (!connectionSuccess) {
+          throw new Error('Failed to finalize connection. Please try again.');
+        }
       
-        if (accounts && accounts.length > 0) {
-          console.log('MetaMask connected:', accounts[0]);
-          const checksumAddress = ethers.utils.getAddress(accounts[0]); // Convert to checksum format
+        if (connectionSuccess && connectionSuccess.length > 0) {
+          console.log('MetaMask connected:', connectionSuccess[0]);
+          const checksumAddress = ethers.utils.getAddress(connectionSuccess[0]); // Convert to checksum format
           setAccount(checksumAddress);
           localStorage.setItem('providerType', providerType);
-          localStorage.setItem(
-            'screen:auto:lock:timestamp',
-            JSON.stringify({ timestamp: Date.now() }) // Save current time
-          );
+          cleanupListener(); // Remove the listener after connection is complete
+
           // Check the current chain and switch to Binance Smart Chain if necessary
           const provider = new ethers.providers.Web3Provider(ethereum);
           const chainId = await provider.send('eth_chainId', []);
@@ -57,14 +94,17 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
             const provider = new ethers.providers.Web3Provider(ethereum);
             const chainId = await provider.send('eth_chainId', []);
             if (chainId !== '0x38') {
+              cleanupListener(); // Ensure listener is removed even if an error occurs
               throw new Error('Failed to switch to Binance Smart Chain.');
             }
           }
         } else {
           console.error('No accounts found. Please log in to MetaMask.');
+          cleanupListener(); // Ensure listener is removed even if an error occurs
         }
       } else {
         console.error('eth_accounts permission not granted.');
+        cleanupListener(); // Ensure listener is removed even if an error occurs
       }
     } else if (providerType === 'CoinbaseWallet') {
       const coinbaseWallet = new CoinbaseWalletSDK({

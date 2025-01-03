@@ -9,9 +9,10 @@ import { markMessagesAsRead } from '../../../utils/gunHelpers';
 // Material-UI components
 import { Skeleton, Tooltip, Divider } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
 // Icons from react-icons
-import { FaBars, FaCogs, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
+import { FaCogs, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
 import { CiMenuKebab } from 'react-icons/ci';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import { MdHome } from 'react-icons/md';
@@ -124,7 +125,7 @@ const Sidebar = ({
               className={`sidebar-toggle-inside ${isSidebarOpen ? 'open' : ''}`}
               onClick={toggleSidebar}
             >
-              <FaBars />
+              <DashboardIcon />
             </button>
           </div>
         )}

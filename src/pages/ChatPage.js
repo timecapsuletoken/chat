@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import gun from '../utils/gunSetup';
 import 'gun/lib/webrtc'; // Real-time peer connections (if needed)
 import { encryptMessage, decryptMessage } from '../utils/cryptographer';
+import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
 import { markMessagesAsRead } from '../utils/gunHelpers'; // Adjust the import path if needed
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
@@ -29,7 +30,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => {
+const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSidebarOpen, toggleSidebar, toggleSidebarText }) => {
   const [messages, setMessages] = useState([]); // All chat messages
   const [message, setMessage] = useState(''); // Current input message
   
@@ -331,6 +332,10 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber }) => 
   return (
     <div className="chat-box">
       <div className="chat-header">
+         <SidebarToggle 
+            isSidebarOpen={isSidebarOpen} 
+            toggleSidebar={toggleSidebar} 
+          />
         <div className="chat-address-info">
         <Avatar
             className="chatroom-icon"

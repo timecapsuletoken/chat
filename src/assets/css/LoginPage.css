@@ -79,6 +79,33 @@
     cursor: pointer;
     font-weight: bold;
   }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 100px;
+    margin: 0 auto;
+  }
+  
+  .spinner-circle {
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    border-top: 8px solid #f607ff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }  
   
   .terms {
     margin-top: 20px;

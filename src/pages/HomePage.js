@@ -26,13 +26,12 @@ import WalletModal from '../components/HomePage/Modals/WalletModal';
 import SettingsModal from '../components/HomePage/Modals/SettingsModal';
 import PinModal from '../components/HomePage/Modals/PinModal';
 import BlockedModal from '../components/HomePage/Modals/BlockedModal';
-import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import WelcomePage from '../components/HomePage/WelcomePage';
 import ChatWrapper from '../components/HomePage/ChatWrapper';
 import useBrowserNotification from '../hooks/useBrowserNotification';
 import { initializeAudio, playNotificationSound } from '../hooks/useAudioNotification';
 
-import '../assets/css/HomePage.css';
+import '../assets/css/HomePage/HomePage.css';
 
 // Binance Smart Chain provider and TCA token setup
 const bscProvider = new ethers.providers.JsonRpcProvider(`https://bsc-dataseed.binance.org/?_=${Date.now()}`);
@@ -127,7 +126,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   useEffect(() => {
     if (!autoLockEnabled) return;
   
-    const lockTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
+    const lockTimeout = 2 * 60 * 1000; // 30 minutes in milliseconds
   
     let timer;
   
@@ -417,13 +416,11 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-    console.log("Sidebar state:", !isSidebarOpen); // Log state to check toggle
   };
 
   const closetoggleSidebar = () => {
     if (isSidebarOpen) {
       setIsSidebarOpen(false);
-      console.log("Sidebar closed.");
     }
   };  
 
@@ -536,10 +533,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
             handleSaveSettings={saveSettings}
           />
           <div className="main-content">
-            <SidebarToggle 
-              isSidebarOpen={isSidebarOpen} 
-              toggleSidebar={toggleSidebar} 
-            />
             <AboutModal 
               isOpen={showAboutModal} 
               onClose={() => setShowAboutModal(false)} 
@@ -556,9 +549,16 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
                 openWalletModal={openWalletModal}
                 setChatAddress={setChatAddress}
                 formatNumber={formatNumber}
+                isSidebarOpen={isSidebarOpen} 
+                toggleSidebar={toggleSidebar}   
+                toggleSidebarText="Dashboard"
               />
             ) : (
-              <WelcomePage handleOpenModal={handleOpenModal} />
+              <WelcomePage 
+                handleOpenModal={handleOpenModal}
+                isSidebarOpen={isSidebarOpen} 
+                toggleSidebar={toggleSidebar}   
+              />
             )}
           </div>
         </div>

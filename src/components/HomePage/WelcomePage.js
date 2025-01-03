@@ -6,8 +6,9 @@ import messagesicons from '../../assets/animations/messagesicons.json';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ChatIcon from '@mui/icons-material/Chat';
+import SidebarToggle from '../HomePage/Sidebar/SidebarToggle';
 
-const WelcomePage = ({ handleOpenModal }) => {
+const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
 
   useEffect(() => {
     const buttons = document.querySelectorAll('.rotating-gradient-wrapper');
@@ -44,7 +45,14 @@ const WelcomePage = ({ handleOpenModal }) => {
             autoplay
             className="welcome-card-icon"
           />
-      </div>
+        </div>
+
+        <SidebarToggle 
+          toggleSidebarText="Dashboard"
+          isSidebarOpen={isSidebarOpen} 
+          toggleSidebar={toggleSidebar} 
+        />
+
         <div className="welcome-card">
           <h2 style={{ textAlign: 'center' }}>
             Welcome to <br />
