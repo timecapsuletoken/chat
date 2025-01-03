@@ -10,6 +10,7 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import { motion } from 'framer-motion';
 import MuiCard from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
@@ -18,9 +19,19 @@ import AppTheme from '../components/LandingPage/AppTheme';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LoginIcon from '@mui/icons-material/Login';
 import KeyIcon from '@mui/icons-material/Key';
-import { motion } from 'framer-motion';
 import GradientRotatingButton from '../components/LandingPage/utils/GradientRotatingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
+
+// Define the motion-styled Stack
+const MotionStack = styled(motion(Stack))(({ theme }) => ({
+  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
+  minHeight: '100%',
+  padding: theme.spacing(2),
+  position: 'relative',
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(4),
+  },
+}));
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -118,127 +129,158 @@ const LockedScreen = (props) => {
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
-          <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                height: '100%', // Ensure it spans the full height of the parent
-            }}
-          >
-            <SitemarkIcon />
-          </Box>
-          <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                height: '100%', // Ensure it spans the full height of the parent
-            }}
-          >
-            <Avatar sx={{ m: 1, bgcolor: 'background.default' }}>
-                <LockOutlinedIcon color="primary"/>
-            </Avatar>
-            <Typography
-                component="h1"
-                variant="h4"
-                sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-            >
-                Screen Locked
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                height: '100%', // Ensure it spans the full height of the parent
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Wallet Address:
-            </Typography>
-            <Chip
-              avatar={<Avatar ref={avatarRef} />}
-              label={account}
-              variant="outlined"
-            />
-          </Box>
-          <Box
-            component="form"
-            onSubmit={handleUnlock}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
-            <FormControl>
-                <TextField
-                    id="filled-multiline-flexible"
-                    label="Enter PIN"
-                    variant="filled"
-                    type="password"
-                    value={pinInput}
-                    onChange={(e) => setPinInput(e.target.value)}
-                    error={!!error}
-                    helperText={error}
-                    name="password"
-                    required
-                    fullWidth
-                    color={error ? 'error' : 'primary'}
+        <MotionStack
+          initial={{
+            backgroundImage:
+              'radial-gradient(at 50% 50%, hsl(279.15deg 90.64% 53.92% / 10%), hsl(0deg 0% 10.2%))',
+          }}
+          animate={{
+            backgroundImage: [
+              'radial-gradient(at 50% 50%, hsl(279.15deg 90.64% 53.92% / 10%), hsl(0deg 0% 10.2%))',
+              'radial-gradient(at 50% 50%, hsl(60deg 90% 80% / 15%), hsl(0deg 0% 15%))',
+              'radial-gradient(at 50% 50%, hsl(279.15deg 90.64% 53.92% / 10%), hsl(0deg 0% 10.2%))',
+            ],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          sx={{
+            '&::before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              zIndex: -1,
+              inset: 0,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+            },
+          }}
+        >
+          <SignInContainer direction="column" justifyContent="space-between">
+            <Card variant="outlined">
+              <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    height: '100%', // Ensure it spans the full height of the parent
+                }}
+              >
+                <SitemarkIcon />
+              </Box>
+              <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    height: '100%', // Ensure it spans the full height of the parent
+                }}
+              >
+                <Avatar sx={{ m: 1, bgcolor: 'background.default' }}>
+                    <LockOutlinedIcon color="primary"/>
+                </Avatar>
+                <Typography
+                    component="h1"
+                    variant="h4"
+                    sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+                >
+                    Screen Locked
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    height: '100%', // Ensure it spans the full height of the parent
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Wallet Address:
+                </Typography>
+                <Chip
+                  avatar={<Avatar ref={avatarRef} />}
+                  label={account}
+                  size="medium"
+                  variant="outlined"
                 />
-            </FormControl>
-            
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              endIcon={<KeyIcon />}
-            >
-              Unlock
-            </Button>
-            <Link
-                component="button"
-                type="button"
-                variant="body2"
-                sx={{ alignSelf: 'center' }}
-                onClick={handleForgotPasswordClick} // Attach the click handler
-            >
-                Forgot your PIN?
-            </Link>
-          </Box>
-          <Divider>or</Divider>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <motion.div
-                animate={
-                    animate
-                    ? { rotate: [0, 10, -10, 10, -10, 0] } // Wiggle animation
-                    : { rotate: 0 } // Default state
-                }
-                transition={{ duration: 0.6, ease: 'easeInOut' }}
-                style={{ display: 'inline-block' }}
-            >
-                <GradientRotatingButton
-                    text="Sign in"
-                    icon={<LoginIcon />}
-                    iconPosition="end"
-                    onClick={handleReLogin}
-                />
-            </motion.div>
-          </Box>
-        </Card>
-      </SignInContainer>
+              </Box>
+              <Box
+                component="form"
+                onSubmit={handleUnlock}
+                noValidate
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: '100%',
+                  gap: 2,
+                }}
+              >
+                <FormControl>
+                    <TextField
+                        id="filled-multiline-flexible"
+                        label="Enter PIN"
+                        variant="filled"
+                        type="password"
+                        value={pinInput}
+                        onChange={(e) => setPinInput(e.target.value)}
+                        error={!!error}
+                        helperText={error}
+                        name="password"
+                        required
+                        fullWidth
+                        color={error ? 'error' : 'primary'}
+                    />
+                </FormControl>
+                
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  endIcon={<KeyIcon />}
+                >
+                  Unlock
+                </Button>
+                <Link
+                    component="button"
+                    type="button"
+                    variant="body2"
+                    sx={{ alignSelf: 'center' }}
+                    onClick={handleForgotPasswordClick} // Attach the click handler
+                >
+                    Forgot your PIN?
+                </Link>
+              </Box>
+              <Divider>or</Divider>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <motion.div
+                    animate={
+                        animate
+                        ? { rotate: [0, 10, -10, 10, -10, 0] } // Wiggle animation
+                        : { rotate: 0 } // Default state
+                    }
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    style={{ display: 'inline-block' }}
+                >
+                    <GradientRotatingButton
+                        text="Sign in"
+                        icon={<LoginIcon />}
+                        iconPosition="end"
+                        onClick={handleReLogin}
+                    />
+                </motion.div>
+              </Box>
+            </Card>
+          </SignInContainer>
+        </MotionStack>
     </AppTheme>
   );
 };
