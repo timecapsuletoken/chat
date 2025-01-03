@@ -27,7 +27,6 @@ import {
 
 // Material-UI Icons
 import {
-  MoreVert as MoreVertIcon,
   AccountBalanceWallet as AccountBalanceWalletIcon,
   Info as InfoIcon,
   AccessTime as AccessTimeIcon,
@@ -38,6 +37,7 @@ import {
   Person2 as Person2Icon,
   ExitToApp as ExitToAppIcon,
   Search as SearchIcon,
+  ManageAccounts as ManageAccountsIcon,
 } from '@mui/icons-material';
 import { generateJazzicon } from '../../../utils/jazzAvatar';
 import { hasUserSavedNickname, isNicknameAvailable, saveNicknameToGun } from '../../../utils/gunHelpers';
@@ -206,8 +206,8 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
       <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
       {/* Options Menu Icon */}
       <Tooltip title="User Options">
-      <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)}>
-        <MoreVertIcon sx={{ color: '#fff' }} />
+      <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)} sx={{ padding: '0px' }}>
+        <ManageAccountsIcon sx={{ color: '#fff' }} />
       </IconButton>
       </Tooltip>
       {/* Dropdown Menu */}
@@ -264,21 +264,23 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
         <Divider component="li" sx={{ borderColor: '#1c1c1c' }} flexItem />
 
         {/* Switch Wallet */}
-        <MenuItem
-          onClick={() => {
-            handleSwitchWallet();
-            handleOptionsMenuClose();
-          }}
-          sx={{
-            paddingTop: 0, 
-            paddingBottom: 0, 
-          }} 
-        >
-          <Avatar sx={{ backgroundColor: '#4caf50', width: 24, height: 24, marginRight: 1 }}>
-            <SwitchAccessShortcutIcon sx={{ width: 15, height: 15 }} />
-          </Avatar>
-          Switch Wallet
-        </MenuItem>
+        {providerType !== 'CoinbaseWallet' && (
+          <MenuItem
+            onClick={() => {
+              handleSwitchWallet();
+              handleOptionsMenuClose();
+            }}
+            sx={{
+              paddingTop: 0, 
+              paddingBottom: 0, 
+            }} 
+          >
+            <Avatar sx={{ backgroundColor: '#4caf50', width: 24, height: 24, marginRight: 1 }}>
+              <SwitchAccessShortcutIcon sx={{ width: 15, height: 15 }} />
+            </Avatar>
+            Switch Wallet
+          </MenuItem>
+        )}
         <Divider component="li" sx={{ borderColor: '#1c1c1c' }} flexItem />
 
         {/* Session Information */}

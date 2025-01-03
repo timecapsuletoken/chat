@@ -42,7 +42,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, providerType }) => {
+const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -69,7 +69,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
   const [soundAlertsEnabled, setSoundAlertsEnabled] = useState(false);
   const [desktopNotificationsEnabled, setDesktopNotificationsEnabled] = useState(false);
   const [blockedAddresses, setBlockedAddresses] = useState([]);
-
+  const providerType = localStorage.getItem('providerType');
   const [nickname, setNickname] = useState(''); // State to hold the nickname
   const [loading, setLoading] = useState(true); // Initial loading state is true
   const [isLocked, setIsLocked] = useState(false);
@@ -461,7 +461,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC, provi
             disconnectWallet={disconnectWallet}
             switchAccount={switchAccount}
             switchToBSC={switchToBSC}
-            providerType={localStorage.getItem('providerType')} 
+            providerType={providerType} 
             gun={gun}
             isSidebarOpen={isSidebarOpen}
             showDropdown={showDropdown}

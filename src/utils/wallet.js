@@ -13,6 +13,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
           const checksumAddress = ethers.utils.getAddress(accounts[0]);
           setAccount(checksumAddress);
           localStorage.setItem('connectedAccount', checksumAddress);
+          localStorage.setItem('providerType', providerType);
         }
       }
     };
@@ -63,6 +64,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
               const checksumAddress = ethers.utils.getAddress(accounts[0]);
               setAccount(checksumAddress);
               localStorage.setItem('connectedAccount', checksumAddress);
+              localStorage.setItem('providerType', providerType);
               return true;
             }
             await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
@@ -137,6 +139,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         // Save account information
         setAccount(checksumAddress);
         localStorage.setItem('providerType', 'CoinbaseWallet');
+        console.log('Provider:', providerType);
       } else {
         alert('Unsupported wallet provider.');
       }
@@ -153,7 +156,9 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
 };
 
 export const switchWallet = async (providerType, switchToBSC, setAccount) => {
-  const SavedProvider = localStorage.getItem('providerType');
+  //const SavedProvider = localStorage.getItem('providerType');
+  const SavedProvider = providerType;
+
   try {
         // Clear old session data
         localStorage.removeItem('connectedAccount');
@@ -199,7 +204,7 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
         console.error('No accounts found. Please log in to MetaMask.');
       }
     } else if (SavedProvider === 'CoinbaseWallet') {
-
+      
       const sdk = createCoinbaseWalletSDK({
         appName: 'TCA Chat dApp',
         appLogoUrl: 'https://example.com/assets/images/logo.png', // Replace with your actual logo URL
@@ -209,35 +214,36 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
           attribution: { auto: true },
         },
       });
-
-      // Get the provider
+  
+      // Get the provider directly from the SDK
       const provider = sdk.getProvider();
       if (!provider) {
         throw new Error('Failed to initialize Coinbase Wallet provider.');
       }
-
-      // Request account access
+  
+      // Force wallet selection by requesting accounts
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
       if (accounts && accounts.length > 0) {
         const address = accounts[0];
         console.log('Connected account:', address);
-
+  
         // Convert to checksum address
         const checksumAddress = ethers.utils.getAddress(address);
-
+  
         // Save account information
         setAccount(checksumAddress);
         localStorage.setItem('connectedAccount', checksumAddress);
         localStorage.setItem('providerType', 'CoinbaseWallet');
-
+  
         // Switch to Binance Smart Chain
         await switchToBSC();
-
-        // Reload the page
-        window.location.reload();
+  
+        // Reload the page only after successful connection
         console.log('Wallet switched to Coinbase account:', checksumAddress);
+        window.location.reload();
       } else {
-        alert('Unsupported wallet provider.');
+  
+        alert('No accounts found. Please log in to Coinbase Wallet.');
       }
     }
     

@@ -124,6 +124,7 @@ const Sidebar = ({
             <button
               className={`sidebar-toggle-inside ${isSidebarOpen ? 'open' : ''}`}
               onClick={toggleSidebar}
+              style={{ color: isSidebarOpen ? '#1c1c1c' : 'inherit' }}
             >
               <DashboardIcon />
             </button>
