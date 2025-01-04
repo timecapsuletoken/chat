@@ -60,28 +60,29 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
 
   useEffect(() => {
     if (!account) return;
-
-    const fetchBlockedAddresses = async () => {
-        console.log("Fetching blocked addresses for account:", account);
-
-        const addresses = [];
-        const blockedAddressesNode = gun.get(account).get('blockedAddresses');
-
-        // Fetch the blocked addresses
-        blockedAddressesNode.map().once((data, key) => {
-            if (data === true) {
-                addresses.push(key);
-            }
-        });
-
-        // Ensure state update after all data is fetched
-        setTimeout(() => {
-            console.log("Blocked addresses fetched:", addresses);
-            setBlockedAddresses([...addresses]);
-        }, 100); // Slight delay to allow map() to complete
+  
+    const fetchBlockedAddresses = () => {
+      console.log("Fetching blocked addresses for account:", account);
+  
+      const blockedAddressesNode = gun.get(account).get('blockedAddresses');
+      const addresses = new Set();
+  
+      blockedAddressesNode.map().on((data, key) => {
+        if (data === true) {
+          addresses.add(key);
+        } else {
+          addresses.delete(key);
+        }
+        // Ensure no duplicates in state
+        setBlockedAddresses([...addresses]);
+      });
     };
-
+  
     fetchBlockedAddresses();
+  
+    return () => {
+      gun.get(account).get('blockedAddresses').off();
+    };
   }, [account]);
 
   useEffect(() => {
