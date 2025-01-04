@@ -126,7 +126,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   useEffect(() => {
     if (!autoLockEnabled) return;
   
-    const lockTimeout = 2 * 60 * 1000; // 30 minutes in milliseconds
+    const lockTimeout = 30 * 60 * 1000; // 30 minutes in milliseconds
   
     let timer;
   
@@ -329,14 +329,13 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
       autoLockEnabled: autoLockEnabled || false,
       soundAlertsEnabled: soundAlertsEnabled || false,
       desktopNotificationsEnabled: desktopNotificationsEnabled || false,
-      blockedAddresses: blockedAddresses || [], // Default to an empty array if undefined
+      blockedAddresses: Array.isArray(blockedAddresses) ? blockedAddresses : [], // Ensure valid array
     };
   
     handleSaveSettings(account, settings, showSnackBar);
   };  
 
   const toggleBlockedModal = () => {  
-    console.log("Blocked addresses before saving:", blockedAddresses);
     setIsBlockedModalOpen(!isBlockedModalOpen);
     setIsSettingsModalOpen(false);
     // Fetch or refresh blocked addresses when opening the modal
@@ -531,6 +530,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
             handleUnblockAddress={unblockAddress}
             handleBlockAddress={blockAddress}
             handleSaveSettings={saveSettings}
+            showSnackBar={showSnackBar}
           />
           <div className="main-content">
             <AboutModal 

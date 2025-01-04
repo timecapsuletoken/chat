@@ -211,6 +211,9 @@ const LockedScreen = (props) => {
                   label={account}
                   size="medium"
                   variant="outlined"
+                  sx={{
+                    backgroundColor: 'transparent !important',
+                  }}                
                 />
               </Box>
               <Box

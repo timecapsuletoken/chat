@@ -137,34 +137,50 @@ export const fetchSettings = async (account, setSettings) => {
 
 // Save user settings
 export const handleSaveSettings = (account, settings, showSnackBar) => {
-    if (!account) {
-      console.error("No account provided for saving settings.");
-      return;
+  if (!account) {
+    console.error("No account provided for saving settings.");
+    showSnackBar && showSnackBar('No account provided', 'error');
+    return;
+  }
+
+  console.log("Saving settings:", settings);
+
+  // Separate blockedAddresses from other settings
+  const { blockedAddresses, ...otherSettings } = settings;
+
+    // Optimistic snackbar
+    showSnackBar && showSnackBar('Saving settings...', 'info');
+
+  // Update other settings first
+  gun.get(account).put(otherSettings, (ack) => {
+    if (ack.err) {
+      console.error("Failed to save other settings:", ack.err);
+      showSnackBar && showSnackBar('Failed to save settings', 'error');
+    } else {
+      console.log("Other settings saved successfully:", otherSettings);
+      showSnackBar && showSnackBar('Settings saved successfully', 'success');
     }
-  
-    console.log("Saving settings:", settings);
-  
-    // Transform blockedAddresses into an object for Gun.js compatibility
-    const transformedSettings = {
-      ...settings,
-      blockedAddresses: settings.blockedAddresses
-        ? settings.blockedAddresses.reduce((acc, address) => {
-            acc[address] = true; // Store each address as a key with a value of `true`
-            return acc;
-          }, {})
-        : undefined, // Retain compatibility if blockedAddresses is undefined
-    };
-  
-    gun.get(account).put(transformedSettings, (ack) => {
-      if (ack.err) {
-        console.error("Failed to save settings:", ack.err);
-        showSnackBar && showSnackBar('Failed to save settings','error');
-      } else {
-        console.log("Settings saved successfully:", transformedSettings);
-        showSnackBar && showSnackBar('Settings saved successfully','success');
-      }
-    });
-};  
+  });
+
+  // Handle blockedAddresses separately
+  const transformedBlockedAddresses =
+    Array.isArray(blockedAddresses) && blockedAddresses.length > 0
+      ? blockedAddresses.reduce((acc, address) => {
+          acc[address] = true;
+          return acc;
+        }, {})
+      : {}; // Set to an empty object if no blocked addresses
+
+  gun.get(account).get('blockedAddresses').put(transformedBlockedAddresses, (ack) => {
+    if (ack.err) {
+      console.error("Failed to save blocked addresses:", ack.err);
+      showSnackBar && showSnackBar('Failed to save blocked addresses', 'error');
+    } else {
+      console.log("Blocked addresses saved successfully:", transformedBlockedAddresses);
+      showSnackBar && showSnackBar('Blocked addresses saved successfully', 'success');
+    }
+  });
+};
 
 // Block a specific address
 export const handleBlockAddress = (account, address, setBlockedAddresses, showSnackBar) => {

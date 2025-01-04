@@ -1,5 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+//import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { FixedSizeList } from 'react-window';
 
 const BlockedModal = ({
   isBlockedModalOpen,
@@ -8,8 +16,42 @@ const BlockedModal = ({
   handleUnblockAddress,
   handleBlockAddress,
   handleSaveSettings,
+  showSnackBar,
 }) => {
   if (!isBlockedModalOpen) return null;
+
+    // Ensure unique blocked addresses
+    //const blockedAddresses = [...new Set(blockedAddresses)];
+
+    // Render a row in the virtualized list
+    const renderRow = ({ index, style }) => {
+      const address = blockedAddresses[index];
+  
+      return (
+        <ListItem 
+          style={style} 
+          key={address} 
+          component="div" 
+          disablePadding
+          secondaryAction={
+            <IconButton
+              aria-label="Unblock"
+              onClick={() => handleUnblockAddress(address)} 
+              color="error"
+            >
+              <RestartAltIcon />
+            </IconButton>
+          }
+        >
+          <ListItemButton>
+            <ListItemText
+              primary={address}
+              primaryTypographyProps={{ sx: { fontSize: '0.9rem' } }}
+            />
+          </ListItemButton>
+        </ListItem>
+      );
+    };  
 
   return (
     <div className="modal-overlay" onClick={toggleBlockedModal}>
@@ -19,25 +61,41 @@ const BlockedModal = ({
           <button className="close-button" onClick={toggleBlockedModal}>×</button>
         </div>
 
-        <div className="blocked-list">
-        <ul>
-            {blockedAddresses.length > 0 ? (
-              [...new Set(blockedAddresses)].map((address) => ( // Ensure unique keys
-                <li key={address}>
-                  <span className="blocked-address">{address}</span>
-                  <button
-                    className="unblock-button"
-                    onClick={() => handleUnblockAddress(address)}
-                  >
-                    Unblock
-                  </button>
-                </li>
-              ))
-            ) : (
-              <li className="no-blocked-addresses">No addresses are currently blocked.</li>
-            )}
-        </ul>
-        </div>
+        <Box
+          sx={{
+            width: '100%',
+            height: blockedAddresses.length > 0 ? Math.min(50 * blockedAddresses.length, 400) : 40, // Ensure a minimum height
+            bgcolor: '#1c1c1c',
+            borderRadius: '6px',
+            overflow: 'hidden',
+            mb: 2,
+          }}
+        >
+          {blockedAddresses.length > 0 ? (
+            <FixedSizeList
+              height={blockedAddresses.length > 0 ? Math.min(50 * blockedAddresses.length, 400) : '100%'} // Use 'auto' for empty
+              width="100%"
+              itemSize={50}
+              itemCount={blockedAddresses.length}
+              overscanCount={5}
+            >
+              {renderRow}
+            </FixedSizeList>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                fontSize: '1rem',
+                color: '#fff',
+              }}
+            >
+              No addresses are currently blocked.
+            </Box>
+          )}
+        </Box>
 
         <div className="block-input-container">
           <input
@@ -49,8 +107,10 @@ const BlockedModal = ({
                 const newAddress = e.target.value.trim();
                 if (newAddress && !blockedAddresses.includes(newAddress)) {
                   handleBlockAddress(newAddress); // Call the function only for unique addresses
+                  showSnackBar(`Address ${newAddress.slice(-5)} has been Blocked`, 'success');
                   e.target.value = '';
                 } else {
+                  showSnackBar('Address already blocked or invalid.', 'warning');
                   console.warn("Address already blocked or invalid:", newAddress);
                 }
               }
@@ -66,24 +126,13 @@ const BlockedModal = ({
                   handleBlockAddress(newAddress); // Call the function only for unique addresses
                   input.value = '';
                 } else {
+                  showSnackBar('Address already blocked or invalid.', 'warning');
                   console.warn("Address already blocked or invalid:", newAddress);
                 }
               }
             }}            
           >
             Block Address
-          </button>
-        </div>
-
-        <div className="modal-footer">
-          <button
-            className="save-blocked-btn"
-            onClick={() => {
-              handleSaveSettings();
-              toggleBlockedModal();
-            }}
-          >
-            Save Changes
           </button>
         </div>
       </div>

@@ -49,7 +49,6 @@ const PinModal = ({ isOpen, account, onClose }) => {
             label={generatePinFromAddress(account)}
             onClick={handleCopyToClipboard}
             variant="outlined"
-            fullwidth
             sx={{
             my: 1,
             width: '100%',

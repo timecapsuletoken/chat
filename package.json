@@ -46,6 +46,7 @@
     "react-router-dom": "6.28.0",
     "react-scripts": "5.0.1",
     "react-simple-typewriter": "^5.0.1",
+    "react-window": "^1.8.11",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "vm-browserify": "^1.1.2",
