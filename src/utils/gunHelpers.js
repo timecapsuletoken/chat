@@ -184,29 +184,34 @@ export const handleSaveSettings = (account, settings, showSnackBar) => {
 
 // Block a specific address
 export const handleBlockAddress = (account, address, setBlockedAddresses, showSnackBar) => {
-    const trimmedAddress = address;
-    if (!trimmedAddress || trimmedAddress === account) {
-      console.warn("Invalid address to block:", address);
-      showSnackBar && showSnackBar('Invalid address', 'error');
-      return;
+  const trimmedAddress = address.trim();
+  if (!trimmedAddress || trimmedAddress === account) {
+    console.warn("Invalid address to block:", address);
+    showSnackBar && showSnackBar('Invalid address', 'error');
+    return;
+  }
+
+  console.log(`Saving blocked address:`, trimmedAddress);
+
+  // Save the address as a key in /blockedAddresses
+  gun.get(account).get('blockedAddresses').get(trimmedAddress).put(true, (ack) => {
+    if (ack.err) {
+      console.error("Failed to block address:", ack.err);
+      showSnackBar && showSnackBar('Failed to block address', 'error');
+    } else {
+      console.log("Blocked address saved successfully:", trimmedAddress);
+      showSnackBar && showSnackBar(`Address ${trimmedAddress.slice(-5)} has been Blocked`, 'success');
+
+      // Fetch the updated blocked addresses to avoid duplicates
+      gun.get(account).get('blockedAddresses').once((data) => {
+        if (data) {
+          const updatedAddresses = Object.keys(data).filter((key) => data[key] === true);
+          setBlockedAddresses(updatedAddresses);
+        }
+      });
     }
-  
-    console.log(`Saving blocked address:`, trimmedAddress);
-  
-    // Save the address as a key in /blockedAddresses
-    gun.get(account).get('blockedAddresses').get(trimmedAddress).put(true, (ack) => {
-      if (ack.err) {
-        console.error("Failed to block address:", ack.err);
-        showSnackBar && showSnackBar('Failed to block address', 'error');
-      } else {
-        console.log("Blocked address saved successfully:", trimmedAddress);
-        showSnackBar && showSnackBar(`Address ${trimmedAddress.slice(-5)} has been Blocked`, 'success');
-        setBlockedAddresses((prev) =>
-          Array.isArray(prev) ? [...prev, trimmedAddress] : [trimmedAddress]
-        );
-      }
-    });
-};    
+  });
+};
 
 // Unblock a specific address
 export const handleUnblockAddress = (account, address, setBlockedAddresses, showSnackBar) => {
@@ -225,7 +230,7 @@ export const handleUnblockAddress = (account, address, setBlockedAddresses, show
         showSnackBar && showSnackBar('Failed to unblock address','error');
       } else {
         console.log("Address successfully unblocked:", address);
-        showSnackBar && showSnackBar(`Address ${address.slice(-5)} has been unblocked`,'success');
+        showSnackBar && showSnackBar(`Address ${address.slice(-5)} has been Unblocked`,'success');
 
         // Update the local state only after successful database deletion
         setBlockedAddresses((prev) =>

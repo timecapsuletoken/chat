@@ -17,6 +17,7 @@ const ChatOptionsMenu = ({
   handleWalletInfo,
   toggleBlockedModal,
   navigate,
+  showSnackBar,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -35,9 +36,10 @@ const ChatOptionsMenu = ({
       gun.get(account).get('blockedAddresses').get(chatAddress).put(null, (ack) => {
         if (ack.err) {
           console.error("Failed to unblock address:", ack.err);
+          showSnackBar(`Failed to unblock address ${chatAddress.slice(-5)}`,'error');
         } else {
           console.log("Address successfully unblocked:", chatAddress);
-    
+          showSnackBar(`Address ${chatAddress.slice(-5)} successfully unblocked`,'success');
           // Update the local state only after successful database deletion
           setBlockedAddresses((prev) =>
             prev.filter((blockedAddress) => blockedAddress !== chatAddress)
@@ -49,8 +51,10 @@ const ChatOptionsMenu = ({
       gun.get(account).get('blockedAddresses').get(chatAddress).put(true, (ack) => {
         if (ack.err) {
           console.error("Failed to block address:", ack.err);
+          showSnackBar(`Failed to block address ${chatAddress.slice(-5)}`,'error');
         } else {
           console.log("Blocked address saved successfully:", chatAddress);
+          showSnackBar(`Address ${chatAddress.slice(-5)} has been Blocked`,'success');
           setBlockedAddresses((prev) =>
             Array.isArray(prev) ? [...prev, chatAddress] : [chatAddress]
           );

@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button, Divider } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
 
 const SettingsModal = ({
   isSettingsModalOpen,
@@ -61,10 +63,31 @@ const SettingsModal = ({
           </div>
           <div className="privacy_settings">
             <h3>Privacy Settings</h3>
-            <button className="manage-blocked-btn" onClick={toggleBlockedModal}>
+            <Button 
+              variant="contained" 
+              startIcon={<BlockIcon />} 
+              onClick={toggleBlockedModal}
+              sx={{
+                width: '100%',
+                backgroundColor: '#1c1c1c',
+                borderColor: '#1c1c1c',
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#ddd',
+                  borderColor: '#ddd',
+                  color: '#1c1c1c',
+                },
+              }}
+            >
               Manage Blocked Addresses
-            </button>
+            </Button>
           </div>
+          <Divider 
+            sx={{
+              my: 2, // Adds vertical margin (top and bottom) to the Divider
+              borderColor: '#fff',
+            }}
+          />
           <div className="save_settings_btn">
             <button
               onClick={() => {

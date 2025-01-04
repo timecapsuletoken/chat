@@ -256,18 +256,7 @@
 }
 
 .add-block-button {
-  background-color: #20b2aa;
-  color: #fff;
-  border: none;
-  padding: 8px 15px;
-  font-size: 0.9rem;
-  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-block-button:hover {
-  background-color: #17a598;
 }
 
 /* Save Button */

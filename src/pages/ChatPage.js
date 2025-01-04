@@ -30,7 +30,7 @@ const BEP20_ABI = [
 ];
 const tcaTokenContract = new ethers.Contract(TCA_TOKEN_ADDRESS, BEP20_ABI, bscProvider);
 
-const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSidebarOpen, toggleSidebar, toggleSidebarText }) => {
+const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSidebarOpen, toggleSidebar, toggleSidebarText, showSnackBar }) => {
   const [messages, setMessages] = useState([]); // All chat messages
   const [message, setMessage] = useState(''); // Current input message
   
@@ -357,6 +357,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
           handleWalletInfo={handleWalletInfo}
           toggleBlockedModal={toggleBlockedModal}
           navigate={navigate}
+          showSnackBar={showSnackBar}
         />
       </div>
       <div className="chat-container">

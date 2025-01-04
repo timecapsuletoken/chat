@@ -552,6 +552,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
                 isSidebarOpen={isSidebarOpen} 
                 toggleSidebar={toggleSidebar}   
                 toggleSidebarText="Dashboard"
+                showSnackBar={showSnackBar}
               />
             ) : (
               <WelcomePage 

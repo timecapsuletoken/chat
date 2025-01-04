@@ -1,12 +1,16 @@
 import React from 'react';
+import { ethers } from 'ethers';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-//import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import BlockIcon from '@mui/icons-material/Block';
 import { FixedSizeList } from 'react-window';
 
 const BlockedModal = ({
@@ -96,44 +100,94 @@ const BlockedModal = ({
             </Box>
           )}
         </Box>
-
+        <Divider sx={{ mb: 2, borderColor: '#666' }}/>
         <div className="block-input-container">
-          <input
-            type="text"
-            placeholder="Enter address to block"
+          <TextField
             className="block-input"
+            id="filled-basic"
+            label="Enter address to block"
+            variant="filled"
+            inputProps={{
+              className: 'block-input-field', // Add a unique class for query consistency
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                const newAddress = e.target.value.trim();
-                if (newAddress && !blockedAddresses.includes(newAddress)) {
-                  handleBlockAddress(newAddress); // Call the function only for unique addresses
-                  showSnackBar(`Address ${newAddress.slice(-5)} has been Blocked`, 'success');
-                  e.target.value = '';
-                } else {
-                  showSnackBar('Address already blocked or invalid.', 'warning');
-                  console.warn("Address already blocked or invalid:", newAddress);
+                const newAddress = e.target.value?.trim(); // Safely access value
+
+                // Ensure valid input before proceeding
+                if (typeof newAddress !== 'string' || newAddress === '') {
+                  showSnackBar('Address cannot be empty.', 'warning');
+                  return;
                 }
+
+                // Validate Ethereum address
+                if (!ethers.utils.isAddress(newAddress)) {
+                  showSnackBar('Invalid Ethereum address.', 'error');
+                  return;
+                }
+
+                // Check if the address is already blocked
+                if (blockedAddresses.includes(newAddress)) {
+                  showSnackBar('Address is already blocked.', 'warning');
+                  return;
+                }
+
+                e.target.value = ''; // Reset the input
               }
-            }}            
+            }}
+            sx={{
+              '& .MuiFilledInput-root': {
+                backgroundColor: '#3d3d3d',
+                borderRadius: '4px', // Rounded corners
+                '&.Mui-focused': {
+                  backgroundColor: '#4d4d4d',
+                  color: '#fff', // Optional: Change text color
+                },
+              },
+              '& .MuiFormLabel-root.Mui-focused': {
+                color: '#bd3ef4', // Change label color on focus
+              },
+              '& .MuiFilledInput-underline:after': {
+                borderBottomColor: '#bd3ef4', // Focused border bottom color
+              },
+            }}
           />
-          <button
+          <Button 
+            variant="outlined"
             className="add-block-button"
             onClick={() => {
-              const input = document.querySelector('.block-input');
-              if (input) {
-                const newAddress = input.value.trim();
-                if (newAddress && !blockedAddresses.includes(newAddress)) {
-                  handleBlockAddress(newAddress); // Call the function only for unique addresses
-                  input.value = '';
-                } else {
-                  showSnackBar('Address already blocked or invalid.', 'warning');
-                  console.warn("Address already blocked or invalid:", newAddress);
-                }
+              const input = document.querySelector('.block-input-field'); // Ensure consistent selector
+              if (!input || typeof input.value !== 'string' || input.value.trim() === '') {
+                showSnackBar('Address cannot be empty.', 'warning');
+                return;
               }
-            }}            
+
+              const newAddress = input.value.trim();
+
+              // Validate Ethereum address
+              if (!ethers.utils.isAddress(newAddress)) {
+                showSnackBar('Invalid Ethereum address.', 'error');
+                return;
+              }
+
+              // Check if the address is already blocked
+              if (blockedAddresses.includes(newAddress)) {
+                showSnackBar('Address is already blocked.', 'warning');
+                return;
+              }
+
+              // If all validations pass
+              handleBlockAddress(newAddress);
+              input.value = ''; // Clear the input field
+            }}
+            sx={{
+              color: '#bd3ef4',
+              borderColor: '#bd3ef4',
+              height: '56px',
+            }}
           >
-            Block Address
-          </button>
+            <BlockIcon />
+          </Button>
         </div>
       </div>
     </div>
