@@ -96,32 +96,43 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   }, [account]);   
 
   useEffect(() => {
-    const debounceFetch = setTimeout(() => {
-
+    let cleanupChats;
+    let cleanupNickname;
+  
+    const initialize = async () => {
       if (!account) {
         console.log("Redirecting to login");
         setChats([]);
         navigate('/login');
         return;
-      }          
-
+      }
+  
       console.log("Initializing chats");
-      setLoading(false);
-      const cleanupChats = fetchChats(account, setChats);
-      // Fetch nickname
-      const cleanupNickname = fetchNickname(account, setNickname);
       setLoading(true);
-      fetchSettingsData();
-
-      return () => {
-        console.log("Cleaning up chat subscriptions for account:", account);
-        if (cleanupChats) cleanupChats();
-        if (cleanupNickname) cleanupNickname();
-      };
-    }, 300); // Delay of 300ms to avoid rapid re-renders
-
-    return () => clearTimeout(debounceFetch); // Clear timeout on unmount
-  }, [account, navigate, fetchSettingsData]); 
+  
+      // Fetch chats
+      cleanupChats = fetchChats(account, setChats);
+  
+      // Fetch nickname and verify reverse mapping
+      cleanupNickname = fetchNickname(account, (nickname) => {
+        setNickname(nickname);
+        console.log(`[DEBUG] Nickname set to: "${nickname}" for account: ${account}`);
+      });
+  
+      // Fetch settings
+      await fetchSettingsData();
+  
+      setLoading(false);
+    };
+  
+    initialize();
+  
+    return () => {
+      console.log("Cleaning up subscriptions for account:", account);
+      if (cleanupChats) cleanupChats();
+      if (cleanupNickname) cleanupNickname();
+    };
+  }, [account, navigate, fetchSettingsData]);  
 
   useEffect(() => {
     if (!autoLockEnabled) return;

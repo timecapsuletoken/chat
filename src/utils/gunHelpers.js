@@ -389,6 +389,9 @@ export const fetchNickname = (account, setNickname) => {
         // Data is the nickname directly
         console.log(`[DEBUG] Nickname fetched: "${data}" for account: ${account}`);
         setNickname(data);
+
+        // Verify the reverse mapping
+        verifyReverseMapping(account, data);
       } else {
         // No nickname exists, assign and save the default nickname
         const defaultNickname = account.slice(-5);
@@ -425,6 +428,27 @@ export const fetchNickname = (account, setNickname) => {
     console.log(`[DEBUG] Cleaning up nickname subscription for account: ${account.slice(-4)}`);
     nicknameNode.off();
   };
+};
+
+// Verify reverse mapping and nickname
+const verifyReverseMapping = (account, nickname) => {
+  const reverseNode = gun.get("findWallet").get(nickname);
+
+  reverseNode.once((data) => {
+    if (!data || data.wallet !== account) {
+      console.warn(`[WARN] Reverse mapping missing or incorrect for nickname: "${nickname}". Repairing...`);
+
+      saveNicknameMapping(nickname, account, (ack) => {
+        if (ack.err) {
+          console.error(`[ERROR] Failed to repair reverse mapping: "${nickname}" -> "${account}"`, ack.err);
+        } else {
+          console.log(`[DEBUG] Reverse mapping repaired: "${nickname}" -> "${account}"`);
+        }
+      });
+    } else {
+      console.log(`[DEBUG] Reverse mapping verified for nickname: "${nickname}"`);
+    }
+  });
 };
 
 export const hasUserSavedNickname = async (account) => {
@@ -517,7 +541,7 @@ export const saveNicknameMapping = (nickname, account, callback) => {
 
   console.log(`[DEBUG] Saving nickname mapping: "${nickname}" -> "${account}"`);
 
-  const nicknamesNode = gun.get('findWallet');
+  const nicknamesNode = gun.get("findWallet");
 
   // Create the mapping data
   const mappingData = {
@@ -525,16 +549,12 @@ export const saveNicknameMapping = (nickname, account, callback) => {
     wallet: account,
   };
 
-  // Log the structure before saving
-  console.log("[DEBUG] Mapping data to save:", mappingData);
-
-  // Save nickname mapping under the new structure
   nicknamesNode.get(nickname).put(mappingData, (ack) => {
     if (ack.err) {
       console.error(`[ERROR] Failed to save mapping for nickname: "${nickname}"`, ack.err);
       callback({ err: ack.err });
     } else {
-      console.log(`[DEBUG] Nickname mapping saved successfully:`, mappingData);
+      console.log(`[DEBUG] Nickname mapping saved successfully: "${nickname}" -> "${account}"`);
       callback({ success: true });
     }
   });
