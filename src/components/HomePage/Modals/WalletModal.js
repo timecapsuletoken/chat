@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { RiBnbLine } from 'react-icons/ri';
 import { QRCodeCanvas } from 'qrcode.react';
+import { Stack, Link, Chip, Avatar } from '@mui/material';
 import TCACoin from '../../../assets/images/logos/logo.png';
 
 const WalletModal = ({
@@ -24,29 +25,58 @@ const WalletModal = ({
         </div>
         <div className="wallet-details wallet-addr-details">
           <p><strong>Address</strong></p>
-          <p className="wallet-address">
-            <a
+          <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>
+            <Link 
               href={`https://bscscan.com/address/${account}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="grdntclr"
+              underline="hover"
             >
-              {account}
-            </a>
-            <FaExternalLinkAlt className="wallet-address-extlink" />
-          </p>
+              <Chip
+                icon={<FaExternalLinkAlt />}
+                label={account}
+                size="medium"
+                variant="outlined"
+                sx={{
+                  backgroundColor: 'transparent !important',
+                  color: '#ffffff',
+                  '& .MuiChip-icon': {
+                    color: '#bd3ef4', // Change the icon color here
+                  },
+                }}                
+              />
+            </Link>
+          </Stack>
         </div>
         <div className="wallet-stats">
           <div className="wallet-balance">
             <p>BNB Balance:</p>
             <span className="coins-data">
-              {formatNumber(balance)} <RiBnbLine className="bnb-coin-logo" />
+              <Chip
+                icon={<RiBnbLine className="bnb-coin-logo" />} 
+                label={formatNumber(balance)}
+                size="medium"
+                variant="outlined"
+                sx={{
+                  backgroundColor: 'transparent !important',
+                  color: '#ffffff',
+                }}                
+              />
             </span>
           </div>
           <div className="wallet-txns">
             <p>TCA Balance:</p>
             <span className="coins-data">
-              {formatNumber(tcaBalance)} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo" />
+            <Chip
+                avatar={<Avatar alt="TCA Coin" src={TCACoin} />} 
+                label={formatNumber(tcaBalance)}
+                size="medium"
+                variant="outlined"
+                sx={{
+                  backgroundColor: 'transparent !important',
+                  color: '#ffffff',
+                }}                
+              />
             </span>
           </div>
         </div>

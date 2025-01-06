@@ -13,7 +13,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 
 // Icons from react-icons
 import { FaCogs, FaInfoCircle, FaQuestionCircle } from 'react-icons/fa';
-import { CiMenuKebab } from 'react-icons/ci';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import { MdHome } from 'react-icons/md';
 
@@ -147,7 +147,7 @@ const Sidebar = ({
         <Tooltip title="Options">
           <div className="sidebar-icon">
               <button onClick={toggleDropdown}>
-                <CiMenuKebab />
+                <SettingsIcon />
               </button>
           </div>
         </Tooltip>

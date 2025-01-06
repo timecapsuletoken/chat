@@ -98,14 +98,15 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   useEffect(() => {
     let cleanupChats;
     let cleanupNickname;
-  
+    
+    if (!account) {
+      console.log("Redirecting to login");
+      setChats([]);
+      navigate('/login');
+      return;
+    }
+    
     const initialize = async () => {
-      if (!account) {
-        console.log("Redirecting to login");
-        setChats([]);
-        navigate('/login');
-        return;
-      }
   
       console.log("Initializing chats");
       setLoading(true);

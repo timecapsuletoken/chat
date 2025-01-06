@@ -181,11 +181,6 @@
   }
   
   .wallet-address {
-    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
     font-size: 1.1em;
     word-break: break-all;
     margin: 0px;

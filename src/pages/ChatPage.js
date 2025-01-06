@@ -17,6 +17,9 @@ import { RiBnbLine } from "react-icons/ri";
 import {
   Avatar,
   TextField,
+  Stack, 
+  Link, 
+  Chip, 
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
@@ -467,26 +470,64 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
           <div className="wallet-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="wallet-info-modal" onClick={(e) => e.stopPropagation()}>
               <div className="wallet-modal-header">
-                <h2>My Profile</h2>
+                <h2>{`${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}`} Profile</h2>
                 <button className="wallet-close-button" onClick={closeinfoWalletModal}>×</button>
               </div>
               <div className="wallet-details wallet-addr-details">
                 <p><strong>Address</strong></p>
-                <p className="wallet-address">
-                  <a href={`https://bscscan.com/address/${chatAddress}`} target="_blank" rel="noopener noreferrer" className="grdntclr">
-                    {chatAddress}
-                  </a>
-                  <FaExternalLinkAlt className="wallet-address-extlink" />
-                </p>
+                <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>
+                  <Link 
+                    href={`https://bscscan.com/address/${chatAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    underline="hover"
+                  >
+                    <Chip
+                      icon={<FaExternalLinkAlt />}
+                      label={chatAddress}
+                      size="medium"
+                      variant="outlined"
+                      sx={{
+                        backgroundColor: 'transparent !important',
+                        color: '#ffffff',
+                        '& .MuiChip-icon': {
+                          color: '#bd3ef4', // Change the icon color here
+                        },
+                      }}                
+                    />
+                  </Link>
+                </Stack>
               </div>
               <div className="wallet-stats">
                 <div className="wallet-balance">
                   <p>BNB Balance:</p>
-                  <span className="coins-data">{formatNumber(balance)} <RiBnbLine className="bnb-coin-logo"/></span>
+                  <span className="coins-data">
+                    <Chip
+                      icon={<RiBnbLine className="bnb-coin-logo" />} 
+                      label={formatNumber(balance)}
+                      size="medium"
+                      variant="outlined"
+                      sx={{
+                        backgroundColor: 'transparent !important',
+                        color: '#ffffff',
+                      }}                
+                    />
+                  </span>
                 </div>
                 <div className="wallet-txns">
                   <p>TCA Balance:</p>
-                  <span className="coins-data">{formatNumber(tcaBalance)} <img src={TCACoin} alt="TCA Coin" className="tca-coin-logo"/></span>
+                  <span className="coins-data">
+                  <Chip
+                      avatar={<Avatar alt="TCA Coin" src={TCACoin} />} 
+                      label={formatNumber(tcaBalance)}
+                      size="medium"
+                      variant="outlined"
+                      sx={{
+                        backgroundColor: 'transparent !important',
+                        color: '#ffffff',
+                      }}                
+                    />
+                  </span>
                 </div>
               </div>
               <div className="qr-code-section">

@@ -122,8 +122,8 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
       return;
     }
 
-    // Step 2: Validate nickname format (letters and numbers only, exactly 5 characters)
-    const isValidFormat = /^[a-zA-Z0-9]{4,5}$/.test(newNickname); // 4 to 5 alphanumeric characters
+    // Step 2: Validate nickname format (letters and numbers only, exactly 5 or 6 characters)
+    const isValidFormat = /^[a-zA-Z0-9]{5,6}$/.test(newNickname); // 5 to 6 alphanumeric characters
     if (!isValidFormat) {
       setError('Nickname must be exactly 5 letters or numbers.');
       setWarning(false);
