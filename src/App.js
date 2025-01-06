@@ -5,6 +5,8 @@ import LandingPage from './pages/LandingPage/LandingPage';
 import LoginPage from './pages/LoginPage';
 import LoginNavbar from './components/LoginNavbar';
 import HomePage from './pages/HomePage';
+import Blog from './pages/LandingPage/Blog';
+import SingleArticle from './components/LandingPage/Blog/SingleArticle'; // Import the new component
 import ChatPage from './pages/ChatPage';
 
 import CookiePolicy from './pages/LandingPage/legalDocs/CookiePolicy';
@@ -91,63 +93,23 @@ function App() {
   return (
       <div className="App">
         <Routes>
-          <Route path="/" element={
-            <>
-              <LandingPage />
-            </>
-          }
-          />
-          <Route path="/cookie-policy" element={
-            <>
-              <CookiePolicy />
-            </>
-          }
-          />
-          <Route path="/disclaimer" element={
-            <>
-              <Disclaimer />
-            </>
-          }
-          />
-          <Route path="/privacy-policy" element={
-            <>
-              <PrivacyPolicy />
-            </>
-          }
-          />
-          <Route path="/risk-disclosure" element={
-            <>
-              <RiskDisclosure />
-            </>
-          }
-          />
-          <Route path="/terms-and-conditions" element={
-            <>
-              <TermsAndConditions />
-            </>
-          }
-          />
-          <Route path="/tos" element={
-            <>
-              <TermsOfService />
-            </>
-          }
-          />
+          <Route path="/" element={<><LandingPage /></>}/>
+          <Route path="/cookie-policy" element={<><CookiePolicy /></>}/>
+          <Route path="/disclaimer" element={<><Disclaimer /></>}/>
+          <Route path="/privacy-policy" element={<><PrivacyPolicy /></>}/>
+          <Route path="/risk-disclosure" element={<> <RiskDisclosure /> </> } />
+          <Route path="/terms-and-conditions" element={<> <TermsAndConditions /> </>} />
+          <Route path="/tos" element={<> <TermsOfService /> </>} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<SingleArticle />} />
           <Route path="/login" element={
             <>
               <LoginNavbar />
               <LoginPage account={account} connectWallet={(providerType) => connectWallet(providerType, switchToBSC, setAccount)} />
             </>
           } />
-          <Route path="/home" element={
-            <>
-              <HomePage account={account} disconnectWallet={disconnectWallet} switchAccount={setAccount} switchToBSC={switchToBSC}/>
-            </>
-          } />
-          <Route
-           path="/chat/:address"
-           element={<ChatPage account={account} />}
-          />
+          <Route path="/home" element={<><HomePage account={account} disconnectWallet={disconnectWallet} switchAccount={setAccount} switchToBSC={switchToBSC}/></>} />
+          <Route path="/chat/:address" element={<ChatPage account={account} />} />
         </Routes>
       </div>
   );

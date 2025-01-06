@@ -85,6 +85,9 @@ export default function AppAppBar() {
               <Button variant="text" color="info" size="small" onClick={() => handleScrollToSection('highlights')}>
                 Highlights
               </Button>
+              <Button variant="text" color="info" size="small" onClick={() => (navigate('/blog'))}>
+                Blog
+              </Button>
               <Button variant="text" color="info" size="small" onClick={() => (window.location.href = 'https://www.timecapsuletoken.com/contact')}>
                 Contact us
               </Button>
