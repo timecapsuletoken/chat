@@ -22,7 +22,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
 
 // Binance Smart Chain provider and TCA token setup
-const bscProvider = new ethers.providers.JsonRpcProvider(`https://bsc-dataseed.binance.org/?_=${Date.now()}`);
+const bscProvider = new ethers.providers.JsonRpcProvider(`https://bsc-dataseed.binance.org/`);
 const TCA_TOKEN_ADDRESS = '0x31aab810b51f499340fc1e1b08716d2bc92c7a56';
 const BEP20_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
@@ -49,6 +49,24 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   const isAddressBlocked = blockedAddresses.includes(chatAddress);
   const [isLoading, setIsLoading] = useState(false);
 
+  const isBlocked = async (account, chatAddress) => {
+    if (!account || !chatAddress) return false;
+  
+    const blockedBySender = await new Promise((resolve) => {
+      gun.get(account).get('blockedAddresses').get(chatAddress).once((data) => {
+        resolve(data === true);
+      });
+    });
+  
+    const blockedByReceiver = await new Promise((resolve) => {
+      gun.get(chatAddress).get('blockedAddresses').get(account).once((data) => {
+        resolve(data === true);
+      });
+    });
+  
+    return blockedBySender || blockedByReceiver;
+  };
+  
   const handleSubmit = () => {
     setIsLoading(true);
     // Simulate an async operation
@@ -193,6 +211,15 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
+
+    console.log('[DEBUG] Checking block status...');
+    const isChatBlocked = await isBlocked(account, chatAddress);
+  
+    if (isChatBlocked) {
+      console.warn(`[WARN] Chat is blocked between ${account} and ${chatAddress}`);
+      showSnackBar('Message cannot be sent. One of the parties has blocked the other.', 'error');
+      return;
+    }  
     
     console.log('[DEBUG] Sending message:', message);
   

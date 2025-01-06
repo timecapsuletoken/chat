@@ -12,6 +12,7 @@ const ChatWrapper = ({
   isSidebarOpen, 
   toggleSidebar,
   toggleSidebarText,
+  showSnackBar,
 }) => {
   return (
     <ChatPage
@@ -24,6 +25,7 @@ const ChatWrapper = ({
       isSidebarOpen={isSidebarOpen} 
       toggleSidebar={toggleSidebar}   
       toggleSidebarText="Dashboard"
+      showSnackBar={showSnackBar}
     />
   );
 };
@@ -36,6 +38,7 @@ ChatWrapper.propTypes = {
   setChatAddress: PropTypes.func.isRequired,
   formatNumber: PropTypes.func.isRequired,
   toggleSidebarText: PropTypes.string.isRequired,
+  showSnackBar: PropTypes.func.isRequired, 
 };
 
 export default ChatWrapper;
