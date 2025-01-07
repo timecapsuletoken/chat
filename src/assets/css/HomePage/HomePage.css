@@ -118,27 +118,6 @@
     border-color: #20b2aa;
   }
 
-  /* Save Button */
-  .save_settings_btn {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .save_settings_btn button {
-    background-color: #20b2aa;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .save_settings_btn button:hover {
-    background-color: #17a598;
-  }
-  
   .settings-title {
     position: absolute;
     top: 0px;
@@ -941,11 +920,11 @@
   }
   
   .beta-tag {
-    background: linear-gradient(90deg, #ce00fc, #f7c440, #20d0e3);
+    background: linear-gradient(270deg, #a001f2, #1ccad8);
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 12px;
-    color: #333
+    color: #fff
   }
   
   .important-card h3 {

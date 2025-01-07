@@ -24,12 +24,9 @@ const BlockedModal = ({
 }) => {
   if (!isBlockedModalOpen) return null;
 
-    // Ensure unique blocked addresses
-    //const blockedAddresses = [...new Set(blockedAddresses)];
-
     // Render a row in the virtualized list
     const renderRow = ({ index, style }) => {
-      const address = blockedAddresses[index];
+    const address = blockedAddresses[index];
   
       return (
         <ListItem 
@@ -50,7 +47,7 @@ const BlockedModal = ({
           <ListItemButton>
             <ListItemText
               primary={address}
-              primaryTypographyProps={{ sx: { fontSize: '0.9rem' } }}
+              primaryTypographyProps={{ sx: { fontSize: { xs: '0.75rem', sm: '0.9rem', md: '1rem' }, } }}
             />
           </ListItemButton>
         </ListItem>
@@ -68,7 +65,7 @@ const BlockedModal = ({
         <Box
           sx={{
             width: '100%',
-            height: blockedAddresses.length > 0 ? Math.min(50 * blockedAddresses.length, 400) : 40, // Ensure a minimum height
+            height: blockedAddresses.length > 0 ? Math.min(50 * blockedAddresses.length, 300) : 40, // Ensure a minimum height
             bgcolor: '#1c1c1c',
             borderRadius: '6px',
             overflow: 'hidden',
@@ -77,7 +74,7 @@ const BlockedModal = ({
         >
           {blockedAddresses.length > 0 ? (
             <FixedSizeList
-              height={blockedAddresses.length > 0 ? Math.min(50 * blockedAddresses.length, 400) : '100%'} // Use 'auto' for empty
+              height={blockedAddresses.length > 0 ? Math.min(50 * blockedAddresses.length, 300) : '100%'} // Use 'auto' for empty
               width="100%"
               itemSize={50}
               itemCount={blockedAddresses.length}

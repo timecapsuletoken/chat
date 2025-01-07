@@ -40,8 +40,14 @@ const WalletModal = ({
                 sx={{
                   backgroundColor: 'transparent !important',
                   color: '#ffffff',
+                  fontSize: { xs: '0.7rem', sm: '0.9rem' }, // Adjust font size for the label
+                  height: { xs: 24, sm: 32 }, // Adjust height for smaller chips on mobile              
                   '& .MuiChip-icon': {
+                    fontSize: { xs: '0.8rem', sm: '1rem' }, // Adjust icon size
                     color: '#bd3ef4', // Change the icon color here
+                  },
+                  '& .MuiChip-label': {
+                    padding: { xs: '0 8px', sm: '0 12px' }, // Adjust padding for smaller chips
                   },
                 }}                
               />

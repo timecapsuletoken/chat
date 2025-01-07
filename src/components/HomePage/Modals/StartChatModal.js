@@ -30,6 +30,7 @@ const StartChatModal = ({
   setChatAddress,
   handleStartChat,
   closeSidebar,
+  showSnackBar,
 }) => {
 
   const [nickname, setNickname] = useState(''); // State to store the entered nickname
@@ -48,6 +49,7 @@ const StartChatModal = ({
     if (!nickname.trim()) {
       setError('Please enter a valid nickname.');
       setSuccess(false); // Ensure success is cleared
+      showSnackBar('Please enter a valid nickname','warning');
       return;
     }
   
@@ -57,11 +59,13 @@ const StartChatModal = ({
         setChatAddress(response.wallet); // Set wallet address in the input field
         setError(null); // Clear any error message
         setSuccess(true); // Mark as success
+        showSnackBar('Wallet found','info');
       } else {
         console.error('Failed to fetch wallet:', response.err);
         setError('No wallet found for this nickname.'); // Set error message
         setChatAddress(''); // Clear the input if no wallet is found
         setSuccess(false); // Clear success if there's an error
+        showSnackBar('No wallet found for this nickname','error');
       }
     });
   };
@@ -268,6 +272,7 @@ StartChatModal.propTypes = {
   setChatAddress: PropTypes.func.isRequired,
   handleStartChat: PropTypes.func.isRequired,
   closeSidebar: PropTypes.func.isRequired,
+  showSnackBar: PropTypes.func.isRequired,
 };
 
 export default StartChatModal;

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Divider } from '@mui/material';
 import BlockIcon from '@mui/icons-material/Block';
+import SaveIcon from '@mui/icons-material/Save';
 
 const SettingsModal = ({
   isSettingsModalOpen,
@@ -89,14 +90,17 @@ const SettingsModal = ({
             }}
           />
           <div className="save_settings_btn">
-            <button
+            <Button 
+              fullWidth
+              startIcon={<SaveIcon />}
+              variant="contained" 
               onClick={() => {
                 handleSaveSettings();
                 toggleSettingsModal();
               }}
             >
               Save Settings
-            </button>
+            </Button>
           </div>
         </div>
       </div>

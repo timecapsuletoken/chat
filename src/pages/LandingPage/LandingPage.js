@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Helmet, HelmetProvider } from 'react-helmet-async'; // Import Helmet and HelmetProvider
 import { useInView } from 'react-intersection-observer';
 import Skeleton from '@mui/material/Skeleton';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -656,26 +657,53 @@ export default function MarketingPage(props) {
   useGradientRotadingEffect();
 
   return (
-    <AppTheme {...props}>
-      <CssBaseline enableColorScheme />
-      <AppAppBar />
-      <Hero />
-      <div>
-        <LazyLoadComponent Component={LogoCollection} SkeletonComponent={LogoCollectionSkeleton} />
-        <LazyLoadComponent Component={Features} SkeletonComponent={FeaturesSkeleton} />
-          <Divider />
-        <LazyLoadComponent Component={HowItWorks} SkeletonComponent={HowItWorksSkeleton} />
-          <Divider />
-        <LazyLoadComponent Component={Highlights} SkeletonComponent={HighlightsSkeleton} />
-          <Divider />
-        <LazyLoadComponent Component={Donations} SkeletonComponent={DonationsSkeleton} />
-          <Divider />
-        <LazyLoadComponent Component={Feedback} SkeletonComponent={FeedbackSkeleton} />
-          <Divider />
-        <LazyLoadComponent Component={FAQ} SkeletonComponent={FAQSkeleton} />
-          <Divider />
-        <LazyLoadComponent Component={Footer} SkeletonComponent={FooterSkeleton} />
-      </div>
-    </AppTheme>
+    <HelmetProvider>
+      <AppTheme {...props}>
+      <Helmet>
+          {/* Basic Meta Tags */}
+          <title>TimeCapsule Chat - Explore Decentralized Communication</title>
+          <meta name="description" content="Discover the features of TimeCapsule Chat, a secure and decentralized communication platform. Learn how it leverages blockchain technology to redefine messaging." />
+          <meta name="keywords" content="TimeCapsule Chat, decentralized messaging, secure chat, Web3 communication" />
+          <meta name="author" content="TimeCapsule Team" />
+
+          {/* Open Graph (OG) Tags */}
+          <meta property="og:title" content="TimeCapsule Chat - Explore Decentralized Communication" />
+          <meta property="og:description" content="Discover the features of TimeCapsule Chat, a secure and decentralized communication platform. Learn how it leverages blockchain technology to redefine messaging." />
+          <meta property="og:url" content="https://yourwebsite.com/landing" />
+          <meta property="og:type" content="website" />
+          <meta property="og:image" content="https://yourwebsite.com/path-to-your-og-image.png" />
+          <meta property="og:locale" content="en_US" />
+
+          {/* Twitter Card Tags */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="TimeCapsule Chat - Explore Decentralized Communication" />
+          <meta name="twitter:description" content="Discover the features of TimeCapsule Chat, a secure and decentralized communication platform. Learn how it leverages blockchain technology to redefine messaging." />
+          <meta name="twitter:image" content="https://yourwebsite.com/path-to-your-twitter-image.png" />
+
+          {/* Favicon */}
+          <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/logo.png" />
+        </Helmet>
+        <CssBaseline enableColorScheme />
+        <AppAppBar />
+        <Hero />
+        <div>
+          <LazyLoadComponent Component={LogoCollection} SkeletonComponent={LogoCollectionSkeleton} />
+          <LazyLoadComponent Component={Features} SkeletonComponent={FeaturesSkeleton} />
+            <Divider />
+          <LazyLoadComponent Component={HowItWorks} SkeletonComponent={HowItWorksSkeleton} />
+            <Divider />
+          <LazyLoadComponent Component={Highlights} SkeletonComponent={HighlightsSkeleton} />
+            <Divider />
+          <LazyLoadComponent Component={Donations} SkeletonComponent={DonationsSkeleton} />
+            <Divider />
+          <LazyLoadComponent Component={Feedback} SkeletonComponent={FeedbackSkeleton} />
+            <Divider />
+          <LazyLoadComponent Component={FAQ} SkeletonComponent={FAQSkeleton} />
+            <Divider />
+          <LazyLoadComponent Component={Footer} SkeletonComponent={FooterSkeleton} />
+        </div>
+      </AppTheme>
+    </HelmetProvider>
   );
 }

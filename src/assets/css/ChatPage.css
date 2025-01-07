@@ -501,7 +501,7 @@
 
     .chat-box {
       width: 100%;
-      height: calc(100vh - 50px); /* Adjust for smaller header/footer */
+      height: calc(100vh - 0px); /* Adjust for smaller header/footer */
       padding: 5px;
     }
   

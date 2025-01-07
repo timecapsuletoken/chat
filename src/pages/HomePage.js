@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { ethers } from 'ethers';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import gun from '../utils/gunSetup';
@@ -34,7 +35,7 @@ import { initializeAudio, playNotificationSound } from '../hooks/useAudioNotific
 import '../assets/css/HomePage/HomePage.css';
 
 // Binance Smart Chain provider and TCA token setup
-const bscProvider = new ethers.providers.JsonRpcProvider(`https://bsc-dataseed.binance.org/?_=${Date.now()}`);
+const bscProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
 const TCA_TOKEN_ADDRESS = '0x31aab810b51f499340fc1e1b08716d2bc92c7a56';
 const BEP20_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
@@ -466,115 +467,127 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   return isLocked ? (
     <LockedScreen account={account} disconnectWallet={disconnectWallet} onUnlock={() => setIsLocked(false)} />
   ) : (
-        <div className="home-container">
-          <Sidebar
-            account={account}
-            disconnectWallet={disconnectWallet}
-            switchAccount={switchAccount}
-            switchToBSC={switchToBSC}
-            providerType={providerType} 
-            gun={gun}
-            isSidebarOpen={isSidebarOpen}
-            showDropdown={showDropdown}
-            chats={chats}
-            setChats={setChats}
-            unreadChats={unreadChats}
-            nickname={nickname}
-            setNickname={setNickname}
-            loading={loading}
-            showSnackBar={showSnackBar}
-            isHovered={isHovered}
-            toggleSidebar={toggleSidebar}
-            closetoggleSidebar={closetoggleSidebar}
-            toggleDropdown={toggleDropdown}
-            setIsHovered={setIsHovered}
-            openWalletModal={openWalletModal}
-            handleOpenModal={handleOpenModal}
-            handleChatItemClick={(chatAddress) => setSearchParams({ chatwith: chatAddress })}
-            deleteChat={deleteChat}
-            handleClearChatHistory={clearChatHistory}
-            navigate={navigate}
-            setShowAboutModal={setShowAboutModal}
-            setShowHelpModal={setShowHelpModal}
-            toggleSettingsModal={toggleSettingsModal}
-            closeSidebar={closeSidebar}
-          />
-          <StartChatModal
-            showModal={showModal}
-            handleCloseModal={handleCloseModal}
-            chatAddress={chatAddress}
-            setChatAddress={setChatAddress}
-            handleStartChat={startChat}
-            closeSidebar={closeSidebar}
-          />
-          <WalletModal
-            isWalletModalOpen={isWalletModalOpen}
-            closeWalletModal={closeWalletModal}
-            account={account || ''}
-            balance={balance}
-            tcaBalance={tcaBalance}
-            formatNumber={formatNumber}
-          />
-          <SettingsModal
-            isSettingsModalOpen={isSettingsModalOpen}
-            toggleSettingsModal={toggleSettingsModal}
-            autoLockEnabled={autoLockEnabled}
-            soundAlertsEnabled={soundAlertsEnabled}
-            desktopNotificationsEnabled={desktopNotificationsEnabled}
-            handleToggleautoLockEnabled={handleToggleautoLockEnabled}
-            handleToggleSoundAlerts={handleToggleSoundAlerts}
-            handleToggleDesktopNotifications={handleToggleDesktopNotifications}
-            toggleBlockedModal={toggleBlockedModal}
-            handleSaveSettings={saveSettings}
-            account={account}
-          />
-          {isPinModalOpen && account && (
-            <PinModal
-              isOpen={isPinModalOpen}
+        <>
+          {/* Meta Tags */}
+          <HelmetProvider>
+          <Helmet>
+            <title>Home - TimeCapsule Chat</title>
+            <meta name="description" content="Welcome to TimeCapsule Chat, your gateway to secure decentralized communication. Connect, chat, and explore the future of messaging." />
+            <meta name="keywords" content="TimeCapsule Chat, decentralized communication, Web3 messaging, secure chat" />
+            <meta name="author" content="TimeCapsule Team" />            
+          </Helmet>
+          </HelmetProvider>
+          <div className="home-container">
+            <Sidebar
               account={account}
-              onClose={handleClosePinModal}
+              disconnectWallet={disconnectWallet}
+              switchAccount={switchAccount}
+              switchToBSC={switchToBSC}
+              providerType={providerType} 
+              gun={gun}
+              isSidebarOpen={isSidebarOpen}
+              showDropdown={showDropdown}
+              chats={chats}
+              setChats={setChats}
+              unreadChats={unreadChats}
+              nickname={nickname}
+              setNickname={setNickname}
+              loading={loading}
+              showSnackBar={showSnackBar}
+              isHovered={isHovered}
+              toggleSidebar={toggleSidebar}
+              closetoggleSidebar={closetoggleSidebar}
+              toggleDropdown={toggleDropdown}
+              setIsHovered={setIsHovered}
+              openWalletModal={openWalletModal}
+              handleOpenModal={handleOpenModal}
+              handleChatItemClick={(chatAddress) => setSearchParams({ chatwith: chatAddress })}
+              deleteChat={deleteChat}
+              handleClearChatHistory={clearChatHistory}
+              navigate={navigate}
+              setShowAboutModal={setShowAboutModal}
+              setShowHelpModal={setShowHelpModal}
+              toggleSettingsModal={toggleSettingsModal}
+              closeSidebar={closeSidebar}
             />
-          )}
-          <BlockedModal
-            isBlockedModalOpen={isBlockedModalOpen}
-            toggleBlockedModal={toggleBlockedModal}
-            blockedAddresses={blockedAddresses}
-            handleUnblockAddress={unblockAddress}
-            handleBlockAddress={blockAddress}
-            handleSaveSettings={saveSettings}
-            showSnackBar={showSnackBar}
-          />
-          <div className="main-content">
-            <AboutModal 
-              isOpen={showAboutModal} 
-              onClose={() => setShowAboutModal(false)} 
+            <StartChatModal
+              showModal={showModal}
+              handleCloseModal={handleCloseModal}
+              chatAddress={chatAddress}
+              setChatAddress={setChatAddress}
+              handleStartChat={startChat}
+              closeSidebar={closeSidebar}
+              showSnackBar={showSnackBar}
             />
-            <HelpModal 
-              isOpen={showHelpModal} 
-              onClose={() => setShowHelpModal(false)} 
+            <WalletModal
+              isWalletModalOpen={isWalletModalOpen}
+              closeWalletModal={closeWalletModal}
+              account={account || ''}
+              balance={balance}
+              tcaBalance={tcaBalance}
+              formatNumber={formatNumber}
             />
-            {currentChat ? (
-              <ChatWrapper
+            <SettingsModal
+              isSettingsModalOpen={isSettingsModalOpen}
+              toggleSettingsModal={toggleSettingsModal}
+              autoLockEnabled={autoLockEnabled}
+              soundAlertsEnabled={soundAlertsEnabled}
+              desktopNotificationsEnabled={desktopNotificationsEnabled}
+              handleToggleautoLockEnabled={handleToggleautoLockEnabled}
+              handleToggleSoundAlerts={handleToggleSoundAlerts}
+              handleToggleDesktopNotifications={handleToggleDesktopNotifications}
+              toggleBlockedModal={toggleBlockedModal}
+              handleSaveSettings={saveSettings}
+              account={account}
+            />
+            {isPinModalOpen && account && (
+              <PinModal
+                isOpen={isPinModalOpen}
                 account={account}
-                toggleBlockedModal={toggleBlockedModal}
-                deleteChat={deleteChat}
-                openWalletModal={openWalletModal}
-                setChatAddress={setChatAddress}
-                formatNumber={formatNumber}
-                isSidebarOpen={isSidebarOpen} 
-                toggleSidebar={toggleSidebar}   
-                toggleSidebarText="Dashboard"
-                showSnackBar={showSnackBar}
-              />
-            ) : (
-              <WelcomePage 
-                handleOpenModal={handleOpenModal}
-                isSidebarOpen={isSidebarOpen} 
-                toggleSidebar={toggleSidebar}   
+                onClose={handleClosePinModal}
               />
             )}
+            <BlockedModal
+              isBlockedModalOpen={isBlockedModalOpen}
+              toggleBlockedModal={toggleBlockedModal}
+              blockedAddresses={blockedAddresses}
+              handleUnblockAddress={unblockAddress}
+              handleBlockAddress={blockAddress}
+              handleSaveSettings={saveSettings}
+              showSnackBar={showSnackBar}
+            />
+            <div className="main-content">
+              <AboutModal 
+                isOpen={showAboutModal} 
+                onClose={() => setShowAboutModal(false)} 
+              />
+              <HelpModal 
+                isOpen={showHelpModal} 
+                onClose={() => setShowHelpModal(false)} 
+              />
+              {currentChat ? (
+                <ChatWrapper
+                  account={account}
+                  toggleBlockedModal={toggleBlockedModal}
+                  deleteChat={deleteChat}
+                  openWalletModal={openWalletModal}
+                  setChatAddress={setChatAddress}
+                  formatNumber={formatNumber}
+                  isSidebarOpen={isSidebarOpen} 
+                  toggleSidebar={toggleSidebar}   
+                  toggleSidebarText="Dashboard"
+                  showSnackBar={showSnackBar}
+                />
+              ) : (
+                <WelcomePage 
+                  handleOpenModal={handleOpenModal}
+                  isSidebarOpen={isSidebarOpen} 
+                  toggleSidebar={toggleSidebar}   
+                />
+              )}
+            </div>
           </div>
-        </div>
+        </>
       );
 };
 

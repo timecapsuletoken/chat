@@ -5,7 +5,7 @@ import { Player } from '@lottiefiles/react-lottie-player';
 import messagesicons from '../../assets/animations/messagesicons.json';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import ChatIcon from '@mui/icons-material/Chat';
+import { LuMessageSquarePlus } from 'react-icons/lu';
 import SidebarToggle from '../HomePage/Sidebar/SidebarToggle';
 
 const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
@@ -80,7 +80,7 @@ const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
             Protect your sensitive details, such as passwords, private keys, or seed phrases, by
             never sharing them with anyone! Exercise caution when interacting with external links or
             online forms, and stay vigilant for potential threats lurking in the digital realm. Stay
-            safe out there! 👀
+            safe out there!
           </p>
         </div>
         <Box
@@ -95,7 +95,7 @@ const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
           <Button
             size="small"
             fullWidth
-            endIcon={<ChatIcon />} 
+            endIcon={<LuMessageSquarePlus />} 
             onClick={handleOpenModal}   
             sx={{
               minWidth: 'fit-content',

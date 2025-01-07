@@ -53,7 +53,7 @@ export default function SingleArticle() {
       <CssBaseline enableColorScheme />
        <HelmetProvider>
         <Helmet>
-            <title>TCA Chat - {article.title}</title>
+            <title>TimeCapsule Chat - {article.title}</title>
             <meta name="description" content={article.description} />
             <meta property="og:title" content={article.title} />
             <meta property="og:description" content={article.description} />
