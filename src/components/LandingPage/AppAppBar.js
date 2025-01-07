@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, Link as RouterLink } from 'react-router-dom'; 
 import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -135,12 +135,12 @@ export default function AppAppBar() {
                   </IconButton>
                 </Box>
 
-                <MenuItem>Features</MenuItem>
-                <MenuItem>How It Works</MenuItem>
-                <MenuItem>Highlights</MenuItem>
-                <MenuItem>Donations</MenuItem>
-                <MenuItem>FAQ</MenuItem>
-                <MenuItem>Contact</MenuItem>
+                <MenuItem component={RouterLink} to="/#features">Features</MenuItem>
+                <MenuItem component={RouterLink} to="/#how-it-works">How It Works</MenuItem>
+                <MenuItem component={RouterLink} to="/#highlights">Highlights</MenuItem>
+                <MenuItem component={RouterLink} to="/#donations">Donations</MenuItem>
+                <MenuItem component={RouterLink} to="/#faq">FAQ</MenuItem>
+                <MenuItem component={RouterLink} to="https://www.timecapsuletoken.com/contact">Contact</MenuItem>
                 <Divider sx={{ my: 3 }} />
                 <MenuItem>
                     <Button 

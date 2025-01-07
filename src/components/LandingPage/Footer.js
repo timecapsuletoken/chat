@@ -161,16 +161,16 @@ export default function Footer() {
           <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
             Product
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#features">
+          <Link color="text.secondary" variant="body2" href="/#features">
             Features
           </Link>
-          <Link color="text.secondary" variant="body2" href="#how-it-works">
+          <Link color="text.secondary" variant="body2" href="/#how-it-works">
             How It Works
           </Link>
-          <Link color="text.secondary" variant="body2" href="#highlights">
+          <Link color="text.secondary" variant="body2" href="/#highlights">
             Highlights
           </Link>
-          <Link color="text.secondary" variant="body2" href="#faq">
+          <Link color="text.secondary" variant="body2" href="/#faq">
             FAQs
           </Link>
         </Box>
@@ -187,10 +187,10 @@ export default function Footer() {
           <Link color="text.secondary" variant="body2" target="_blank" href="https://www.timecapsuletoken.com/">
             About us
           </Link>
-          <Link color="text.secondary" variant="body2" href="#donations">
+          <Link color="text.secondary" variant="body2" href="/#donations">
             Donations
           </Link>
-          <Link color="text.secondary" variant="body2" href="#feedback">
+          <Link color="text.secondary" variant="body2" href="/#feedback">
             Feedback
           </Link>
           <Link color="text.secondary" variant="body2" target="_blank" href="https://www.timecapsuletoken.com/assets/pdfs/whitepaper.pdf">

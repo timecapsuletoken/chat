@@ -1,25 +1,4 @@
-  .chat-box {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    height: 100vh; /* Full viewport height */
-    overflow: hidden; /* Prevent scrolling within chat-box */
-    box-sizing: border-box; /* Include padding in height */
-  }
-  
-  .chat-header {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .chat-address-info {
-    display: flex;
-    align-items: center;
-  }
+
   
   .address-icon {
     width: 32px;
@@ -27,16 +6,6 @@
     border-radius: 50%;
     background-color: #e0e0e0;
     margin-right: 10px;
-  }
-  
-  .chat-address {
-    font-weight: bold;
-    margin: 0;
-  }
-  
-  .status {
-    font-size: 12px;
-    color: #888;
   }
   
   .chat-options {
@@ -243,26 +212,6 @@
     font-size: 0.9em;
   }  
 
-  /* Chat container (parent of chat-body) */
-  .chat-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* Take remaining space in .chat-box */
-    overflow-y: auto; /* Enable scrolling for messages */
-    padding: 0; /* Avoid unnecessary spacing */
-  }
-
-  /* Message list container */
-  .chat-body {
-    flex: 1; /* Takes remaining height in the container */
-    overflow-y: auto; /* Enables vertical scrolling */
-    max-height: calc(100vh - 150px); /* Adjust based on header and input height */
-    padding: 10px;
-    display: flex;
-    flex-direction: column-reverse;
-    gap: 10px;
-  }
-
   /* Shared styles for all messages */
   .message {
     display: inline-block; /* Ensures the message wraps to fit content */
@@ -348,18 +297,6 @@
   }
 
   /* Input container */
-  .chat-input-container {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-    border-top: 1px solid #ccc; /* Optional: Separate the input visually */
-    background-color: #333; /* Ensure it contrasts with the chat body */
-    width: 100%; /* Take the full width of the parent container */
-    box-sizing: border-box; /* Include padding in the width */
-    position: relative; /* Prevent unintended overlap */
-    z-index: 1; /* Ensure it's above other content */
-  }
-
   .chat-input-container input {
     flex: 1;
     padding: 10px;
@@ -397,13 +334,6 @@
   
   .warning-icon {
     margin-right: 5px;
-  }
-  
-  .chat-input-container {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-top: 1px solid #ccc;
   }
   
   .emoji-icon {
@@ -457,7 +387,6 @@
     font-size: 12px;
     color: #888;
     text-align: center;
-    margin-top: 5px;
   }
   
   .input-hint span {
@@ -466,30 +395,10 @@
 
   /* Larger screens */
   @media (min-width: 1024px) {
-    .chat-box {
-      width: 80%;
-      margin: 0 auto; /* Center the chat box */
-      max-height: 95vh; /* Leave some margin for aesthetics */
-    }
-
-    .chat-header {
-      padding: 15px;
-      border-bottom: 2px solid #ccc;
-    }
-
-    .chat-body {
-      padding: 15px;
-      gap: 15px;
-    }
 
     .message {
       font-size: 16px;
       padding: 0px 10px 10px 10px;
-    }
-
-    .chat-input-container {
-      padding: 15px;
-      gap: 15px;
     }
 
     .send-message-btn {
@@ -499,26 +408,9 @@
   
   @media (max-width: 768px) {
 
-    .chat-box {
-      width: 100%;
-      height: calc(100vh - 0px); /* Adjust for smaller header/footer */
-      padding: 5px;
-    }
-  
-    .chat-header {
-      flex-direction: row; /* Stack items vertically */
-      padding: 5px;
-      text-align: center;
-    }
-
     .chat-options-menu-btn {
       align-self: flex-end;
       margin: 10px 10px;
-    }
-  
-    .chat-address-info {
-      flex-direction: row; /* Stack avatar and address vertically */
-      text-align: center;
     }
   
     .address-icon {
@@ -537,11 +429,6 @@
       padding: 5px;
     }
   
-    .chat-body {
-      max-height: calc(100vh - 120px); /* Adjust for header and input area */
-      padding: 5px;
-    }
-  
     .message {
       max-width: 80%; /* Reduce message width for smaller screens */
       font-size: 12px; /* Adjust font size */
@@ -554,13 +441,6 @@
   
     .message.received {
       max-width: calc(100% - 50px);
-    }
-  
-    .chat-input-container {
-      display: flex;
-      gap: 5px;
-      align-items: stretch;
-      flex-direction: row;
     }
   
     .chat-input-container input,

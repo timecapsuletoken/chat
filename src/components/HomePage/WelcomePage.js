@@ -74,15 +74,7 @@ const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
             users to simply and instantly message each other, wallet-to-wallet.
           </p>
         </div>
-        <div className="important-card">
-          <h3>❗ Be Careful</h3>
-          <p>
-            Protect your sensitive details, such as passwords, private keys, or seed phrases, by
-            never sharing them with anyone! Exercise caution when interacting with external links or
-            online forms, and stay vigilant for potential threats lurking in the digital realm. Stay
-            safe out there!
-          </p>
-        </div>
+        
         <Box
           className="rotating-gradient-wrapper"
           sx={{

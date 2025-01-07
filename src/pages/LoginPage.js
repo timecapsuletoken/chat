@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HelmetProvider, Helmet } from 'react-helmet-async'; // Import HelmetProvider and Helmet
 import { useNavigate } from 'react-router-dom';
 import { AnimatedBackground } from 'animated-backgrounds';
 import { motion } from 'framer-motion';
 import { Typewriter } from 'react-simple-typewriter';
-import Snackbar from '../utils/Snackbar';
 import '../assets/css/LoginPage.css';
 import { Box, Link, Typography, Stack, Avatar } from '@mui/material';
 import metamaskIcon from '../assets/images/logos/metamask.svg';
@@ -14,11 +13,6 @@ import TCALogo from '../assets/images/logos/logo.png';
 const LoginPage = ({ connectWallet, account }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); // Add loading state
-  const snackbarShown = useRef(false); // Track if snackbar has been displayed
-
-  const showSnackBar = (message, severity) => {
-    Snackbar.handleShowSnackBar(message, severity);
-  };
 
   useEffect(() => {
     if (account) {
@@ -27,16 +21,6 @@ const LoginPage = ({ connectWallet, account }) => {
       navigate('/home');
     }
   }, [account, navigate]);
-
-  useEffect(() => {
-    if (!snackbarShown.current) {
-      showSnackBar(
-        'Note: Ensure Binance Smart Chain is enabled in your wallet. If not, you will be prompted to add it.',
-        'info'
-      );
-      snackbarShown.current = true; // Mark snackbar as shown
-    }
-  }, []);
 
     // Handler for connecting wallets
     const handleConnectWallet = async (providerType) => {

@@ -15,8 +15,10 @@ import { FaExternalLinkAlt } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 import { RiBnbLine } from "react-icons/ri";
 import {
+  Box,
   Avatar,
   TextField,
+  Typography,
   Stack, 
   Link, 
   Chip, 
@@ -361,23 +363,111 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
     const reversedMessages = [...messages].reverse();
 
   return (
-    <div className="chat-box">
-      <div className="chat-header">
-         <SidebarToggle 
-            isSidebarOpen={isSidebarOpen} 
-            toggleSidebar={toggleSidebar} 
-          />
-        <div className="chat-address-info">
-        <Avatar
-            className="chatroom-icon"
+    <Box
+      className="chat-box"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: {
+          xs: '100%', // 100% for mobile screens
+          sm: '90%', // 90% for tablets
+          lg: '100%', // 80% for large screens
+        },
+        height: {
+          xs: 'calc(100vh - 0px)', // Adjusted height for small screens
+          lg: '95vh', // Max height for large screens
+        },
+        maxHeight: { lg: '95vh' }, // Leave margin for aesthetics on large screens
+        margin: { lg: '0 auto' }, // Center the chat box on large screens
+        overflow: 'hidden', // Prevent scrolling within the box
+        boxSizing: 'border-box', // Include padding in height
+        padding: { xs: '0px', lg: '0px' }, // Padding for smaller screens
+      }}
+    >
+      <Box
+        className="chat-header"
+        sx={{
+          position: {
+            xs: 'fixed', // Fixed position for small screens
+            sm: 'relative', // Default position for medium and larger screens
+          },
+          backgroundColor: '#333',
+          top: 0, // Aligns it to the top of the viewport
+          width: {
+            xs: '100%',
+            sm: '90%',
+          }, // Ensures it spans the full width
+          zIndex: 2, // Keeps it above other content
+          display: 'flex', // Flexbox layout
+          justifyContent: {
+            xs: 'space-around',
+            sm: 'space-between', // Default position for medium and larger screens
+          },
+          alignItems: 'center', // Align items vertically
+          padding: {
+            xs: '5px', // Small screens
+            sm: '10px', // Medium screens
+            lg: '15px', // Large screens
+          },
+          borderBottom: {
+            xs: '1px solid #ccc', // Thin border for smaller screens
+            lg: '2px solid #ccc', // Thicker border for larger screens
+          },
+          flexDirection: {
+            xs: 'row', // Items aligned horizontally on smaller screens
+            sm: 'row', // Horizontal alignment remains on medium screens
+            lg: 'row', // Horizontal alignment on larger screens
+          },
+          textAlign: {
+            xs: 'center', // Centered text alignment on smaller screens
+            sm: 'left',   // Default for medium and larger screens
+          },
+        }}      
+      >
+        <SidebarToggle 
+          isSidebarOpen={isSidebarOpen} 
+          toggleSidebar={toggleSidebar} 
+        />
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: {
+              xs: 'row', // Stack items vertically on small screens
+              sm: 'row', // Keep them horizontal for medium and larger screens
+            },
+            textAlign: { xs: 'center', sm: 'left' }, // Center text for small screens
+          }}
+        >
+          <Avatar
             ref={avatarRef}
+            className="chatroom-icon"
+            sx={{
+              marginRight: 2, // Space between the avatar and address
+            }}
           />
-          <p className="chat-address">
-           {chatAddress.length > 10 ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}` : chatAddress}
-           <br /> 
-           <span className="status">{isAddressBlocked === true ? `Address is Blocked` : 'Ready to Talk'}</span>
-          </p>
-        </div>
+          <Box>
+            <Typography
+              sx={{
+                fontWeight: 'bold', // Matches the `.chat-address` font-weight
+                margin: 0, // No margin for the typography
+              }}
+            >
+              {chatAddress.length > 10
+                ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}`
+                : chatAddress}
+            </Typography>
+            <Typography
+              component="span"
+              sx={{
+                fontSize: '12px', // Matches `.status` font-size
+                color: '#888', // Matches `.status` color
+              }}
+            >
+              {isAddressBlocked ? 'Address is Blocked' : 'Ready to Talk'}
+            </Typography>
+          </Box>
+        </Box>
         <ChatOptionsMenu
           account={account}
           chatAddress={chatAddress}
@@ -390,81 +480,175 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
           navigate={navigate}
           showSnackBar={showSnackBar}
         />
-      </div>
-      <div className="chat-container">
-      <div className="chat-body" ref={chatBodyRef}>
-        {reversedMessages.map((msg, index) => (
-          <div key={index} className={`message-wrapper ${msg.sender === account ? 'sent-wrapper' : 'received-wrapper'}`}>
-            <div
-              className="message-avatar"
-              ref={(el) => {
-                if (el) generateJazzicon(msg.sender, el, 20); // Generate avatar for each sender/receiver
-              }}
-            />
-            <div className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
-              <p>{msg.content}</p>
-              <small>{new Date(msg.timestamp).toLocaleString()}</small>              
-            </div>
-          </div>
-        ))}
-      </div>
-      </div>
-      <div className="chat-input-container">
-      <FaSmile className="emoji-icon" onClick={isAddressBlocked ? null : toggleEmojiPicker} />
-        {showEmojiPicker && (
-          <div className="emoji-picker-container">
-            <EmojiPicker onEmojiClick={onEmojiClick} />
-          </div>
-        )}
-        <TextField
-          //className="chat-input"
-          id="outlined-textarea"
-          label="Your Message Goes in Here"
-          multiline
-          fullWidth
-          maxRows={4}
-          value={message}
-          onChange={(e) => {
-            setMessage(e.target.value);
-            adjustHeight(e);
-          }}      
-          onKeyDown={(e) => handleKeyDown(e)}
-          disabled={isAddressBlocked}
+      </Box>
+      <Box
+        className="chat-container"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1, // Takes remaining space in the parent container
+          overflowY: 'auto', // Enables vertical scrolling
+          padding: 0, // No extra padding
+          marginTop: {
+            xs: '40px', // Height of the fixed header on mobile
+            sm: '20px', // Medium screens
+            lg: '0px', // Large screens
+          },
+          marginBottom: {
+            xs: '40px', // Height of the fixed footer on mobile
+            sm: '20px', // Medium screens
+            lg: '0px', // Large screens
+          },
+          height: {
+            xs: 'calc(100vh - 110px)', // Dynamically adjust height for mobile (header + footer height)
+            sm: 'auto', // Default height for medium and larger screens
+          },
+        }}          
+      >
+        <Box
+          className="chat-body" 
+          ref={chatBodyRef}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'white', // Default border color
-              },
-              '&:hover fieldset': {
-                borderColor: 'white', // Border color on hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: 'white', // Border color when focused
-              },
+            flex: 1, // Takes remaining height in the container
+            overflowY: 'auto', // Enables vertical scrolling
+            maxHeight: {
+              xs: 'calc(100vh - 110px)', // For smaller screens
+              sm: 'calc(100vh - 150px)', // For medium and larger screens
             },
-            '& .MuiInputBase-input': {
-              color: 'white', // Text color
+            padding: {
+              xs: '5px', // Small screens
+              sm: '10px', // Medium screens
+              lg: '15px', // Large screens
             },
-            '& .MuiInputLabel-root': {
-              color: 'white', // Default label color
-            },
-            '& .MuiInputLabel-root.Mui-focused': {
-              color: 'white', // Label color when focused
+            paddingTop: {
+              xs: '50px', // Add extra padding to account for the footer height
+              sm: '20px', // Medium screens
+              lg: '15px', // Large screens
+            },  
+            paddingBottom: {
+              xs: '50px', // Add extra padding to account for the footer height
+              sm: '20px', // Medium screens
+              lg: '15px', // Large screens
+            },        
+            display: 'flex', // Flexbox layout
+            flexDirection: 'column-reverse', // Reverse stacking for chat messages
+            gap: {
+              xs: '10px', // Small screens
+              lg: '15px', // Large screens
             },
           }}
-        />
-        <LoadingButton
-          loading={isLoading}
-          variant="outlined"
-          onClick={handleSubmit}
-          disabled={isAddressBlocked}
         >
-          <FaPaperPlane/>
-        </LoadingButton>
-      </div>
-      <p className="input-hint">
-        <span>Decentralized Communication</span> (<span>BETA</span>) v1.00.0
-      </p>
+          {reversedMessages.map((msg, index) => (
+            <div key={index} className={`message-wrapper ${msg.sender === account ? 'sent-wrapper' : 'received-wrapper'}`}>
+              <div
+                className="message-avatar"
+                ref={(el) => {
+                  if (el) generateJazzicon(msg.sender, el, 20); // Generate avatar for each sender/receiver
+                }}
+              />
+              <div className={`message ${msg.sender === account ? 'sent' : 'received'}`}>
+                <p>{msg.content}</p>
+                <small>{new Date(msg.timestamp).toLocaleString()}</small>              
+              </div>
+            </div>
+          ))}
+        </Box>
+      </Box>
+      <Box 
+        className="chat-footer"
+        sx={{
+          position: {
+            xs: 'fixed', // Fix the footer at the bottom of the screen for small screens
+            sm: 'relative', // Default position for medium and larger screens
+          },
+          bottom: 0, // Align it to the bottom of the viewport
+          width: '100%', // Full width of the screen
+          zIndex: 2, // Ensures it's above other content
+          backgroundColor: '#333', // Footer background color
+        }}
+      >
+        <Box
+          className="chat-input-container"
+          sx={{
+            display: 'flex', // Flex layout
+            gap: {
+              xs: '5px', // Small screens
+              sm: '10px', // Medium screens
+              lg: '15px', // Large screens
+            },
+            padding: {
+              xs: '10px', // Default padding for smaller screens
+              lg: '15px', // Larger padding for large screens
+            },
+            alignItems: {
+              xs: 'stretch', // Stretch items for smaller screens
+              sm: 'center', // Align center for larger screens
+            },
+            flexDirection: {
+              xs: 'row', // Horizontal alignment for all screen sizes
+            },
+            borderTop: '1px solid #ccc', // Separator from chat body
+            backgroundColor: '#333', // Background color for contrast
+            width: '100%', // Full width
+            boxSizing: 'border-box', // Include padding in width calculation
+            position: 'relative', // Avoid unintended overlaps
+            zIndex: 1, // Ensure it is above other content
+          }}
+        >
+          <FaSmile className="emoji-icon" onClick={isAddressBlocked ? null : toggleEmojiPicker} />
+            {showEmojiPicker && (
+              <div className="emoji-picker-container">
+                <EmojiPicker onEmojiClick={onEmojiClick} />
+              </div>
+            )}
+            <TextField
+              //className="chat-input"
+              id="outlined-textarea"
+              label="Your Message Goes in Here"
+              multiline
+              fullWidth
+              maxRows={4}
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                adjustHeight(e);
+              }}      
+              onKeyDown={(e) => handleKeyDown(e)}
+              disabled={isAddressBlocked}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'white', // Default border color
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'white', // Border color on hover
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'white', // Border color when focused
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  color: 'white', // Text color
+                },
+                '& .MuiInputLabel-root': {
+                  color: 'white', // Default label color
+                },
+                '& .MuiInputLabel-root.Mui-focused': {
+                  color: 'white', // Label color when focused
+                },
+              }}
+            />
+            <LoadingButton
+              loading={isLoading}
+              variant="outlined"
+              onClick={handleSubmit}
+              disabled={isAddressBlocked}
+            >
+              <FaPaperPlane/>
+            </LoadingButton>
+        </Box>
+        
+      </Box>
       {isWalletInfoModalOpen && (
         <div className="wallet-modal-overlay" onClick={() => setIsWalletInfoModalOpen(false)}>
           <div className="wallet-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -545,7 +729,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
           </div>
         </div>
       )}
-    </div>
+    </Box>
   );
 };
 
