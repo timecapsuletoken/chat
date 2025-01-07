@@ -39,13 +39,22 @@ function Author({ authors }) {
 }
 
 export default function SingleArticle() {
-  const { id } = useParams(); // Get the article ID from the URL
+  const { slug } = useParams(); // Fetch the slug from the URL
   const { articles, loading } = useArticles();
+  const generateSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+      .replace(/\s+/g, '-')        // Replace spaces with hyphens
+      .trim();                     // Remove trailing spaces
+  };
 
   if (loading) return <p>Loading...</p>;
 
-  const article = articles.find((_, index) => index === parseInt(id, 10));
-
+  const article = articles.find(
+    (article) => generateSlug(article.title) === slug
+  );
+  
   if (!article) return <p>Article not found</p>;
 
   return (
@@ -58,8 +67,8 @@ export default function SingleArticle() {
             <meta property="og:title" content={article.title} />
             <meta property="og:description" content={article.description} />
             <meta property="og:image" content={article.img} />
-            <meta property="og:url" content={`https://myblog.com/blog/${id}`} />
-            <link rel="canonical" href={`https://myblog.com/blog/${id}`} />
+            <meta property="og:url" content={`https://${process.env.REACT_APP_BASE_DOMAIN}/blog/${slug}`} />
+            <link rel="canonical" href={`https://${process.env.REACT_APP_BASE_DOMAIN}/blog/${slug}`} />
         </Helmet>
        </HelmetProvider>
       <AppAppBar />
@@ -126,19 +135,19 @@ export default function SingleArticle() {
           <Box sx={{ display: 'flex', gap: 2 }}>
             <IconButton
               aria-label="share on Facebook"
-              onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://myblog.com/blog/${id}`, '_blank')}
+              onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://myblog.com/blog/${slug}`, '_blank')}
             >
               <FacebookIcon />
             </IconButton>
             <IconButton
               aria-label="share on Twitter"
-              onClick={() => window.open(`https://twitter.com/intent/tweet?url=https://myblog.com/blog/${id}&text=${article.title}`, '_blank')}
+              onClick={() => window.open(`https://twitter.com/intent/tweet?url=https://myblog.com/blog/${slug}&text=${article.title}`, '_blank')}
             >
               <TwitterIcon />
             </IconButton>
             <IconButton
               aria-label="share on LinkedIn"
-              onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=https://myblog.com/blog/${id}&title=${article.title}&summary=${article.description}`, '_blank')}
+              onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=https://myblog.com/blog/${slug}&title=${article.title}&summary=${article.description}`, '_blank')}
             >
               <LinkedInIcon />
             </IconButton>

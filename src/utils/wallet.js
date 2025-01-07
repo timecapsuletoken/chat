@@ -30,7 +30,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
     
       // Initialize MetaMask SDK
       const MMSDK = new MetaMaskSDK({
-        appName: 'YourAppName',
+        appName: 'TCA Chat',
         theme: 'dark',
         network: 'bsc-mainnet',
         storageType: 'session', // Optional: Use session storage for state persistence
@@ -113,7 +113,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
        // Initialize the Coinbase Wallet SDK
        const sdk = createCoinbaseWalletSDK({
         appName: 'TCA Chat dApp',
-        appLogoUrl: 'https://example.com/assets/images/logo.png', // Replace with your actual logo URL
+        appLogoUrl: '/assets/images/logo.png', // Replace with your actual logo URL
         appChainIds: [56], // Binance Smart Chain ID
         preference: {
           options: 'eoaOnly', // EOA connections only

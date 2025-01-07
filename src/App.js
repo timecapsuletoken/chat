@@ -101,7 +101,7 @@ function App() {
           <Route path="/terms-and-conditions" element={<><TermsAndConditions /></>} />
           <Route path="/tos" element={<><TermsOfService /></>} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<SingleArticle />} />
+          <Route path="/blog/:slug" element={<SingleArticle />} />
           <Route path="/login" element={
             <>
               <LoginNavbar />

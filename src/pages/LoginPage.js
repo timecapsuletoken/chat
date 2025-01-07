@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HelmetProvider, Helmet } from 'react-helmet-async'; // Import HelmetProvider and Helmet
 import { useNavigate } from 'react-router-dom';
 import { AnimatedBackground } from 'animated-backgrounds';
 import { motion } from 'framer-motion';
+import { Typewriter } from 'react-simple-typewriter';
+import Snackbar from '../utils/Snackbar';
 import '../assets/css/LoginPage.css';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import { Box, Link, Typography, Stack, Avatar } from '@mui/material';
 import metamaskIcon from '../assets/images/logos/metamask.svg';
 import coinbaseIcon from '../assets/images/logos/coinbase.svg';
+import TCALogo from '../assets/images/logos/logo.png';
 
 const LoginPage = ({ connectWallet, account }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); // Add loading state
+  const snackbarShown = useRef(false); // Track if snackbar has been displayed
+
+  const showSnackBar = (message, severity) => {
+    Snackbar.handleShowSnackBar(message, severity);
+  };
 
   useEffect(() => {
     if (account) {
@@ -20,6 +27,16 @@ const LoginPage = ({ connectWallet, account }) => {
       navigate('/home');
     }
   }, [account, navigate]);
+
+  useEffect(() => {
+    if (!snackbarShown.current) {
+      showSnackBar(
+        'Note: Ensure Binance Smart Chain is enabled in your wallet. If not, you will be prompted to add it.',
+        'info'
+      );
+      snackbarShown.current = true; // Mark snackbar as shown
+    }
+  }, []);
 
     // Handler for connecting wallets
     const handleConnectWallet = async (providerType) => {
@@ -43,10 +60,37 @@ const LoginPage = ({ connectWallet, account }) => {
       </Helmet>
       <div className="login-container">
       <AnimatedBackground animationName="quantumField" style={{ position: 'absolute', width: '100%', height: '100%', zIndex: -1 }} />
-        <div className="header">
-          <h2>Login to TimeCapsule Chat</h2>
-          <p>Connect with your web3 based wallet and sign-in</p>
-        </div>
+        <Box
+          sx={{
+            textAlign: 'center', // Centers the content horizontally
+            padding: 2, // Adds padding around the header
+          }}
+        >
+          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+            <Typography variant="h6" color="white">
+              Login to
+            </Typography>
+            <Avatar alt="TimeCapsule Chat" src={TCALogo} />
+            <Typography variant="h6" color="white">
+              <Typewriter
+                words={['TimeCapsule Chat', 'Decentralized Chat']}
+                loop={true}
+                cursor
+                cursorStyle="|"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={2000}
+              />
+            </Typography>
+          </Stack>
+          <Typography
+            variant="body1"
+            color="white"
+            sx={{ marginTop: 1 }} // Adds spacing between the stack and the text
+          >
+            Connect with your web3-based wallet and sign-in
+          </Typography>
+        </Box>
         {loading ? (
           // Show loading spinner when loading
           <motion.div
@@ -76,16 +120,13 @@ const LoginPage = ({ connectWallet, account }) => {
           </div>
         )}
         <div style={{ marginTop: '16px', textAlign: 'center' }}>
-          <Typography variant="body2" color="info" style={{ marginTop: '8px' }}>
-            <strong>Note:</strong> Ensure Binance Smart Chain is enabled in your wallet. If not, you will be prompted to add it.
-          </Typography>
           <Typography variant="body2" color="gray">
             By connecting your wallet and signing a message, you agree to our{' '}
-            <Link href="#terms" underline="hover">
+            <Link target="_blank" href="/terms-and-conditions" underline="hover">
               Terms & Conditions
             </Link>{' '}
             and{' '}
-            <Link href="#privacy" underline="hover">
+            <Link target="_blank" href="/privacy-policy" underline="hover">
               Privacy Policy
             </Link>.
           </Typography>

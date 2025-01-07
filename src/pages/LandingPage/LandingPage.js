@@ -669,16 +669,16 @@ export default function MarketingPage(props) {
           {/* Open Graph (OG) Tags */}
           <meta property="og:title" content="TimeCapsule Chat - Explore Decentralized Communication" />
           <meta property="og:description" content="Discover the features of TimeCapsule Chat, a secure and decentralized communication platform. Learn how it leverages blockchain technology to redefine messaging." />
-          <meta property="og:url" content="https://yourwebsite.com/landing" />
+          <meta property="og:url" content={`https://${process.env.REACT_APP_BASE_DOMAIN}/`} />
           <meta property="og:type" content="website" />
-          <meta property="og:image" content="https://yourwebsite.com/path-to-your-og-image.png" />
+          <meta property="og:image" content={`https://${process.env.REACT_APP_BASE_DOMAIN}/${process.env.REACT_APP_BASE_METATAG_IMAGE}`} />
           <meta property="og:locale" content="en_US" />
 
           {/* Twitter Card Tags */}
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content="TimeCapsule Chat - Explore Decentralized Communication" />
           <meta name="twitter:description" content="Discover the features of TimeCapsule Chat, a secure and decentralized communication platform. Learn how it leverages blockchain technology to redefine messaging." />
-          <meta name="twitter:image" content="https://yourwebsite.com/path-to-your-twitter-image.png" />
+          <meta name="twitter:image" content={`https://${process.env.REACT_APP_BASE_DOMAIN}/${process.env.REACT_APP_BASE_METATAG_IMAGE}`} />
 
           {/* Favicon */}
           <link rel="icon" href="/favicon.ico" type="image/x-icon" />

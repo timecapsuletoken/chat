@@ -45,7 +45,7 @@ const SyledCardContent = styled(CardContent)({
 const StyledTypography = styled(Typography)({
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 2,
+  WebkitLineClamp: 3,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 });
@@ -110,6 +110,14 @@ export default function MainContent() {
   const startIndex = (page - 1) * articlesPerPage;
   const displayedArticles = articles.slice(startIndex, startIndex + articlesPerPage);
 
+  const generateSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+      .replace(/\s+/g, '-')        // Replace spaces with hyphens
+      .trim();                     // Remove trailing hyphens
+  };
+  
   if (loading) return <p>Loading...</p>;
 
   const handleFocus = (index) => {
@@ -135,7 +143,7 @@ export default function MainContent() {
       <Grid container spacing={2} columns={12}>
         {displayedArticles.map((article, index) => (
           <Grid key={index} size={{ xs: 12, md: 6 }}>
-            <Link to={`/blog/${startIndex + index}`} style={{ textDecoration: 'none' }}>
+            <Link to={`/blog/${generateSlug(article.title)}`} style={{ textDecoration: 'none' }}>
               <SyledCard
                 variant="outlined"
                 onFocus={() => handleFocus(startIndex + index)}
@@ -163,9 +171,7 @@ export default function MainContent() {
                   <Typography gutterBottom variant="h6" component="div">
                     {article.title}
                   </Typography>
-                  <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                    {article.description}
-                  </StyledTypography>
+                  <StyledTypography variant="body2" color="text.secondary" dangerouslySetInnerHTML={{ __html: article.description }} gutterBottom />
                 </SyledCardContent>
                 <Author authors={article.authors} />
               </SyledCard>
