@@ -58,7 +58,7 @@ const LogoCollectionSkeleton = (
       flexDirection: { xs: 'column' }, // Column layout for mobile
       flexWrap: { xs: 'wrap' }, // Wrap children to enable multiple rows
       '& > *': {
-        width: { xs: '50%' }, // Make children take 50% width for 2 columns
+        width: { xs: '50%', sm: '100%', lg: '100%' }, // Make children take 50% width for 2 columns
       },
     }}
   >
@@ -174,6 +174,8 @@ const FeaturesSkeleton = (
       },
       flexDirection: {
         xs: 'column-reverse',
+        sm: 'row',
+        lg: 'row',
       },
     }}
   >
@@ -201,6 +203,7 @@ const FeaturesSkeleton = (
         justifyContent: 'center',
         flexDirection: {
           xs: 'row',
+          sm: 'column',
         },
         flexWrap: {
           xs: 'nowrap',
