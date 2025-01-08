@@ -62,38 +62,18 @@ export default function ColorModeIconDropdown(props) {
   }[resolvedMode];
   return (
     <React.Fragment>
-      <Box
-        className="rotating-gradient-wrapper"
-        sx={(theme) => ({
-          display: 'inline-block',
-          padding: '1px', // Space for the gradient border
-          borderRadius: '8px',
-          background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
-        })}
-     >
-        <IconButton
-          data-screenshot="toggle-mode"
-          sx={{
-            borderRadius: '8px',
-            background: (theme) => `${theme.palette.background.default} !important`,
-            border: 'transparent !important',
-            color: (theme) => theme.palette.text.primary,
-            '&:hover': {
-              background: (theme) => `${theme.palette.action.hover} !important`,
-            },
-          }}
-        
-          onClick={handleClick}
-          disableRipple
-          size="small"
-          aria-controls={open ? 'color-scheme-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          {...props}
-        >
-          {icon}
-        </IconButton>
-      </Box>
+      <IconButton
+        data-screenshot="toggle-mode"
+        onClick={handleClick}
+        disableRipple
+        size="small"
+        aria-controls={open ? 'color-scheme-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        {...props}
+      >
+        {icon}
+      </IconButton>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"

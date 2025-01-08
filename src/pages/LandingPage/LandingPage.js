@@ -24,7 +24,7 @@ const Footer = React.lazy(() => import('../../components/LandingPage/Footer'));
 const LazyLoadComponent = ({ Component, SkeletonComponent }) => {
   const { ref, inView } = useInView({ triggerOnce: true, rootMargin: '0px' });
   const [loading, setLoading] = React.useState(true);
-  const devMode = true; // Set to true to force Skeleton visibility
+  const devMode = false; // Set to true to force Skeleton visibility
 
   React.useEffect(() => {
     if (!devMode && inView)  {

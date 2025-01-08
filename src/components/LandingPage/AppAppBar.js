@@ -41,18 +41,22 @@ export default function AppAppBar() {
   };
 
   const handleScrollToSection = (sectionId) => {
+    // Close the Drawer first
+    setOpen(false);
+  
     // Navigate to the root if needed
     if (window.location.pathname !== '/') {
       navigate('/');
     }
+  
     // Scroll to the section smoothly
     setTimeout(() => {
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
-    }, 0); // Timeout ensures the DOM is ready after navigation
-  };
+    }, 0);
+  };  
 
   return (
     <AppBar
@@ -135,11 +139,12 @@ export default function AppAppBar() {
                   </IconButton>
                 </Box>
 
-                <MenuItem component={RouterLink} to="/#features">Features</MenuItem>
-                <MenuItem component={RouterLink} to="/#how-it-works">How It Works</MenuItem>
-                <MenuItem component={RouterLink} to="/#highlights">Highlights</MenuItem>
-                <MenuItem component={RouterLink} to="/#donations">Donations</MenuItem>
-                <MenuItem component={RouterLink} to="/#faq">FAQ</MenuItem>
+                <MenuItem onClick={() => handleScrollToSection('features')}>Features</MenuItem>
+                <MenuItem onClick={() => handleScrollToSection('how-it-works')}>How It Works</MenuItem>
+                <MenuItem onClick={() => handleScrollToSection('highlights')}>Highlights</MenuItem>
+                <MenuItem onClick={() => handleScrollToSection('donations')}>Donations</MenuItem>
+                <MenuItem onClick={() => (navigate('/blog'))}>Blog</MenuItem>
+                <MenuItem onClick={() => handleScrollToSection('faq')}>FAQ</MenuItem>
                 <MenuItem component={RouterLink} to="https://www.timecapsuletoken.com/contact">Contact</MenuItem>
                 <Divider sx={{ my: 3 }} />
                 <MenuItem>
