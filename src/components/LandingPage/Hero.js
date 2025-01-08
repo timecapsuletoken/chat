@@ -121,10 +121,12 @@ export default function Hero() {
           className="rotating-color"
           //src="https://storage.googleapis.com/tca_video/TCA_Chatting.mp4"
           src={ChatVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
+          controls={false} 
+          playsInLine="playsinline"
+          loop={true}
+          muted={true}
+          autoPlay={true}
+          playsInline={true}
           alt="Dashboard Video"
           sx={{ 
             height: 'auto', 
