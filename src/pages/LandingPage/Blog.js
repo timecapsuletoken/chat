@@ -33,13 +33,27 @@ export default function Blog(props) {
         </Helmet>
         <CssBaseline enableColorScheme />
         <AppAppBar />
-        <Container
-          maxWidth="lg"
-          component="main"
-          sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
+        <Box
+          id="hero"
+          sx={(theme) => ({
+            width: '100%',
+            backgroundRepeat: 'no-repeat',
+            backgroundImage:
+              'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(279.15deg 90.64% 53.92% / 50%), transparent)',
+            ...theme.applyStyles('dark', {
+              backgroundImage:
+                'radial-gradient(ellipse 80% 50% at 50% -20%, hsl(279.15deg 90.64% 53.92% / 50%), transparent)',
+            }),
+          })}
         >
-          <MainContent />
-        </Container>
+          <Container
+            maxWidth="lg"
+            component="main"
+            sx={{ display: 'flex', flexDirection: 'column', my: 16, gap: 4 }}
+          >
+            <MainContent />
+          </Container>
+        </Box>
         <Box sx={{ borderTop: 'solid 1px #333', }}>
           <Footer />
         </Box>
