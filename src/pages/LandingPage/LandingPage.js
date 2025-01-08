@@ -24,7 +24,7 @@ const Footer = React.lazy(() => import('../../components/LandingPage/Footer'));
 const LazyLoadComponent = ({ Component, SkeletonComponent }) => {
   const { ref, inView } = useInView({ triggerOnce: true, rootMargin: '0px' });
   const [loading, setLoading] = React.useState(true);
-  const devMode = false; // Set to true to force Skeleton visibility
+  const devMode = true; // Set to true to force Skeleton visibility
 
   React.useEffect(() => {
     if (!devMode && inView)  {
@@ -55,9 +55,26 @@ const LogoCollectionSkeleton = (
       display: 'flex', // Flexbox layout
       justifyContent: 'center', // Center horizontally
       alignItems: 'center', // Center vertically
+      flexDirection: { xs: 'column' }, // Column layout for mobile
+      flexWrap: { xs: 'wrap' }, // Wrap children to enable multiple rows
+      '& > *': {
+        width: { xs: '50%' }, // Make children take 50% width for 2 columns
+      },
     }}
   >
-    <Grid2 container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ maxWidth: '100%' }}>
+    <Grid2 
+      container 
+      rowSpacing={2} 
+      columnSpacing={{ xs: 4, sm: 2, md: 3 }} 
+      sx={{ 
+        maxWidth: '100%',
+        justifyContent: {
+          xs: 'center',
+          sm: 'center',
+          lg: 'center',
+        }, 
+      }}
+    >
       <Grid2 xs={6}>
         <Skeleton
           variant="rectangular"
@@ -152,6 +169,12 @@ const FeaturesSkeleton = (
     spacing={2}
     sx={{
       maxWidth: '100%',
+      justifyContent: {
+        xs: 'center',
+      },
+      flexDirection: {
+        xs: 'column-reverse',
+      },
     }}
   >
     {/* Left Box */}
@@ -168,15 +191,30 @@ const FeaturesSkeleton = (
     </Grid2>
 
     {/* Right Side */}
-    <Grid2 xs={12} md={6} container spacing={2} direction="column" sx={{ justifyContent: 'center' }}>
+    <Grid2 
+      xs={12} 
+      md={6} 
+      container 
+      spacing={2} 
+      direction="column" 
+      sx={{ 
+        justifyContent: 'center',
+        flexDirection: {
+          xs: 'row',
+        },
+        flexWrap: {
+          xs: 'nowrap',
+        },
+      }}
+    >
       {/* Right Box - Top */}
       <Grid2 xs={12}>
         <Skeleton
           variant="rectangular"
           animation="wave"
           sx={{
-            width: { xs: '200px', md: '400px' },
-            height: { xs: '50px', md: '100px' },
+            width: { xs: '55px', md: '400px' },
+            height: { xs: '25px', md: '100px' },
             borderRadius: 2,
           }}
         />
@@ -187,8 +225,8 @@ const FeaturesSkeleton = (
           variant="rectangular"
           animation="wave"
           sx={{
-            width: { xs: '200px', md: '400px' },
-            height: { xs: '50px', md: '100px' },
+            width: { xs: '55px', md: '400px' },
+            height: { xs: '25px', md: '100px' },
             borderRadius: 2,
           }}
         />
@@ -199,8 +237,8 @@ const FeaturesSkeleton = (
           variant="rectangular"
           animation="wave"
           sx={{
-            width: { xs: '200px', md: '400px' },
-            height: { xs: '50px', md: '100px' },
+            width: { xs: '55px', md: '400px' },
+            height: { xs: '25px', md: '100px' },
             borderRadius: 2,
           }}
         />
@@ -314,7 +352,7 @@ const HighlightsSkeleton = (
     }}
   >
     {/* Top Grid */}
-    <Grid2 container rowSpacing={3} direction="row" columnSpacing={{ xs: 4, sm: 8, md: 5 }} sx={{ maxWidth: '100%' }}>
+    <Grid2 container rowSpacing={3} direction={{ xs: 'column', sm: 'row', lg: 'row' }} columnSpacing={{ xs: 4, sm: 8, md: 5 }} sx={{ mb: { xs: 3 }, maxWidth: '100%' }}>
       <Grid2 xs={6}>
         <Skeleton
           variant="rectangular"
@@ -322,8 +360,8 @@ const HighlightsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '37px', sm: '75px', md: '150px' },
+            width: { xs: '250px', sm: '125px', md: '250px' },
+            height: { xs: '150px', sm: '75px', md: '150px' },
           }}
         />
       </Grid2>
@@ -334,8 +372,8 @@ const HighlightsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '37px', sm: '75px', md: '150px' },
+            width: { xs: '250px', sm: '125px', md: '250px' },
+            height: { xs: '150px', sm: '75px', md: '150px' },
           }}
         />
       </Grid2>
@@ -346,15 +384,15 @@ const HighlightsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '37px', sm: '75px', md: '150px' },
+            width: { xs: '250px', sm: '125px', md: '250px' },
+            height: { xs: '150px', sm: '75px', md: '150px' },
           }}
         />
       </Grid2>
     </Grid2>
 
     {/* Bottom Grid */}
-    <Grid2 container rowSpacing={3} direction="row" columnSpacing={{ xs: 4, sm: 8, md: 5 }} sx={{ maxWidth: '100%' }}>
+    <Grid2 container rowSpacing={3} direction={{ xs: 'column', sm: 'row', lg: 'row' }} columnSpacing={{ xs: 4, sm: 8, md: 5 }} sx={{ maxWidth: '100%' }}>
       <Grid2 xs={6}>
         <Skeleton
           variant="rectangular"
@@ -362,8 +400,8 @@ const HighlightsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '37px', sm: '75px', md: '150px' },
+            width: { xs: '250px', sm: '125px', md: '250px' },
+            height: { xs: '150px', sm: '75px', md: '150px' },
           }}
         />
       </Grid2>
@@ -374,8 +412,8 @@ const HighlightsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '37px', sm: '75px', md: '150px' },
+            width: { xs: '250px', sm: '125px', md: '250px' },
+            height: { xs: '150px', sm: '75px', md: '150px' },
           }}
         />
       </Grid2>
@@ -386,8 +424,8 @@ const HighlightsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '37px', sm: '75px', md: '150px' },
+            width: { xs: '250px', sm: '125px', md: '250px' },
+            height: { xs: '150px', sm: '75px', md: '150px' },
           }}
         />
       </Grid2>
@@ -407,8 +445,7 @@ const DonationsSkeleton = (
       my: 10,
     }}
   >
-    {/* Top Grid */}
-    <Grid2 container rowSpacing={3} direction="row" columnSpacing={{ xs: 4, sm: 8, md: 5 }} sx={{ maxWidth: '100%' }}>
+    <Grid2 container rowSpacing={3} direction={{ xs: 'column', sm: 'row', lg: 'row' }} columnSpacing={{ xs: 4, sm: 8, md: 5 }} sx={{ maxWidth: '100%' }}>
       <Grid2 xs={6}>
         <Skeleton
           variant="rectangular"
@@ -416,8 +453,8 @@ const DonationsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '62px', sm: '125px', md: '250px' },
+            width: { xs: '125px', sm: '125px', md: '250px' },
+            height: { xs: '125px', sm: '125px', md: '250px' },
           }}
         />
       </Grid2>
@@ -428,8 +465,8 @@ const DonationsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '62px', sm: '125px', md: '250px' },
+            width: { xs: '125px', sm: '125px', md: '250px' },
+            height: { xs: '125px', sm: '125px', md: '250px' },
           }}
         />
       </Grid2>
@@ -440,8 +477,8 @@ const DonationsSkeleton = (
           sx={{
             borderRadius: 2,
             mb: 4,
-            width: { xs: '62px', sm: '125px', md: '250px' },
-            height: { xs: '62px', sm: '125px', md: '250px' },
+            width: { xs: '125px', sm: '125px', md: '250px' },
+            height: { xs: '125px', sm: '125px', md: '250px' },
           }}
         />
       </Grid2>
@@ -642,8 +679,8 @@ const FooterSkeleton = (
         sx={{ 
           mb: 2,
           borderRadius: 2,
-          width: { xs: '130px', sm: '260px', md: '150vh' },
-          height: { xs: '12px', sm: '25px', md: '30vh' },
+          width: { xs: '260px', sm: '260px', md: '150vh' },
+          height: { xs: '150px', sm: '25px', md: '30vh' },
         }}
       />
 
