@@ -8,7 +8,7 @@ import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
 import { markMessagesAsRead } from '../utils/gunHelpers'; // Adjust the import path if needed
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
-import EmojiPicker from 'emoji-picker-react'; // Import the Emoji Picker
+import 'emoji-picker-element';
 import '../assets/css/ChatPage.css';
 import TCACoin from '../assets/images/logos/logo.png';
 import { FaExternalLinkAlt } from 'react-icons/fa';
@@ -21,7 +21,8 @@ import {
   Typography,
   Stack, 
   Link, 
-  Chip, 
+  Chip,
+  Button, 
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
@@ -42,7 +43,8 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const chatAddress = params.get('chatwith');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false); // State to control emoji picker visibility
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef(null);
   const navigate = useNavigate();
   const [isWalletInfoModalOpen, setIsWalletInfoModalOpen] = useState(false);
   const [balance, setBalance] = useState(0); // Placeholder balance
@@ -286,11 +288,41 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
     setShowEmojiPicker(!showEmojiPicker);
   };
 
-  // Updated emoji selection handler
-  const onEmojiClick = (emojiObject) => {
-    setMessage(prevMessage => prevMessage + emojiObject.emoji);
-    setShowEmojiPicker(false);
+  const onEmojiSelect = (event) => {
+    console.log('Emoji event received:', event); // Debug: Log the event
+    if (!event?.detail?.unicode) {
+      console.warn("Invalid emoji select event", event);
+      return;
+    }
+    const emoji = event.detail.unicode;
+    console.log('Selected Emoji:', emoji); // Debug: Log the selected emoji
+    setMessage((prevMessage) => `${prevMessage}${emoji}`); // Append emoji to the message
+    setShowEmojiPicker(false); // Close the emoji picker
   };  
+
+  const handleClickOutside = (event) => {
+    if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+      console.log('Click detected outside emoji picker'); // Debug: Log outside click
+      setShowEmojiPicker(false);
+    }
+  };  
+
+  useEffect(() => {
+    const picker = emojiPickerRef.current;
+    if (picker) {
+      picker.addEventListener('emoji-click', onEmojiSelect);
+    }
+
+    // Add click event listener to close the picker
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      if (picker) {
+        picker.removeEventListener('emoji-click', onEmojiSelect);
+      }
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const getBnbBalance = async (chatAddress) => {
     try {
@@ -595,10 +627,17 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
             zIndex: 1, // Ensure it is above other content
           }}
         >
-          <FaSmile className="emoji-icon" onClick={isAddressBlocked ? null : toggleEmojiPicker} />
+          
+            <Button 
+              variant="outlined" 
+              className="emoji-icon" 
+              onClick={isAddressBlocked ? null : toggleEmojiPicker}                               
+            >
+              <FaSmile />
+            </Button>
             {showEmojiPicker && (
               <div className="emoji-picker-container">
-                <EmojiPicker onEmojiClick={onEmojiClick} />
+                <emoji-picker ref={emojiPickerRef}></emoji-picker>
               </div>
             )}
             <TextField

@@ -43,7 +43,7 @@ const LoginPage = ({ connectWallet, account }) => {
         <meta name="author" content="TimeCapsule Team" />        
       </Helmet>
       <div className="login-container">
-      <AnimatedBackground animationName="quantumField" style={{ position: 'absolute', width: '100%', height: '100%', zIndex: -1 }} />
+      <AnimatedBackground animationName="starryNight" style={{ position: 'absolute', width: '100%', height: '100%', zIndex: -1 }} />
         <Box
           sx={{
             textAlign: 'center', // Centers the content horizontally
@@ -57,7 +57,7 @@ const LoginPage = ({ connectWallet, account }) => {
             <Avatar alt="TimeCapsule Chat" src={TCALogo} />
             <Typography variant="h6" color="white">
               <Typewriter
-                words={['TimeCapsule Chat', 'Decentralized Chat']}
+                words={['Decentralized', 'TimeCapsule Chat']}
                 loop={true}
                 cursor
                 cursorStyle="|"
