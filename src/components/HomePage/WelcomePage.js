@@ -27,6 +27,18 @@ const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
     });
   }, []);
 
+  useEffect(() => {
+    // Apply the styles
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    };
+  }, []); // Empty dependency array ensures it runs only on mount/unmount
+
   return (
     <>
       <div className="welcome-card-wrapper">
