@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { Typewriter } from 'react-simple-typewriter';
 import { Player } from '@lottiefiles/react-lottie-player';
 import messagesicons from '../../assets/animations/messagesicons.json';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import { Button, Typography, Box } from '@mui/material';
 import { LuMessageSquarePlus } from 'react-icons/lu';
 import SidebarToggle from '../HomePage/Sidebar/SidebarToggle';
 
@@ -81,10 +80,18 @@ const WelcomePage = ({ handleOpenModal, isSidebarOpen, toggleSidebar }) => {
             </span>{' '}
             <span className="beta-tag">Beta</span>
           </h2>
-          <p>
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: { xs: '0.9rem', sm: '1rem' },
+              lineHeight: 1.6,
+              marginBottom: '16px',
+              textAlign: 'center',
+            }}
+          >
             Built for users that Value their Privacy, TimeCapsule Chat is a messaging platform for
             users to simply and instantly message each other, wallet-to-wallet.
-          </p>
+          </Typography>
         </div>
         
         <Box

@@ -26,7 +26,6 @@ radata/*
 radata/!
 radata/%1C
 certs/*
-relay.js
 .vscode/settings.json
 resourceMonitor.js
 clean.js
