@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
 import gun from '../utils/gunSetup';
-import 'gun/lib/webrtc'; // Real-time peer connections (if needed)
+import 'gun/lib/webrtc'; 
 import { encryptMessage, decryptMessage } from '../utils/cryptographer';
+import { secureInputHandler } from '../utils/inputSanitizer'; 
 import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
-import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
-import { markMessagesAsRead, fetchNicknameFromWallet } from '../utils/gunHelpers'; // Adjust the import path if needed
+import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu';
+import { markMessagesAsRead, fetchNicknameFromWallet } from '../utils/gunHelpers';
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import 'emoji-picker-element';
 import '../assets/css/ChatPage.css';
@@ -675,8 +676,18 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
             maxRows={4}
             value={message}
             onChange={(e) => {
-              setMessage(e.target.value);
+              secureInputHandler(
+                e.target.value,
+                1000, // Max length
+                /[a-zA-Z0-9@#$%!()* ]/g, // Allowed pattern
+                300, // Throttle delay in ms
+                showSnackBar,
+                setMessage // Callback to update state
+              );      
               adjustHeight(e);
+            }}      
+            inputProps={{
+              maxLength: 1000,
             }}      
             onKeyDown={(e) => handleKeyDown(e)}
             disabled={isAddressBlocked}

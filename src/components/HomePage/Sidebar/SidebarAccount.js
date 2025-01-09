@@ -39,22 +39,24 @@ import {
   Search as SearchIcon,
   ManageAccounts as ManageAccountsIcon,
 } from '@mui/icons-material';
+
 import { generateJazzicon } from '../../../utils/jazzAvatar';
 import { hasUserSavedNickname, isNicknameAvailable, saveNicknameToGun } from '../../../utils/gunHelpers';
 import { switchWallet } from '../../../utils/wallet';
+import { secureInputHandler } from '../../../utils/inputSanitizer';
 
 const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nickname, setNickname, showSnackBar, handleClearChatHistory, openWalletModal, disconnectWallet }) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const menuOpen = Boolean(menuAnchorEl);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [warning, setWarning] = useState(false); // New state for warning
+  const [warning, setWarning] = useState(false); 
   const [success, setSuccess] = useState(false);
 
   // Nickname Functionalities
   const [isNicknameModalOpen, setIsNicknameModalOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');
-  const [disabled, setDisabled] = useState(false); // State for button disabled status
+  const [disabled, setDisabled] = useState(false);
 
   // Session Information
   const [isSessionModalOpen, setIsSessionModalOpen] = useState(false);
@@ -353,8 +355,20 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
             id="nickname-input"
             label="Nickname"
             variant="outlined"
-            value={newNickname}
-            onChange={(e) => setNewNickname(e.target.value)}
+            value={newNickname}            
+            onChange={(e) => {
+              secureInputHandler(
+                e.target.value,
+                6, // Max length
+                /[a-zA-Z0-9 ]/g, // Allowed pattern
+                0, // Throttle delay in ms
+                showSnackBar,
+                setNewNickname // Callback to update state
+              );      
+            }}      
+            inputProps={{
+              maxLength: 6,
+            }}      
             disabled={disabled}
             inert={disabled ? 'true' : undefined} // Use a string for `inert`          
             slotProps={{

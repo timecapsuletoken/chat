@@ -12,6 +12,7 @@ import Divider from '@mui/material/Divider';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import BlockIcon from '@mui/icons-material/Block';
 import { FixedSizeList } from 'react-window';
+import { secureInputHandler } from '../../../utils/inputSanitizer';
 
 const BlockedModal = ({
   isBlockedModalOpen,
@@ -104,8 +105,20 @@ const BlockedModal = ({
             id="filled-basic"
             label="Enter address to block"
             variant="filled"
+            onChange={(e) => {
+              const sanitizedValue = secureInputHandler(
+                e.target.value,
+                42, // Max length
+                /[a-zA-Z0-9 ]/g, // Allowed pattern
+                500, // No throttling
+                showSnackBar
+              );
+          
+              e.target.value = sanitizedValue; // Directly update the input field with sanitized value
+            }}
             inputProps={{
               className: 'block-input-field', // Add a unique class for query consistency
+              maxLength: 42,
             }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {

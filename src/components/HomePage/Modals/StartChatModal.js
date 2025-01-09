@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { fetchWalletFromNickname } from '../../../utils/gunHelpers';
+import { secureInputHandler } from '../../../utils/inputSanitizer';
 
 // Icon imports
 import { IoClose } from 'react-icons/io5';
@@ -115,7 +116,19 @@ const StartChatModal = ({
             variant="outlined" 
             //placeholder="e.g. 0x12345..."
             value={chatAddress}
-            onChange={(e) => setChatAddress(e.target.value)}
+            onChange={(e) => {
+              secureInputHandler(
+                e.target.value,
+                42, // Max length
+                /[a-zA-Z0-9 ]/g, // Allowed pattern
+                500, // Throttle delay in ms
+                showSnackBar,
+                setChatAddress // Callback to update state
+              );      
+            }}      
+            inputProps={{
+              maxLength: 42,
+            }}   
             sx={{
               mt: 1,
               '& .MuiOutlinedInput-root': {
@@ -167,7 +180,19 @@ const StartChatModal = ({
               label="e.g. 0a1B2..."
               variant="outlined"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)} // Update nickname state
+              onChange={(e) => {
+                secureInputHandler(
+                  e.target.value,
+                  6, // Max length
+                  /[a-zA-Z0-9 ]/g, // Allowed pattern
+                  500, // Throttle delay in ms
+                  showSnackBar,
+                  setNickname // Callback to update state
+                );      
+              }}      
+              inputProps={{
+                maxLength: 6,
+              }}   
               slotProps={{
                 input: {
                   endAdornment: (
