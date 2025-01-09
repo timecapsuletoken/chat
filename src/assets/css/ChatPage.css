@@ -138,8 +138,6 @@
   }
 
   .wallet-addr-details {
-    border: solid 1px;
-    border-radius: 8px;
     padding: 20px;
     display: flex;
     flex-direction: column;

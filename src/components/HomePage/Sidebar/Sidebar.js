@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 // Components from your project
 import SidebarAccount from '../Sidebar/SidebarAccount';
 
-import { markMessagesAsRead } from '../../../utils/gunHelpers';
+import { markMessagesAsRead, fetchNicknameFromWallet } from '../../../utils/gunHelpers';
 
 // Material-UI components
 import { Skeleton, Tooltip, Divider } from '@mui/material';
@@ -66,6 +66,7 @@ const Sidebar = ({
 }) => {
   
   const [isLoading, setIsLoading] = useState(true);
+  const [chatNicknames, setChatNicknames] = useState({}); // State to store nicknames
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -91,6 +92,28 @@ const Sidebar = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [closetoggleSidebar]);
+
+    // Fetch nicknames for chats
+    useEffect(() => {
+      const fetchNicknames = async () => {
+        if (!chats || chats.length === 0) return;
+  
+        const nicknames = {};
+        for (const chatAddress of chats) {
+          try {
+            const nickname = await fetchNicknameFromWallet(chatAddress);
+            nicknames[chatAddress] = nickname || 'Unknown'; // Fallback to 'Unknown' if no nickname
+            console.log(`[DEBUG] Fetched nickname for ${chatAddress}: ${nickname}`);
+          } catch (error) {
+            console.error(`[ERROR] Failed to fetch nickname for ${chatAddress}:`, error);
+            nicknames[chatAddress] = chatAddress.slice(-5);
+          }
+        }
+        setChatNicknames(nicknames);
+      };
+  
+      fetchNicknames();
+    }, [chats]);  
 
   return (
     <div ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''} ${showDropdown ? 'no-scroll' : ''}`}>
@@ -212,7 +235,7 @@ const Sidebar = ({
               <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />
               <Tooltip title={address}>
                 <p className="chat-address-sidebar">
-                  {address.slice(0, 6)}...{address.slice(-4)}
+                  {chatNicknames[address] || `${address.slice(0, 6)}...${address.slice(-4)}`}
                 </p>
               </Tooltip>
               <Divider orientation="vertical" variant="middle" sx={{ borderColor: '#1c1c1c' }} flexItem />

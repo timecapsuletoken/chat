@@ -221,6 +221,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
         setChatNickname(getchatNickname); // Assuming you have a state like `chatNickname`
       } catch (error) {
         console.error(`[ERROR] Failed to fetch ChatNickname for "${chatAddress}":`, error);
+        setChatNickname(chatAddress.slice(-5));
       }
     };
   
