@@ -6,7 +6,7 @@ import 'gun/lib/webrtc'; // Real-time peer connections (if needed)
 import { encryptMessage, decryptMessage } from '../utils/cryptographer';
 import SidebarToggle from '../components/HomePage/Sidebar/SidebarToggle';
 import ChatOptionsMenu from '../components/HomePage/ChatOptionsMenu'; // Adjust path as necessary
-import { markMessagesAsRead } from '../utils/gunHelpers'; // Adjust the import path if needed
+import { markMessagesAsRead, fetchNicknameFromWallet } from '../utils/gunHelpers'; // Adjust the import path if needed
 import { FaSmile, FaPaperPlane } from 'react-icons/fa';
 import 'emoji-picker-element';
 import '../assets/css/ChatPage.css';
@@ -43,6 +43,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const chatAddress = params.get('chatwith');
+  const [chatNickname, setChatNickname] = useState(''); // State to hold the nickname
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
   const navigate = useNavigate();
@@ -209,6 +210,22 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
       document.removeEventListener('click', handleClick);
     };
   }, [account, chatAddress]);
+
+  useEffect(() => {
+    const chatFetchNickname = async () => {
+      if (!chatAddress) return;
+  
+      try {
+        const getchatNickname = await fetchNicknameFromWallet(chatAddress);
+        console.log(`[DEBUG] ChatNickname fetched: ${getchatNickname}`);
+        setChatNickname(getchatNickname); // Assuming you have a state like `chatNickname`
+      } catch (error) {
+        console.error(`[ERROR] Failed to fetch ChatNickname for "${chatAddress}":`, error);
+      }
+    };
+  
+    chatFetchNickname();
+  }, [chatAddress]);  
   
   useEffect(() => {
     if (chatBodyRef.current) {
@@ -217,7 +234,10 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim()) {
+      showSnackBar('Cannot send an empty message.', 'error'); // Optional: Provide user feedback
+      return;
+    }
 
     console.log('[DEBUG] Checking block status...');
     const isChatBlocked = await isBlocked(account, chatAddress);
@@ -402,18 +422,18 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
         flexDirection: 'column',
         width: {
           xs: '100%', // 100% for mobile screens
-          sm: '90%', // 90% for tablets
+          sm: '100%', // 90% for tablets
           lg: '100%', // 80% for large screens
         },
         height: {
           xs: 'calc(100vh - 0px)', // Adjusted height for small screens
-          lg: '95vh', // Max height for large screens
+          lg: '100vh', // Max height for large screens
         },
-        maxHeight: { lg: '95vh' }, // Leave margin for aesthetics on large screens
+        maxHeight: { lg: '100vh' }, // Leave margin for aesthetics on large screens
         margin: { lg: '0 auto' }, // Center the chat box on large screens
         overflow: 'hidden', // Prevent scrolling within the box
         boxSizing: 'border-box', // Include padding in height
-        padding: { xs: '0px', lg: '0px' }, // Padding for smaller screens
+        padding: { xs: '0', sm: '0 30px 0 30px', lg: '0 30px 0 30px' }, // Padding for smaller screens
       }}
     >
       <Box
@@ -427,7 +447,8 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
           top: 0, // Aligns it to the top of the viewport
           width: {
             xs: '100%',
-            sm: '90%',
+            sm: '100%',
+            lg: '100%',
           }, // Ensures it spans the full width
           zIndex: 2, // Keeps it above other content
           display: 'flex', // Flexbox layout
@@ -439,7 +460,7 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
           padding: {
             xs: '5px', // Small screens
             sm: '10px', // Medium screens
-            lg: '15px', // Large screens
+            lg: '5px', // Large screens
           },
           borderBottom: {
             xs: '1px solid #ccc', // Thin border for smaller screens
@@ -483,20 +504,25 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
               sx={{
                 fontWeight: 'bold', // Matches the `.chat-address` font-weight
                 margin: 0, // No margin for the typography
+                textAlign: 'left',
               }}
             >
-              {chatAddress.length > 10
-                ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}`
-                : chatAddress}
+              {chatNickname 
+                ? chatNickname 
+                : chatAddress.length > 10
+                  ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}`
+                  : chatAddress}
             </Typography>
             <Typography
               component="span"
               sx={{
                 fontSize: '12px', // Matches `.status` font-size
-                color: '#888', // Matches `.status` color
+                color: '#ccc', // Matches `.status` color
               }}
             >
-              {isAddressBlocked ? 'Address is Blocked' : 'Ready to Talk'}
+              {isAddressBlocked ? 'Address is Blocked' : `${chatAddress.length > 10
+                ? `${chatAddress.slice(0, 6)}...${chatAddress.slice(-4)}`
+                : chatAddress}`}
             </Typography>
           </Box>
         </Box>
@@ -548,9 +574,9 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
               sm: 'calc(100vh - 150px)', // For medium and larger screens
             },
             padding: {
-              xs: '5px', // Small screens
-              sm: '10px', // Medium screens
-              lg: '15px', // Large screens
+              xs: '0 15px 0 15px', // Small screens
+              sm: '0 15px 0 15px', // Medium screens
+              lg: '0 15px 0 15px', // Large screens
             },
             paddingTop: {
               xs: '50px', // Add extra padding to account for the footer height
@@ -626,67 +652,65 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
             position: 'relative', // Avoid unintended overlaps
             zIndex: 1, // Ensure it is above other content
           }}
-        >
-          
-            <Button 
-              variant="outlined" 
-              className="emoji-icon" 
-              onClick={isAddressBlocked ? null : toggleEmojiPicker}                               
-            >
-              <FaSmile />
-            </Button>
-            {showEmojiPicker && (
-              <div className="emoji-picker-container">
-                <emoji-picker ref={emojiPickerRef}></emoji-picker>
-              </div>
-            )}
-            <TextField
-              //className="chat-input"
-              id="outlined-textarea"
-              label="Your Message Goes in Here"
-              multiline
-              fullWidth
-              maxRows={4}
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-                adjustHeight(e);
-              }}      
-              onKeyDown={(e) => handleKeyDown(e)}
-              disabled={isAddressBlocked}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: 'white', // Default border color
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'white', // Border color on hover
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: 'white', // Border color when focused
-                  },
+        > 
+          <Button 
+            variant="outlined" 
+            className="emoji-icon" 
+            onClick={isAddressBlocked ? null : toggleEmojiPicker}                               
+          >
+            <FaSmile />
+          </Button>
+          {showEmojiPicker && (
+            <div className="emoji-picker-container">
+              <emoji-picker ref={emojiPickerRef}></emoji-picker>
+            </div>
+          )}
+          <TextField
+            //className="chat-input"
+            id="outlined-multiline-static"
+            label="Your Message Goes in Here"
+            multiline
+            fullWidth
+            maxRows={4}
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              adjustHeight(e);
+            }}      
+            onKeyDown={(e) => handleKeyDown(e)}
+            disabled={isAddressBlocked}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'white', // Default border color
                 },
-                '& .MuiInputBase-input': {
-                  color: 'white', // Text color
+                '&:hover fieldset': {
+                  borderColor: 'white', // Border color on hover
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'white', // Default label color
+                '&.Mui-focused fieldset': {
+                  borderColor: 'white', // Border color when focused
                 },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: 'white', // Label color when focused
-                },
-              }}
-            />
-            <LoadingButton
-              loading={isLoading}
-              variant="outlined"
-              onClick={handleSubmit}
-              disabled={isAddressBlocked}
-            >
-              <FaPaperPlane/>
-            </LoadingButton>
+              },
+              '& .MuiInputBase-input': {
+                color: 'white', // Text color
+              },
+              '& .MuiInputLabel-root': {
+                color: 'white', // Default label color
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: 'white', // Label color when focused
+              },
+            }}
+          />
+          <LoadingButton
+            loading={isLoading}
+            variant="outlined"
+            onClick={handleSubmit}
+            disabled={isAddressBlocked}
+          >
+            <FaPaperPlane/>
+          </LoadingButton>
         </Box>
-        
       </Box>
       {isWalletInfoModalOpen && (
         <div className="wallet-modal-overlay" onClick={() => setIsWalletInfoModalOpen(false)}>
