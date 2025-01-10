@@ -28,7 +28,9 @@ const LoginPage = ({ connectWallet, account }) => {
       try {
         await connectWallet(providerType); // Call the connectWallet function
       } catch (error) {
-        console.error('Error connecting wallet:', error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Error connecting wallet:', error);
+        }
       } finally {
         setLoading(false); // Reset loading state
       }

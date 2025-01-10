@@ -81,7 +81,9 @@ const Sidebar = ({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        console.log("[DEBUG] Click detected outside sidebar. Toggling sidebar.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("[DEBUG] Click detected outside sidebar. Toggling sidebar.");
+        }
         closetoggleSidebar(); // Run the function when clicking outside the sidebar
       }
     };
@@ -103,9 +105,13 @@ const Sidebar = ({
           try {
             const nickname = await fetchNicknameFromWallet(chatAddress);
             nicknames[chatAddress] = nickname || 'Unknown'; // Fallback to 'Unknown' if no nickname
-            console.log(`[DEBUG] Fetched nickname for ${chatAddress}: ${nickname}`);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`[DEBUG] Fetched nickname for ${chatAddress}: ${nickname}`);
+            }
           } catch (error) {
-            console.error(`[ERROR] Failed to fetch nickname for ${chatAddress}:`, error);
+            if (process.env.NODE_ENV !== 'production') {
+              console.error(`[ERROR] Failed to fetch nickname for ${chatAddress}:`, error);
+            }
             nicknames[chatAddress] = chatAddress.slice(-5);
           }
         }
@@ -213,8 +219,10 @@ const Sidebar = ({
               className={`chat-item ${unreadChats.has(address) ? 'unread-message' : ''}`}
               onClick={() => {
                 handleChatItemClick(address);
-                console.log("[DEBUG] Chat clicked. Address:", address);
-                console.log("[DEBUG] unreadChats contains address:", unreadChats.has(address));
+                if (process.env.NODE_ENV !== 'production') {
+                  console.log("[DEBUG] Chat clicked. Address:", address);
+                  console.log("[DEBUG] unreadChats contains address:", unreadChats.has(address));
+                }
                 markMessagesAsRead(account, address);
                 closeSidebar();
               }}
@@ -245,7 +253,9 @@ const Sidebar = ({
                   className="delete-icon"
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Delete button clicked for address:", address);
+                    if (process.env.NODE_ENV !== 'production') {
+                      console.log("Delete button clicked for address:", address);
+                    }
                     deleteChat(address); // Call deleteChat here                
                   }}
                 />

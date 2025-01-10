@@ -35,10 +35,14 @@ const ChatOptionsMenu = ({
       // Unblock the chat address
       gun.get(account).get('blockedAddresses').get(chatAddress).put(null, (ack) => {
         if (ack.err) {
-          console.error("Failed to unblock address:", ack.err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error("Failed to unblock address:", ack.err);
+          }
           showSnackBar(`Failed to unblock address ${chatAddress.slice(-5)}`,'error');
         } else {
-          console.log("Address successfully unblocked:", chatAddress);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log("Address successfully unblocked:", chatAddress);
+          }
           showSnackBar(`Address ${chatAddress.slice(-5)} successfully unblocked`,'success');
           // Update the local state only after successful database deletion
           setBlockedAddresses((prev) =>
@@ -50,10 +54,14 @@ const ChatOptionsMenu = ({
       // Block the chat address
       gun.get(account).get('blockedAddresses').get(chatAddress).put(true, (ack) => {
         if (ack.err) {
-          console.error("Failed to block address:", ack.err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error("Failed to block address:", ack.err);
+          }
           showSnackBar(`Failed to block address ${chatAddress.slice(-5)}`,'error');
         } else {
-          console.log("Blocked address saved successfully:", chatAddress);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log("Blocked address saved successfully:", chatAddress);
+          }
           showSnackBar(`Address ${chatAddress.slice(-5)} has been Blocked`,'success');
           setBlockedAddresses((prev) =>
             Array.isArray(prev) ? [...prev, chatAddress] : [chatAddress]

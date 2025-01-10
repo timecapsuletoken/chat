@@ -21,6 +21,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import KeyIcon from '@mui/icons-material/Key';
 import GradientRotatingButton from '../components/LandingPage/utils/GradientRotatingButton';
 import { generateJazzicon } from '../utils/jazzAvatar';
+import { secureInputHandler } from '../utils/inputSanitizer';
 
 // Define the motion-styled Stack
 const MotionStack = styled(motion(Stack))(({ theme }) => ({
@@ -78,7 +79,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 const LockedScreen = (props) => {
-  const { account, disconnectWallet, onUnlock } = props;  
+  const { account, disconnectWallet, onUnlock, showSnackBar } = props;  
   const [pinInput, setPinInput] = React.useState('');
   const [error, setError] = React.useState('');
   const [generatedPin, setGeneratedPin] = React.useState('');
@@ -106,7 +107,9 @@ const LockedScreen = (props) => {
     if (account) {
       const pin = generatePinFromAddress(account);
       setGeneratedPin(pin); // Save the generated PIN to state
-      console.log('Generated PIN:', pin); // Log the PIN
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Generated PIN:', pin); // Log the PIN
+      }
     }
     
     if (account && avatarRef.current) {
@@ -234,7 +237,19 @@ const LockedScreen = (props) => {
                         variant="filled"
                         type="password"
                         value={pinInput}
-                        onChange={(e) => setPinInput(e.target.value)}
+                        onChange={(e) => {
+                          secureInputHandler(
+                            e.target.value,
+                            42, // Max length
+                            /[a-zA-Z0-9 ]/g, // Allowed pattern
+                            500, // Throttle delay in ms
+                            showSnackBar,
+                            setPinInput // Callback to update state
+                          );      
+                        }}      
+                        inputProps={{
+                          maxLength: 42,
+                        }}   
                         error={!!error}
                         helperText={error}
                         name="password"
@@ -291,6 +306,7 @@ const LockedScreen = (props) => {
 LockedScreen.propTypes = {
   account: PropTypes.string.isRequired,
   onUnlock: PropTypes.func.isRequired,
+  showSnackBar: PropTypes.func.isRequired,
 };
 
 export default LockedScreen;

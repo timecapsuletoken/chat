@@ -12,7 +12,9 @@ const useArticles = () => {
         const data = await response.json();
         setArticles(data);
       } catch (error) {
-        console.error("Failed to fetch articles:", error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error("Failed to fetch articles:", error);
+        }
       } finally {
         setLoading(false);
       }

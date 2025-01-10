@@ -83,8 +83,10 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   const toggleSettingsModal = () => setIsSettingsModalOpen(!isSettingsModalOpen);
 
   const fetchSettingsData = useCallback(() => {
-    console.log("Initializing settings fetch for account:", account.slice(-4));
-  
+    if (process.env.NODE_ENV !== 'production') {
+      console.log("Initializing settings fetch for account:", account.slice(-4));
+    }
+    
     fetchSettings(account, (settings) => {
   
       // Apply other settings as needed
@@ -101,7 +103,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
     let cleanupNickname;
     
     if (!account) {
-      console.log("Redirecting to login");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Redirecting to login");
+      }
       setChats([]);
       navigate('/login');
       return;
@@ -109,7 +113,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
     
     const initialize = async () => {
   
-      console.log("Initializing chats");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Initializing chats");
+      }
       setLoading(true);
   
       // Fetch chats
@@ -118,7 +124,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
       // Fetch nickname and verify reverse mapping
       cleanupNickname = fetchNickname(account, (nickname) => {
         setNickname(nickname);
-        console.log(`[DEBUG] Nickname set to: "${nickname}" for account: ${account}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Nickname set to: "${nickname}" for account: ${account}`);
+        }
       });
   
       // Fetch settings
@@ -130,7 +138,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
     initialize();
   
     return () => {
-      console.log("Cleaning up subscriptions for account:", account);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Cleaning up subscriptions for account:", account);
+      }
       if (cleanupChats) cleanupChats();
       if (cleanupNickname) cleanupNickname();
     };
@@ -151,7 +161,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
     const startAutoLockCountdown = () => {
       const savedTimestamp = JSON.parse(localStorage.getItem('screen:auto:lock:timestamp'))?.timestamp;
       if (!savedTimestamp) {
-        console.error("Timestamp not found. Cannot enable auto-lock.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.error("Timestamp not found. Cannot enable auto-lock.");
+        }
         return;
       }
   
@@ -160,16 +172,19 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
       const remainingTime = lockTimeout - elapsedTime;
   
       if (remainingTime <= 0) {
-        console.log("Auto-lock time expired. Locking screen now.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("Auto-lock time expired. Locking screen now.");
+        }
         setIsLocked(true);
         return;
       }
   
-      //console.log(`Auto-lock enabled. Locking screen in ${remainingTime}ms.`);
       clearTimeout(timer); // Clear any previous timeout
       timer = setTimeout(() => {
         setIsLocked(true);
-        console.log("Auto-lock activated. Screen is now locked.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("Auto-lock activated. Screen is now locked.");
+        }
       }, remainingTime);
     };
   
@@ -205,7 +220,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   useEffect(() => {
     const requestNotificationPermission = async () => {
       if (!("Notification" in window)) {
-        console.error("This browser does not support desktop notifications.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.error("This browser does not support desktop notifications.");
+        }
         return;
       }
   
@@ -213,19 +230,29 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
         try {
           const permission = await Notification.requestPermission();
           if (permission === "granted") {
-            console.log("Notification permission granted.");
+            if (process.env.NODE_ENV !== 'production') {
+              console.log("Notification permission granted.");
+            }
           } else {
-            console.warn("Notification permission denied.");
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn("Notification permission denied.");
+            }
           }
         } catch (error) {
-          console.error("Error while requesting notification permission:", error);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error("Error while requesting notification permission:", error);
+          }
         }
       } else if (Notification.permission === "granted") {
-        console.log("Notification permission already granted.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("Notification permission already granted.");
+        }
       } else {
-        console.warn(
-          "Notification permission already denied. Please enable it manually in browser settings."
-        );
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(
+            "Notification permission already denied. Please enable it manually in browser settings."
+          );
+        }
       }
     };
   
@@ -275,32 +302,44 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
 
   useEffect(() => {
     if (!account || chats.length === 0) {
-      console.log("[DEBUG] No account or chats to check unread messages.");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("[DEBUG] No account or chats to check unread messages.");
+      }
       return;
     }
   
     const unreadSet = new Set();
     const activeListeners = new Map(); // Track active listeners
   
-    console.log("[DEBUG] Setting up real-time unread messages monitoring.");
-  
+    if (process.env.NODE_ENV !== 'production') {
+      console.log("[DEBUG] Setting up real-time unread messages monitoring.");
+    }
+    
     for (const chatAddress of chats) {
       if (activeListeners.has(chatAddress)) {
-        console.log(`[DEBUG] Listener already exists for chat: ${chatAddress}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Listener already exists for chat: ${chatAddress}`);
+        }
         continue;
       }
   
       const receiverNode = gun.get(`chats/${account}/messages/${chatAddress}`);
-      console.log(`[DEBUG] Listening to messages for chat: ${chatAddress}`);
-  
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Listening to messages for chat: ${chatAddress}`);
+      }
+      
       const listener = receiverNode.map().on((message, id) => {
         if (!message || !id) return;
   
-        console.log(`[DEBUG] Processing message ID: ${id} for chatAddress: ${chatAddress}`, message);
-  
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Processing message ID: ${id} for chatAddress: ${chatAddress}`, message);
+        }
+        
         if (message.status === 'unread') {
           if (!unreadSet.has(chatAddress)) {
-            console.log(`[DEBUG] Adding chat with unread messages: ${chatAddress}`);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`[DEBUG] Adding chat with unread messages: ${chatAddress}`);
+            }
             unreadSet.add(chatAddress);
             setUnreadChats(new Set([...unreadSet]));
             if (Notification.permission === "granted") {
@@ -314,7 +353,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
             }
           }
         } else if (message.status === 'read' && unreadSet.has(chatAddress)) {
-          console.log(`[DEBUG] Removing chat with read messages: ${chatAddress}`);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[DEBUG] Removing chat with read messages: ${chatAddress}`);
+          }
           unreadSet.delete(chatAddress);
           setUnreadChats(new Set([...unreadSet]));
         }
@@ -324,9 +365,13 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
     }
   
     return () => {
-      console.log("[DEBUG] Cleaning up listeners for unread messages.");
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("[DEBUG] Cleaning up listeners for unread messages.");
+      }
       activeListeners.forEach((listener, chatAddress) => {
-        console.log(`[DEBUG] Cleaning up listener for chat: ${chatAddress}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Cleaning up listener for chat: ${chatAddress}`);
+        }
         listener.off();
       });
       activeListeners.clear();
@@ -383,7 +428,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
       
       return balanceBnb;
     } catch (error) {
-      console.error('Error fetching BNB balance:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error fetching BNB balance:', error);
+      }
       return null;
     }
   };
@@ -395,7 +442,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
       const decimals = await tcaTokenContract.decimals();
       return ethers.utils.formatUnits(balance, decimals); // Convert balance to readable format
     } catch (error) {
-      console.error('Error fetching TCA token balance:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error fetching TCA token balance:', error);
+      }
       return null;
     }
   };
@@ -417,7 +466,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
         return { balance, tcaBalance }; // Return both balances as an object
       }
     } catch (error) {
-      console.error("Failed to fetch wallet data:", error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Failed to fetch wallet data:", error);
+      }
       return { balance: 0, tcaBalance: 0 }; // Return defaults on error
     }
   };    
@@ -465,7 +516,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   };
 
   return isLocked ? (
-    <LockedScreen account={account} disconnectWallet={disconnectWallet} onUnlock={() => setIsLocked(false)} />
+    <LockedScreen account={account} disconnectWallet={disconnectWallet} onUnlock={() => setIsLocked(false)} showSnackBar={showSnackBar} />
   ) : (
         <>
           {/* Meta Tags */}

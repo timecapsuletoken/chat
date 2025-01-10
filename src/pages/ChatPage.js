@@ -89,8 +89,10 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
     if (!account) return;
   
     const fetchBlockedAddresses = () => {
-      console.log("Fetching blocked addresses for account:", account);
-  
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Fetching blocked addresses for account:", account);
+      }
+      
       const blockedAddressesNode = gun.get(account).get('blockedAddresses');
       const addresses = new Set();
   
@@ -115,8 +117,10 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   useEffect(() => {
     if (!chatAddress || !account) return;
   
-    console.log('Subscribing to messages for chatAddress:', chatAddress);
-  
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Subscribing to messages for chatAddress:', chatAddress);
+    }
+    
     // Clear messages and processed IDs when switching chats
     setMessages([]);
     processedMessageIds.current.clear();
@@ -149,13 +153,18 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   
         const processedMessage = { ...message, content: decryptedContent || '[Unable to decrypt]', id };
   
-        console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Processed message from ${source}:`, processedMessage);
+        }
+
         setMessages((prev) =>
           [...prev, processedMessage].sort((a, b) => a.timestamp - b.timestamp) // Sort by timestamp
         );
 
       } catch (error) {
-        console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[DEBUG] Decryption failed for message ID: ${id}`, error);
+        }
         setMessages((prev) =>
           [...prev, { ...message, content: '[Unable to decrypt]', id }].sort((a, b) => a.timestamp - b.timestamp)
         );
@@ -198,7 +207,9 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
 
       // Check if the clicked element belongs to the target classes
       if (targetClasses.some((cls) => event.target.closest(`.${cls}`))) {
-        console.log('[DEBUG] Click detected in chat area. Marking messages as read.');
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[DEBUG] Click detected in chat area. Marking messages as read.');
+        }
         markMessagesAsRead(account, chatAddress); // Mark messages as read
       }
     };
@@ -218,10 +229,14 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   
       try {
         const getchatNickname = await fetchNicknameFromWallet(chatAddress);
-        console.log(`[DEBUG] ChatNickname fetched: ${getchatNickname}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] ChatNickname fetched: ${getchatNickname}`);
+        }
         setChatNickname(getchatNickname); // Assuming you have a state like `chatNickname`
       } catch (error) {
-        console.error(`[ERROR] Failed to fetch ChatNickname for "${chatAddress}":`, error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[ERROR] Failed to fetch ChatNickname for "${chatAddress}":`, error);
+        }
         setChatNickname(chatAddress.slice(-5));
       }
     };
@@ -241,21 +256,28 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
       return;
     }
 
-    console.log('[DEBUG] Checking block status...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[DEBUG] Checking block status...');
+    }
     const isChatBlocked = await isBlocked(account, chatAddress);
   
     if (isChatBlocked) {
-      console.warn(`[WARN] Chat is blocked between ${account} and ${chatAddress}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[WARN] Chat is blocked between ${account} and ${chatAddress}`);
+      }
       showSnackBar('Message cannot be sent. One of the parties has blocked the other.', 'error');
       return;
     }  
     
-    console.log('[DEBUG] Sending message:', message);
-  
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[DEBUG] Sending message:', message);
+    }
+
     // Encrypt the message content
     const encryptedMessage = encryptMessage(message);
-    console.log('[DEBUG] Encrypted message:', encryptedMessage);
-  
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[DEBUG] Encrypted message:', encryptedMessage);
+    }  
     const timestamp = Date.now();
   
     // Message for the sender (status: 'read')
@@ -277,26 +299,38 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
     // Save the message for the sender
     gun.get(`chats/${account}/messages/${chatAddress}`).set(senderMessage, (senderAck) => {
       if (senderAck.err) {
-        console.error('[DEBUG] Failed to save message for sender:', senderAck.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('[DEBUG] Failed to save message for sender:', senderAck.err);
+        }
       } else {
-        console.log('[DEBUG] Message saved for sender.');
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[DEBUG] Message saved for sender.');
+        }
       }
     });
   
     // Save the message for the receiver and add the chat to their node
     gun.get(`chats/${chatAddress}/messages/${account}`).set(receiverMessage, (receiverAck) => {
       if (receiverAck.err) {
-        console.error('[DEBUG] Failed to save message for receiver:', receiverAck.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('[DEBUG] Failed to save message for receiver:', receiverAck.err);
+        }
       } else {
-        console.log('[DEBUG] Message saved for receiver.');
-  
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[DEBUG] Message saved for receiver.');
+        }
+
         // Add the chat to the receiver's `chats` node
         const receiverChatsNode = gun.get(chatAddress).get('chats');
         receiverChatsNode.set(account, (receiverAck) => {
           if (receiverAck.err) {
-            console.error("Failed to add chat for receiver:", receiverAck.err);
+            if (process.env.NODE_ENV !== 'production') {
+              console.error("Failed to add chat for receiver:", receiverAck.err);
+            }
           } else {
-            console.log(`Chat added for receiver: ${chatAddress} with ${account}`);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`Chat added for receiver: ${chatAddress} with ${account}`);
+            }
           }
         });
       }
@@ -311,20 +345,28 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
   };
 
   const onEmojiSelect = (event) => {
-    console.log('Emoji event received:', event); // Debug: Log the event
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Emoji event received:', event); // Debug: Log the event
+    }
     if (!event?.detail?.unicode) {
-      console.warn("Invalid emoji select event", event);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn("Invalid emoji select event", event);
+      }
       return;
     }
     const emoji = event.detail.unicode;
-    console.log('Selected Emoji:', emoji); // Debug: Log the selected emoji
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Selected Emoji:', emoji); // Debug: Log the selected emoji
+    }
     setMessage((prevMessage) => `${prevMessage}${emoji}`); // Append emoji to the message
     setShowEmojiPicker(false); // Close the emoji picker
   };  
 
   const handleClickOutside = (event) => {
     if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-      console.log('Click detected outside emoji picker'); // Debug: Log outside click
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Click detected outside emoji picker'); // Debug: Log outside click
+      }
       setShowEmojiPicker(false);
     }
   };  
@@ -356,7 +398,9 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
       
       return balanceBnb;
     } catch (error) {
-      console.error('Error fetching BNB balance:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error fetching BNB balance:', error);
+      }
       return null;
     }
   };
@@ -368,7 +412,9 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
       const decimals = await tcaTokenContract.decimals();
       return ethers.utils.formatUnits(balance, decimals); // Convert balance to readable format
     } catch (error) {
-      console.error('Error fetching TCA token balance:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error fetching TCA token balance:', error);
+      }
       return null;
     }
   };
@@ -387,7 +433,9 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
 
       }
     } catch (error) {
-      console.error("Failed to fetch wallet data:", error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Failed to fetch wallet data:", error);
+      }
     }
   };
 

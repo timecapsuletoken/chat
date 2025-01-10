@@ -3,30 +3,35 @@ import { createRoot } from 'react-dom/client';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
 const SnackbarManager = (() => {
-  const container = document.createElement('div');
-  document.body.appendChild(container);
-
-  const root = createRoot(container);
-
   let enqueueSnackbar = null;
+  let initialized = false;
 
-  const SnackbarApp = () => {
-    const { enqueueSnackbar: enqueue } = useSnackbar();
+  const initializeSnackbar = () => {
+    if (!initialized) {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const root = createRoot(container);
 
-    useEffect(() => {
-      enqueueSnackbar = enqueue; // Assign the enqueueSnackbar function globally
-    }, [enqueue]);
+      const SnackbarApp = () => {
+        const { enqueueSnackbar: enqueue } = useSnackbar();
+        useEffect(() => {
+          enqueueSnackbar = enqueue;
+        }, [enqueue]);
+        return null;
+      };
 
-    return null; // No UI needed, just managing snackbar functionality
+      root.render(
+        <SnackbarProvider maxSnack={3}>
+          <SnackbarApp />
+        </SnackbarProvider>
+      );
+
+      initialized = true;
+    }
   };
 
-  root.render(
-    <SnackbarProvider maxSnack={3}>
-      <SnackbarApp />
-    </SnackbarProvider>
-  );
-
   const triggerSnackbar = ({ message, severity }) => {
+    if (!initialized) initializeSnackbar();
     if (enqueueSnackbar) {
       enqueueSnackbar(message, { variant: severity });
     } else {

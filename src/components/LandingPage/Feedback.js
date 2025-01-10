@@ -111,7 +111,9 @@ export default function FeedbackSection() {
       setSuccessMessage('Thank you for your feedback!');
       setFormData({ name: '', email: '', message: '', fileUrl: '' });
     } catch (error) {
-      console.error('Error sending email:', error.text);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error sending email:', error.text);
+      }
       setSuccessMessage('Failed to send feedback. Please try again later.');
     } finally {
       setLoading(false);

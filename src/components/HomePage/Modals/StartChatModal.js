@@ -56,13 +56,17 @@ const StartChatModal = ({
   
     fetchWalletFromNickname(nickname, (response) => {
       if (response.wallet) {
-        console.log('Wallet found:', response.wallet);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Wallet found:', response.wallet);
+        }
         setChatAddress(response.wallet); // Set wallet address in the input field
         setError(null); // Clear any error message
         setSuccess(true); // Mark as success
         showSnackBar('Wallet found','info');
       } else {
-        console.error('Failed to fetch wallet:', response.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Failed to fetch wallet:', response.err);
+        }
         setError('No wallet found for this nickname.'); // Set error message
         setChatAddress(''); // Clear the input if no wallet is found
         setSuccess(false); // Clear success if there's an error

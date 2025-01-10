@@ -4,7 +4,9 @@ import 'gun/lib/yson.js';
 
 export const markMessagesAsRead = (receiver, chatAddress) => {
   if (!receiver || !chatAddress) {
-    console.error("[DEBUG] Receiver or chat address is missing.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("[DEBUG] Receiver or chat address is missing.");
+    }
     return;
   }
 
@@ -12,22 +14,32 @@ export const markMessagesAsRead = (receiver, chatAddress) => {
 
   messageNode.map().once((message, id) => {
     if (!message) {
-      console.log(`[DEBUG] Skipping null or undefined message: ${id}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Skipping null or undefined message: ${id}`);
+      }
       return;
     }
 
     if (message.status !== 'unread') {
-      console.log(`[DEBUG] Skipping message not marked as unread: ${id}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Skipping message not marked as unread: ${id}`);
+      }
       return;
     }
 
-    console.log(`[DEBUG] Marking message ${id} as read for receiver: ${receiver}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[DEBUG] Marking message ${id} as read for receiver: ${receiver}`);
+    }
 
     gun.get(`chats/${receiver}/messages/${chatAddress}`).get(id).get('status').put('read', (ack) => {
       if (ack.err) {
-        console.error(`[DEBUG] Failed to mark message ${id} as read:`, ack.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[DEBUG] Failed to mark message ${id} as read:`, ack.err);
+        }
       } else {
-        console.log(`[DEBUG] Successfully marked message ${id} as read.`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Successfully marked message ${id} as read.`);
+        }
       }
     });
   });
@@ -35,18 +47,24 @@ export const markMessagesAsRead = (receiver, chatAddress) => {
 
 export const hasUnreadMessages = (account, chatAddress) => {
   if (!account || !chatAddress) {
-    console.error("[DEBUG] Missing account or chat address.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("[DEBUG] Missing account or chat address.");
+    }
     return false;
   }
 
-  console.log(`[DEBUG] Setting up listener for unread messages for chatAddress: ${chatAddress}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Setting up listener for unread messages for chatAddress: ${chatAddress}`);
+  }
 
   let unreadExists = false;
 
   const receiverNode = gun.get(`chats/${account}/messages/${chatAddress}`);
   receiverNode.map().once((message, id) => {
     if (message && message.status === 'unread') {
-      console.log(`[DEBUG] Found unread message in receiverNode. ID: ${id}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Found unread message in receiverNode. ID: ${id}`);
+      }
       unreadExists = true;
     }
   });
@@ -58,7 +76,9 @@ export const hasUnreadMessages = (account, chatAddress) => {
 export const fetchChats = (account, setChats) => {
     if (!account) return;
 
-    console.log("Fetching chats for account:", account.slice(-4));
+    if (process.env.NODE_ENV !== 'production') {
+      console.log("Fetching chats for account:", account.slice(-4));
+    }
 
     const loadedChats = new Set();
     const chatNode = gun.get(account).get('chats');
@@ -66,18 +86,24 @@ export const fetchChats = (account, setChats) => {
 
     chatNode.map().once((data, key) => {
         if (!data) {
+          if (process.env.NODE_ENV !== 'production') {
             console.warn(`Empty or invalid data for chat key: ${key}`);
+          }
             return;
         }
 
         // If the data is stored as a nested object, access its value
         const chatAddress = data[''] || data; // Adjust if structure differs
         if (chatAddress) {
+          if (process.env.NODE_ENV !== 'production') {
             console.log("Resolved chat address:", data.slice(-4));
+          }
             loadedChats.add(chatAddress);
             setChats(Array.from(loadedChats));
         } else {
+          if (process.env.NODE_ENV !== 'production') {
             console.warn(`No valid chat address found in key: ${key}`);
+          }
         }
     });
 
@@ -87,7 +113,9 @@ export const fetchChats = (account, setChats) => {
 
       const senderAddress = message.sender;
       if (!loadedChats.has(senderAddress)) {
+        if (process.env.NODE_ENV !== 'production') {
           console.log("New sender detected:", senderAddress.slice(-4));
+        }
           loadedChats.add(senderAddress);
           setChats(Array.from(loadedChats));
       }
@@ -95,7 +123,9 @@ export const fetchChats = (account, setChats) => {
 
     // Cleanup function to detach listeners
     return () => {
+      if (process.env.NODE_ENV !== 'production') {
         console.log("Cleaning up chat subscriptions for account:", account.slice(-4));
+      }
         chatNode.off();
         messageNode.off();
     };
@@ -104,15 +134,18 @@ export const fetchChats = (account, setChats) => {
 // Fetch settings for the user's account
 export const fetchSettings = async (account, setSettings) => {
     if (!account) return;
-  
-    console.log("Fetching settings for account:", account.slice(-4));
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Fetching settings for account:", account.slice(-4));
+      }
   
     try {
       const data = await new Promise((resolve) => {
         gun.get(account).once((fetchedData) => resolve(fetchedData || {}));
       });
   
-      console.log("Fetched settings data:", data);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Fetched settings data:", data);
+      }
 
         const blockedAddressesArray = [];
         const blockedAddressesNode = gun.get(account).get('blockedAddresses');
@@ -131,19 +164,25 @@ export const fetchSettings = async (account, setSettings) => {
 
       });
     } catch (error) {
-      console.error("Error fetching settings from Gun:", error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Error fetching settings from Gun:", error);
+      }
     }
 };  
 
 // Save user settings
 export const handleSaveSettings = (account, settings, showSnackBar) => {
   if (!account) {
-    console.error("No account provided for saving settings.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("No account provided for saving settings.");
+    }
     showSnackBar && showSnackBar('No account provided', 'error');
     return;
   }
 
-  console.log("Saving settings:", settings);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log("Saving settings:", settings);
+  }
 
   // Separate blockedAddresses from other settings
   const { blockedAddresses, ...otherSettings } = settings;
@@ -154,10 +193,14 @@ export const handleSaveSettings = (account, settings, showSnackBar) => {
   // Update other settings first
   gun.get(account).put(otherSettings, (ack) => {
     if (ack.err) {
-      console.error("Failed to save other settings:", ack.err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Failed to save other settings:", ack.err);
+      }
       showSnackBar && showSnackBar('Failed to save settings', 'error');
     } else {
-      console.log("Other settings saved successfully:", otherSettings);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Other settings saved successfully:", otherSettings);
+      }
       showSnackBar && showSnackBar('Settings saved successfully', 'success');
     }
   });
@@ -173,10 +216,14 @@ export const handleSaveSettings = (account, settings, showSnackBar) => {
 
   gun.get(account).get('blockedAddresses').put(transformedBlockedAddresses, (ack) => {
     if (ack.err) {
-      console.error("Failed to save blocked addresses:", ack.err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Failed to save blocked addresses:", ack.err);
+      }
       showSnackBar && showSnackBar('Failed to save blocked addresses', 'error');
     } else {
-      console.log("Blocked addresses saved successfully:", transformedBlockedAddresses);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Blocked addresses saved successfully:", transformedBlockedAddresses);
+      }
       showSnackBar && showSnackBar('Blocked addresses saved successfully', 'success');
     }
   });
@@ -186,20 +233,28 @@ export const handleSaveSettings = (account, settings, showSnackBar) => {
 export const handleBlockAddress = (account, address, setBlockedAddresses, showSnackBar) => {
   const trimmedAddress = address.trim();
   if (!trimmedAddress || trimmedAddress === account) {
-    console.warn("Invalid address to block:", address);
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("Invalid address to block:", address);
+    }
     showSnackBar && showSnackBar('Invalid address', 'error');
     return;
   }
 
-  console.log(`Saving blocked address:`, trimmedAddress);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Saving blocked address:`, trimmedAddress);
+  }
 
   // Save the address as a key in /blockedAddresses
   gun.get(account).get('blockedAddresses').get(trimmedAddress).put(true, (ack) => {
     if (ack.err) {
-      console.error("Failed to block address:", ack.err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Failed to block address:", ack.err);
+      }
       showSnackBar && showSnackBar('Failed to block address', 'error');
     } else {
-      console.log("Blocked address saved successfully:", trimmedAddress);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Blocked address saved successfully:", trimmedAddress);
+      }
       showSnackBar && showSnackBar(`Address ${trimmedAddress.slice(-5)} has been Blocked`, 'success');
 
       // Fetch the updated blocked addresses to avoid duplicates
@@ -216,20 +271,28 @@ export const handleBlockAddress = (account, address, setBlockedAddresses, showSn
 // Unblock a specific address
 export const handleUnblockAddress = (account, address, setBlockedAddresses, showSnackBar) => {
     if (!account || !address) {
-      console.error("Invalid account or address provided for unblocking.");
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Invalid account or address provided for unblocking.");
+      }
       showSnackBar && showSnackBar('Invalid account or address provided for unblocking','error');
       return;
     }
   
-    console.log(`Attempting to unblock address: ${address}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Attempting to unblock address: ${address}`);
+    }
   
     // Remove the address from the database
     gun.get(account).get('blockedAddresses').get(address).put(null, (ack) => {
       if (ack.err) {
-        console.error("Failed to unblock address:", ack.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error("Failed to unblock address:", ack.err);
+        }
         showSnackBar && showSnackBar('Failed to unblock address','error');
       } else {
-        console.log("Address successfully unblocked:", address);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("Address successfully unblocked:", address);
+        }
         showSnackBar && showSnackBar(`Address ${address.slice(-5)} has been Unblocked`,'success');
 
         // Update the local state only after successful database deletion
@@ -258,7 +321,9 @@ export const handleStartChat = (account, chatAddress, setChats, setSearchParams,
   }
 
   if (!trimmedAddress || trimmedAddress === account) {
-    console.warn("Invalid chat address:", chatAddress);
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("Invalid chat address:", chatAddress);
+    }
     showSnackBar && showSnackBar("Invalid chat address", 'warning');
     return;
   }
@@ -267,10 +332,14 @@ export const handleStartChat = (account, chatAddress, setChats, setSearchParams,
   const senderChatsNode = gun.get(account).get('chats');
   senderChatsNode.set(trimmedAddress, (senderAck) => {
     if (senderAck.err) {
-      console.error("Failed to add chat for sender:", senderAck.err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error("Failed to add chat for sender:", senderAck.err);
+      }
       showSnackBar && showSnackBar("Failed to Create a chat", 'error');
     } else {
-      console.log(`Chat added for sender: ${account} with ${trimmedAddress}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Chat added for sender: ${account} with ${trimmedAddress}`);
+      }
       showSnackBar && showSnackBar(`Chat created for ${trimmedAddress.slice(-5)}`, 'success');
       // Update the UI for the sender
       setChats((prev) => [...new Set([...prev, trimmedAddress])]);
@@ -293,20 +362,26 @@ export const handleDeleteChat = (account, chatAddress, setChats, showSnackBar) =
   // Step 1: Find the chat reference in the user's chats
   userChatsNode.map().once((data, chatKey) => {
     if (data === chatAddress) {
-      console.log(`Found chat to delete: Address = ${chatAddress}, Key = ${chatKey}`);
-
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Found chat to delete: Address = ${chatAddress}, Key = ${chatKey}`);
+      }
       // Step 2: Delete all messages under the messages node
       const messagesNode = gun.get(messagesBasePath);
       messagesNode.map().once((_, messageKey) => {
         if (!messageKey) return; // Skip null or invalid keys
-
-        console.log(`Deleting message: Key = ${messageKey}`);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`Deleting message: Key = ${messageKey}`);
+          }
         messagesNode.get(messageKey).put(null, (msgAck) => {
           if (msgAck.err) {
-            console.error(`Failed to delete message with Key = ${messageKey}:`, msgAck.err);
+            if (process.env.NODE_ENV !== 'production') {
+              console.error(`Failed to delete message with Key = ${messageKey}:`, msgAck.err);
+            }
             showSnackBar && showSnackBar('Failed to hide','error');
           } else {
-            console.log(`Message deleted: Key = ${messageKey}`);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`Message deleted: Key = ${messageKey}`);
+            }
             showSnackBar && showSnackBar('Message has been hidden','success');
           }
         });
@@ -314,16 +389,23 @@ export const handleDeleteChat = (account, chatAddress, setChats, showSnackBar) =
 
       // Step 3: Delete the chat reference from the user's chats node
       setTimeout(() => {
-        console.log(`Deleting chat metadata for Key = ${chatKey}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`Deleting chat metadata for Key = ${chatKey}`);
+        }
         userChatsNode.get(chatKey).put(null, (ack) => {
           if (ack.err) {
-            console.error(`Failed to delete chat metadata with Key = ${chatKey}:`, ack.err);
+            if (process.env.NODE_ENV !== 'production') {
+              console.error(`Failed to delete chat metadata with Key = ${chatKey}:`, ack.err);
+            }
           } else {
-            console.log(`Chat metadata deleted: Key = ${chatKey}`);
-
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`Chat metadata deleted: Key = ${chatKey}`);
+            }
             // Step 4: Update the UI state
             setChats((prevChats) => prevChats.filter((chat) => chat !== chatAddress));
-            console.log(`Chat removed from UI for Address = ${chatAddress}`);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(`Chat removed from UI for Address = ${chatAddress}`);
+            }
           }
         });
       }, 500); // Delay to ensure messages are deleted first
@@ -345,9 +427,13 @@ export const handleClearChatHistory = (account, setChats) => {
       // Delete the current node
       childNode.put(null, (ack) => {
         if (ack.err) {
-          console.error(`Failed to delete node (${key}):`, ack.err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error(`Failed to delete node (${key}):`, ack.err);
+          }
         } else {
-          console.log(`Node (${key}) deleted successfully.`);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`Node (${key}) deleted successfully.`);
+          }
         }
       });
     });
@@ -355,9 +441,13 @@ export const handleClearChatHistory = (account, setChats) => {
     // Finally, delete the parent node itself
     node.put(null, (ack) => {
       if (ack.err) {
-        console.error("Failed to delete parent node:", ack.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error("Failed to delete parent node:", ack.err);
+        }
       } else {
-        console.log("Parent node deleted successfully.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("Parent node deleted successfully.");
+        }
       }
     });
   };
@@ -369,17 +459,23 @@ export const handleClearChatHistory = (account, setChats) => {
 
   // Clear local state
   setChats([]);
-  console.log("All chat history and metadata cleared.");
+  if (process.env.NODE_ENV !== 'production') {
+    console.log("All chat history and metadata cleared.");
+  }
 };
 
 // Fetch the nickname
 export const fetchNickname = (account, setNickname) => {
   if (!account) {
-    console.warn("[WARN] Account is required to fetch nickname.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("[WARN] Account is required to fetch nickname.");
+    }
     return;
   }
 
-  console.log(`[DEBUG] Fetching nickname for account: ${account.slice(-4)}`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Fetching nickname for account: ${account.slice(-4)}`);
+  }
 
   const nicknameNode = gun.get(account).get("nickname");
 
@@ -387,7 +483,9 @@ export const fetchNickname = (account, setNickname) => {
     (data) => {
       if (data) {
         // Data is the nickname directly
-        console.log(`[DEBUG] Nickname fetched: "${data}" for account: ${account}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Nickname fetched: "${data}" for account: ${account}`);
+        }
         setNickname(data);
 
         // Verify the reverse mapping
@@ -395,37 +493,54 @@ export const fetchNickname = (account, setNickname) => {
       } else {
         // No nickname exists, assign and save the default nickname
         const defaultNickname = account.slice(-5);
-        console.warn(`[WARN] No nickname found. Assigning default nickname: "${defaultNickname}"`);
-
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`[WARN] No nickname found. Assigning default nickname: "${defaultNickname}"`);
+        }
         gun.get(account).put({ nickname: defaultNickname }, (ack) => {
           if (ack.err) {
-            console.error(`[ERROR] Failed to save default nickname for account: ${account}`, ack.err);
+            if (process.env.NODE_ENV !== 'production') {
+              console.error(`[ERROR] Failed to save default nickname for account: ${account}`, ack.err);
+            }
             return;
           }
 
-          console.log(`[DEBUG] Default nickname "${defaultNickname}" saved for account: ${account}`);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[DEBUG] Default nickname "${defaultNickname}" saved for account: ${account}`);
+          }
           setNickname(defaultNickname);
 
           // Save the reverse mapping
           saveNicknameToGun(account, defaultNickname, (mappingAck) => {
             if (mappingAck.err) {
-              console.error(
-                `[ERROR] Failed to save reverse mapping for default nickname: "${defaultNickname}"`,
-                mappingAck.err
-              );
+              if (process.env.NODE_ENV !== 'production') {
+                console.error(
+                  `[ERROR] Failed to save reverse mapping for default nickname: "${defaultNickname}"`,
+                  mappingAck.err
+                );
+              }
             } else {
-              console.log(`[DEBUG] Reverse mapping saved for default nickname: "${defaultNickname}"`);
+              if (process.env.NODE_ENV !== 'production') {
+                console.log(`[DEBUG] Reverse mapping saved for default nickname: "${defaultNickname}"`);
+              }
             }
           });
         });
       }
     },
-    { err: (err) => console.error(`[ERROR] Failed to fetch nickname for account: ${account}`, err) }
+    { 
+      err: (err) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[ERROR] Failed to fetch nickname for account: ${account}`, err);
+        }
+      }
+    }    
   );
 
   // Cleanup function to detach listeners
   return () => {
-    console.log(`[DEBUG] Cleaning up nickname subscription for account: ${account.slice(-4)}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[DEBUG] Cleaning up nickname subscription for account: ${account.slice(-4)}`);
+    }
     nicknameNode.off();
   };
 };
@@ -436,28 +551,40 @@ const verifyReverseMapping = (account, nickname) => {
 
   reverseNode.once((data) => {
     if (!data || data.wallet !== account) {
-      console.warn(`[WARN] Reverse mapping missing or incorrect for nickname: "${nickname}". Repairing...`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[WARN] Reverse mapping missing or incorrect for nickname: "${nickname}". Repairing...`);
+      }
 
       saveNicknameMapping(nickname, account, (ack) => {
         if (ack.err) {
-          console.error(`[ERROR] Failed to repair reverse mapping: "${nickname}" -> "${account}"`, ack.err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error(`[ERROR] Failed to repair reverse mapping: "${nickname}" -> "${account}"`, ack.err);
+          }
         } else {
-          console.log(`[DEBUG] Reverse mapping repaired: "${nickname}" -> "${account}"`);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[DEBUG] Reverse mapping repaired: "${nickname}" -> "${account}"`);
+          }
         }
       });
     } else {
-      console.log(`[DEBUG] Reverse mapping verified for nickname: "${nickname}"`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Reverse mapping verified for nickname: "${nickname}"`);
+      }
     }
   });
 };
 
 export const hasUserSavedNickname = async (account) => {
   if (!account) {
-    console.warn("[WARN] Account is required to check if the user has saved a nickname.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("[WARN] Account is required to check if the user has saved a nickname.");
+    }
     return true; // Default to disabling input if no account is provided
   }
 
-  console.log(`[DEBUG] Checking if user has already saved a custom nickname for account: "${account}"`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Checking if user has already saved a custom nickname for account: "${account}"`);
+  }
 
   const accountNode = gun.get(account);
 
@@ -467,10 +594,14 @@ export const hasUserSavedNickname = async (account) => {
       const defaultNickname = account.slice(-5);
 
       if (currentNickname && currentNickname !== defaultNickname) {
-        console.warn("[WARN] User has already saved a custom nickname.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn("[WARN] User has already saved a custom nickname.");
+        }
         resolve(true); // User has already saved a nickname
       } else {
-        console.log("[DEBUG] User has not saved a custom nickname yet.");
+        if (process.env.NODE_ENV !== 'production') {
+          console.log("[DEBUG] User has not saved a custom nickname yet.");
+        }
         resolve(false); // User has not saved a nickname
       }
     });
@@ -479,21 +610,29 @@ export const hasUserSavedNickname = async (account) => {
 
 export const isNicknameAvailable = async (nickname) => {
   if (!nickname) {
-    console.warn("[WARN] Nickname is required to check availability.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("[WARN] Nickname is required to check availability.");
+    }
     return false; // Default to not available if no nickname is provided
   }
 
-  console.log(`[DEBUG] Checking nickname availability for: "${nickname}"`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Checking nickname availability for: "${nickname}"`);
+  }
 
   const nicknamesNode = gun.get('findWallet');
 
   return new Promise((resolve) => {
     nicknamesNode.get(nickname).once((data) => {
       if (data && data.wallet) {
-        console.warn(`[WARN] Nickname "${nickname}" is already taken.`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`[WARN] Nickname "${nickname}" is already taken.`);
+        }
         resolve(false); // Nickname is not available
       } else {
-        console.log(`[DEBUG] Nickname "${nickname}" is available.`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Nickname "${nickname}" is available.`);
+        }
         resolve(true); // Nickname is available
       }
     });
@@ -502,29 +641,40 @@ export const isNicknameAvailable = async (nickname) => {
 
 export const saveNicknameToGun = (account, nickname, callback) => {
   if (!account || !nickname) {
-    console.warn("Both account and nickname are required.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("Both account and nickname are required.");
+    }
     callback({ err: "Invalid parameters" });
     return;
   }
 
-  console.log(`[DEBUG] Saving nickname: "${nickname}" for account: "${account}"`);
-
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Saving nickname: "${nickname}" for account: "${account}"`);
+  }
   // Save nickname under the account node
   gun.get(account).put({ nickname }, (ack) => {
     if (ack.err) {
-      console.error(`[ERROR] Failed to save nickname for account: "${account}"`, ack.err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(`[ERROR] Failed to save nickname for account: "${account}"`, ack.err);
+      }
       callback(ack);
       return;
     }
 
-    console.log(`[DEBUG] Nickname "${nickname}" saved for account: "${account}"`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[DEBUG] Nickname "${nickname}" saved for account: "${account}"`);
+    }
 
     // Save the reverse mapping
     saveNicknameMapping(nickname, account, (mappingAck) => { // Corrected order here
       if (mappingAck.err) {
-        console.error(`[ERROR] Failed to save reverse mapping: "${nickname}" -> "${account}"`, mappingAck.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error(`[ERROR] Failed to save reverse mapping: "${nickname}" -> "${account}"`, mappingAck.err);
+        }
       } else {
-        console.log(`[DEBUG] Reverse mapping updated: "${nickname}" -> "${account}"`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Reverse mapping updated: "${nickname}" -> "${account}"`);
+        }
       }
 
       callback(mappingAck); // Notify about the reverse mapping
@@ -534,12 +684,16 @@ export const saveNicknameToGun = (account, nickname, callback) => {
 
 export const saveNicknameMapping = (nickname, account, callback) => {
   if (!nickname || !account) {
-    console.warn("Both nickname and account are required to save mapping.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("Both nickname and account are required to save mapping.");
+    }
     callback({ err: "Invalid parameters" });
     return;
   }
 
-  console.log(`[DEBUG] Saving nickname mapping: "${nickname}" -> "${account}"`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Saving nickname mapping: "${nickname}" -> "${account}"`);
+  }
 
   const nicknamesNode = gun.get("findWallet");
 
@@ -551,10 +705,14 @@ export const saveNicknameMapping = (nickname, account, callback) => {
 
   nicknamesNode.get(nickname).put(mappingData, (ack) => {
     if (ack.err) {
-      console.error(`[ERROR] Failed to save mapping for nickname: "${nickname}"`, ack.err);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(`[ERROR] Failed to save mapping for nickname: "${nickname}"`, ack.err);
+      }
       callback({ err: ack.err });
     } else {
-      console.log(`[DEBUG] Nickname mapping saved successfully: "${nickname}" -> "${account}"`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Nickname mapping saved successfully: "${nickname}" -> "${account}"`);
+      }
       callback({ success: true });
     }
   });
@@ -562,21 +720,29 @@ export const saveNicknameMapping = (nickname, account, callback) => {
 
 export const fetchWalletFromNickname = (nickname, callback) => {
   if (!nickname) {
-    console.warn("Nickname is required to fetch wallet address.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn("Nickname is required to fetch wallet address.");
+    }
     callback({ err: "Invalid parameters" });
     return;
   }
 
-  console.log(`[DEBUG] Fetching wallet for nickname: "${nickname}"`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[DEBUG] Fetching wallet for nickname: "${nickname}"`);
+  }
 
   const nicknamesNode = gun.get('findWallet');
 
   nicknamesNode.get(nickname).once((data) => {
     if (!data || !data.wallet) {
-      console.warn(`[DEBUG] No wallet found for nickname: "${nickname}"`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[DEBUG] No wallet found for nickname: "${nickname}"`);
+      }
       callback({ err: "No wallet found" });
     } else {
-      console.log(`[DEBUG] Wallet address for nickname "${nickname}": ${data.wallet}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[DEBUG] Wallet address for nickname "${nickname}": ${data.wallet}`);
+      }
       callback({ wallet: data.wallet });
     }
   });
@@ -585,22 +751,30 @@ export const fetchWalletFromNickname = (nickname, callback) => {
 export const fetchNicknameFromWallet = (wallet) => {
   return new Promise((resolve, reject) => {
     if (!wallet) {
-      console.warn("Wallet address is required to fetch nickname.");
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn("Wallet address is required to fetch nickname.");
+      }
       reject("Invalid parameters");
       return;
     }
 
-    console.log(`[DEBUG] Fetching nickname for wallet: "${wallet}"`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[DEBUG] Fetching nickname for wallet: "${wallet}"`);
+    }
 
     const walletNode = gun.get(wallet).get('nickname');
 
     walletNode.once((data) => {
       if (!data) {
-        console.warn(`[DEBUG] No nickname found for wallet: "${wallet}"`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn(`[DEBUG] No nickname found for wallet: "${wallet}"`);
+        }
         reject("No nickname found");
       } else {
         const nickname = data[''] || data; // Handle flat or structured data
-        console.log(`[DEBUG] Nickname for wallet "${wallet}": ${nickname}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[DEBUG] Nickname for wallet "${wallet}": ${nickname}`);
+        }
         resolve(nickname);
       }
     });
@@ -615,9 +789,13 @@ export const fetchNicknameFromWallet = (wallet) => {
       .get(messageId)
       .put(null, (ack) => {
         if (ack.err) {
-          console.error('Failed to delete message:', ack.err);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('Failed to delete message:', ack.err);
+          }
         } else {
-          console.log('Message deleted successfully:', messageId);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Message deleted successfully:', messageId);
+          }
         }
       });
   };

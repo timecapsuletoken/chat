@@ -39,10 +39,14 @@ function App() {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: '0x38' }], // 0x38 is the hexadecimal Chain ID for BSC
         });
-        console.log('Switched to Binance Smart Chain');
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Switched to Binance Smart Chain');
+        }
       } catch (error) {
         if (error.code === 4902) {
-          console.log('Binance Smart Chain not found. Adding it now...');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Binance Smart Chain not found. Adding it now...');
+          }
           try {
             // Add Binance Smart Chain
             await window.ethereum.request({
@@ -61,22 +65,32 @@ function App() {
                 },
               ],
             });
-            console.log('Binance Smart Chain added to MetaMask');
-            // Retry switching to BSC
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('Binance Smart Chain added to MetaMask');
+            }
+              // Retry switching to BSC
             await window.ethereum.request({
               method: 'wallet_switchEthereumChain',
               params: [{ chainId: '0x38' }],
             });
-            console.log('Switched to Binance Smart Chain');
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('Switched to Binance Smart Chain');
+            }
           } catch (addError) {
-            console.error('Failed to add Binance Smart Chain:', addError);
+            if (process.env.NODE_ENV !== 'production') {
+              console.error('Failed to add Binance Smart Chain:', addError);
+            }
           }
         } else {
-          console.error('Failed to switch to Binance Smart Chain:', error);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('Failed to switch to Binance Smart Chain:', error);
+          }
         }
       }
     } else {
-      console.error('MetaMask is not installed. Please install it to use this app.');
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('MetaMask is not installed. Please install it to use this app.');
+      }
     }
   };  
 

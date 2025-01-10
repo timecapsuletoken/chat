@@ -50,7 +50,9 @@ export async function switchNetwork() {
     // Check if the current network matches the required network
     const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
     if (currentChainId === selectedNetwork.chainId) {
-      console.log("Already on the correct network:", selectedNetwork.chainName);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Already on the correct network:", selectedNetwork.chainName);
+      }
       return; // No need to switch networks
     }
 
@@ -72,9 +74,13 @@ export async function switchNetwork() {
       ],
     });
 
-    console.log("Switched to network:", selectedNetwork.chainName);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log("Switched to network:", selectedNetwork.chainName);
+    }
   } catch (error) {
-    console.error("Failed to switch network:", error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("Failed to switch network:", error);
+    }
     throw new Error("Failed to switch network. Please try again.");
   }
 }
@@ -91,28 +97,36 @@ export async function donate(donationUSD) {
     const signer = provider.getSigner(); // Get the signer after ensuring connection
 
     // Ensure the user is on the correct network
-    console.log('Switching network...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Switching network...');
+    }
     await switchNetwork();
 
     // Calculate the BNB amount for the donation
     let bnbAmount = await calculateBNBAmount(donationUSD);
-    console.log('Calculated BNB amount (raw):', bnbAmount);
-
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Calculated BNB amount (raw):', bnbAmount);
+    }
     // Round to 18 decimal places to avoid fractional component errors
     bnbAmount = parseFloat(bnbAmount.toFixed(18));
-    console.log('Calculated BNB amount (rounded):', bnbAmount);
-
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Calculated BNB amount (rounded):', bnbAmount);
+    }
     // Send BNB
     const tx = await signer.sendTransaction({
       to: donationWallet,
       value: ethers.utils.parseUnits(bnbAmount.toString(), 'ether'), // Convert BNB to Wei
     });
 
-    console.log('Transaction sent successfully:', tx);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Transaction sent successfully:', tx);
+    }
+
     return { success: true, transactionHash: tx.hash };
   } catch (error) {
-    console.error("Donation failed:", error);
-
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("Donation failed:", error);
+    }
     // Handle specific error messages
     if (error.code === -32603 && error.data?.message.includes("insufficient funds")) {
       throw new Error("Insufficient funds for gas or transaction value.");

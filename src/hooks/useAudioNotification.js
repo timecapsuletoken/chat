@@ -10,7 +10,11 @@ export const initializeAudio = () => {
       .then((decodedData) => {
         notificationSound = decodedData;
       })
-      .catch((error) => console.error("Failed to load notification sound:", error));
+      .catch((error) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error("Failed to load notification sound:", error);
+        }
+      });      
   }
 };
 
@@ -21,6 +25,8 @@ export const playNotificationSound = () => {
     source.connect(audioContext.destination);
     source.start(0);
   } else {
-    console.error("AudioContext not initialized or sound not loaded.");
+    if (process.env.NODE_ENV !== 'production') {
+      console.error("AudioContext not initialized or sound not loaded.");
+    }
   }
 };

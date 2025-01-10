@@ -86,7 +86,9 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
           setNetwork('No Provider');
         }
       } catch (error) {
-        console.error('Error fetching network information:', error);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Error fetching network information:', error);
+        }
         setNetwork('Error');
       }
     };
@@ -169,10 +171,14 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
     // Step 4: Save nickname to Gun
     saveNicknameToGun(account, newNickname, (ack) => {
       if (ack.err) {
-        console.error('Failed to save nickname:', ack.err);
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('Failed to save nickname:', ack.err);
+        }
         showSnackBar('Failed to save nickname', 'error');
       } else {
-        console.log('Nickname saved successfully:', newNickname);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Nickname saved successfully:', newNickname);
+        }
         showSnackBar(`${account.slice(-5)} Nickname saved as: ${newNickname}`, 'success');
         setNewNickname(''); // Clear the input field
         setNickname(newNickname); // Update local nickname state
@@ -288,7 +294,9 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
         {/* Session Information */}
         <MenuItem
           onClick={() => {
-            console.log('Session Information Modal Open');
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('Session Information Modal Open');
+            }
             handleOpenSessionModal();
             handleOptionsMenuClose();
           }}

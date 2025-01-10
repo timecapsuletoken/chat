@@ -78,7 +78,9 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         }
       
         if (connectionSuccess && connectionSuccess.length > 0) {
-          console.log('MetaMask connected:', connectionSuccess[0]);
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('MetaMask connected:', connectionSuccess[0]);
+          }
           const checksumAddress = ethers.utils.getAddress(connectionSuccess[0]); // Convert to checksum format
           setAccount(checksumAddress);
           localStorage.setItem('providerType', providerType);
@@ -88,7 +90,9 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
           const provider = new ethers.providers.Web3Provider(ethereum);
           const chainId = await provider.send('eth_chainId', []);
           if (chainId !== '0x38') {
-            console.log('Not on Binance Smart Chain. Attempting to switch...');
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('Not on Binance Smart Chain. Attempting to switch...');
+            }
             // Force Binance Smart Chain connection
             await switchToBSC();
 
@@ -101,11 +105,15 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
             }
           }
         } else {
-          console.error('No accounts found. Please log in to MetaMask.');
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('No accounts found. Please log in to MetaMask.');
+          }
           cleanupListener(); // Ensure listener is removed even if an error occurs
         }
       } else {
-        console.error('eth_accounts permission not granted.');
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('eth_accounts permission not granted.');
+        }
         cleanupListener(); // Ensure listener is removed even if an error occurs
       }
     } else if (providerType === 'CoinbaseWallet') {
@@ -131,7 +139,9 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
       if (accounts && accounts.length > 0) {
         const address = accounts[0];
-        console.log('Connected account:', address);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Connected account:', address);
+        }
 
         // Convert to checksum address
         const checksumAddress = ethers.utils.getAddress(address);
@@ -139,7 +149,9 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         // Save account information
         setAccount(checksumAddress);
         localStorage.setItem('providerType', 'CoinbaseWallet');
-        console.log('Provider:', providerType);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Provider:', providerType);
+        }
       } else {
         alert('Unsupported wallet provider.');
       }
@@ -148,9 +160,13 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
   } catch (error) {
     if (error.code === 4001) {
       // EIP-1193 userRejectedRequest error
-      console.log('Permissions needed to continue.');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Permissions needed to continue.');
+      }
     } else {
-      console.error(`Error connecting to ${providerType}:`, error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(`Error connecting to ${providerType}:`, error);
+      }
     }
   }
 };
@@ -188,7 +204,9 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
       const accounts = await ethereum.request({ method: 'eth_accounts' });
 
       if (accounts && accounts.length > 0) {
-        console.log('Wallet switched to MetaMask account:', accounts[0]);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Wallet switched to MetaMask account:', accounts[0]);
+        }
         const checksumAddress = ethers.utils.getAddress(accounts[0]); // Convert to checksum format
         setAccount(checksumAddress);
         localStorage.setItem('connectedAccount', checksumAddress); // Save account before reload
@@ -201,7 +219,9 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
         window.location.reload();
 
       } else {
-        console.error('No accounts found. Please log in to MetaMask.');
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('No accounts found. Please log in to MetaMask.');
+        }
       }
     } else if (SavedProvider === 'CoinbaseWallet') {
       
@@ -225,8 +245,9 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
       if (accounts && accounts.length > 0) {
         const address = accounts[0];
-        console.log('Connected account:', address);
-  
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Connected account:', address);
+        }
         // Convert to checksum address
         const checksumAddress = ethers.utils.getAddress(address);
   
@@ -239,7 +260,9 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
         await switchToBSC();
   
         // Reload the page only after successful connection
-        console.log('Wallet switched to Coinbase account:', checksumAddress);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('Wallet switched to Coinbase account:', checksumAddress);
+        }
         window.location.reload();
       } else {
   
@@ -248,6 +271,8 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
     }
     
   } catch (error) {
-    console.error(`Error switching wallet for ${providerType}:`, error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`Error switching wallet for ${providerType}:`, error);
+    }
   }
 };
