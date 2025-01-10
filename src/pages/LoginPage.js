@@ -15,12 +15,16 @@ const LoginPage = ({ connectWallet, account }) => {
   const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
-    if (account) {
+    if (!account) return; // Only navigate if account is set
+    const storedAccount = localStorage.getItem('connectedAccount');
+    
+    if (storedAccount && storedAccount === account) {
       localStorage.setItem('connectedAccount', account);
       localStorage.getItem('providerType');      
+      // Navigate only if the stored account matches the current account
       navigate('/home');
     }
-  }, [account, navigate]);
+  }, [account, navigate]);  
 
     // Handler for connecting wallets
     const handleConnectWallet = async (providerType) => {

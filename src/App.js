@@ -1,22 +1,27 @@
-import React, { useState,useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { connectWallet } from './utils/wallet';
-import LandingPage from './pages/LandingPage/LandingPage';
-import LoginPage from './pages/LoginPage';
-import LoginNavbar from './components/LoginNavbar';
-import HomePage from './pages/HomePage';
-import Blog from './pages/LandingPage/Blog';
-import SingleArticle from './components/LandingPage/Blog/SingleArticle'; // Import the new component
-import ChatPage from './pages/ChatPage';
-
-import CookiePolicy from './pages/LandingPage/legalDocs/CookiePolicy';
-import Disclaimer from './pages/LandingPage/legalDocs/Disclaimer';
-import PrivacyPolicy from './pages/LandingPage/legalDocs/PrivacyPolicy';
-import RiskDisclosure from './pages/LandingPage/legalDocs/RiskDisclosure';
-import TermsAndConditions from './pages/LandingPage/legalDocs/TermsAndConditions';
-import TermsOfService from './pages/LandingPage/legalDocs/TermsOfService';
 
 import './App.css';
+
+const LandingPage = lazy(() => import('./pages/LandingPage/LandingPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const LoginNavbar = lazy(() => import('./components/LoginNavbar'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const Blog = lazy(() => import('./pages/LandingPage/Blog'));
+const SingleArticle = lazy(() => import('./components/LandingPage/Blog/SingleArticle'));
+
+const CookiePolicy = lazy(() => import('./pages/LandingPage/legalDocs/CookiePolicy'));
+const Disclaimer = lazy(() => import('./pages/LandingPage/legalDocs/Disclaimer'));
+const PrivacyPolicy = lazy(() => import('./pages/LandingPage/legalDocs/PrivacyPolicy'));
+const RiskDisclosure = lazy(() => import('./pages/LandingPage/legalDocs/RiskDisclosure'));
+const TermsAndConditions = lazy(() => import('./pages/LandingPage/legalDocs/TermsAndConditions'));
+const TermsOfService = lazy(() => import('./pages/LandingPage/legalDocs/TermsOfService'));
+
+const ProtectedRoute = ({ account, children }) => {
+  return account ? children : <Navigate to="/login" />;
+};
 
 function App() {
   const [account, setAccount] = useState(null);
@@ -106,25 +111,41 @@ function App() {
 
   return (
       <div className="App">
-        <Routes>
-          <Route path="/" element={<><LandingPage /></>} />
-          <Route path="/cookie-policy" element={<><CookiePolicy /></>} />
-          <Route path="/disclaimer" element={<><Disclaimer /></>} />
-          <Route path="/privacy-policy" element={<><PrivacyPolicy /></>} />
-          <Route path="/risk-disclosure" element={<><RiskDisclosure /></>} />
-          <Route path="/terms-and-conditions" element={<><TermsAndConditions /></>} />
-          <Route path="/tos" element={<><TermsOfService /></>} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<SingleArticle />} />
-          <Route path="/login" element={
-            <>
-              <LoginNavbar />
-              <LoginPage account={account} connectWallet={(providerType) => connectWallet(providerType, switchToBSC, setAccount)} />
-            </>
-          } />
-          <Route path="/home" element={<><HomePage account={account} disconnectWallet={disconnectWallet} switchAccount={setAccount} switchToBSC={switchToBSC}/></>} />
-          <Route path="/chat/:address" element={<ChatPage account={account} />} />
-        </Routes>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<><LandingPage /></>} />
+            <Route path="/cookie-policy" element={<><CookiePolicy /></>} />
+            <Route path="/disclaimer" element={<><Disclaimer /></>} />
+            <Route path="/privacy-policy" element={<><PrivacyPolicy /></>} />
+            <Route path="/risk-disclosure" element={<><RiskDisclosure /></>} />
+            <Route path="/terms-and-conditions" element={<><TermsAndConditions /></>} />
+            <Route path="/tos" element={<><TermsOfService /></>} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<SingleArticle />} />
+            <Route path="/login" element={
+              <>
+                <LoginNavbar />
+                <LoginPage account={account} connectWallet={(providerType) => connectWallet(providerType, switchToBSC, setAccount)} />
+              </>
+            } />
+            <Route 
+              path="/home" 
+              element={
+                <ProtectedRoute account={account}>
+                  <HomePage account={account} disconnectWallet={disconnectWallet} switchAccount={setAccount} switchToBSC={switchToBSC}/>
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/chat/:address" 
+              element={
+                <ProtectedRoute account={account}>
+                  <ChatPage account={account} />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
       </div>
   );
 }
