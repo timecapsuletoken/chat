@@ -211,7 +211,7 @@ const LockedScreen = (props) => {
                 </Typography>
                 <Chip
                   avatar={<Avatar ref={avatarRef} />}
-                  label={account}
+                  label={`${account.slice(0, 16)}...${account.slice(-17)}`}
                   size="medium"
                   variant="outlined"
                   sx={{

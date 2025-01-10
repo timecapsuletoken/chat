@@ -76,6 +76,16 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   const [isLocked, setIsLocked] = useState(false);
   const { showNotification } = useBrowserNotification();
 
+  useEffect(() => {
+    if (!account) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log("Redirecting to login");
+      }
+      setChats([]); // Clear chats
+      navigate('/login'); // Redirect to login
+    }
+  }, [account, navigate]);
+  
   const showSnackBar = (message, severity) => {
     Snackbar.handleShowSnackBar(message, severity);
   };
@@ -101,15 +111,6 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
   useEffect(() => {
     let cleanupChats;
     let cleanupNickname;
-    
-    if (!account) {
-      if (process.env.NODE_ENV !== 'production') {
-        console.log("Redirecting to login");
-      }
-      setChats([]);
-      navigate('/login');
-      return;
-    }
     
     const initialize = async () => {
   
