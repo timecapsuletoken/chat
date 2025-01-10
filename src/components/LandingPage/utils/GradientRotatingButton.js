@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useNavigate } from 'react-router-dom';
+import useGradientRotation from './useEffectForGradientRotation'; // Import the custom hook
 
 const GradientRotatingButton = ({ 
   text, 
@@ -13,22 +14,7 @@ const GradientRotatingButton = ({
 }) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const buttons = document.querySelectorAll('.rotating-gradient-wrapper');
-
-    buttons.forEach((button, index) => {
-      let angle = 0;
-
-      const updateAnimation = () => {
-        angle = (angle + 1) % 360;
-        button.style.setProperty('--angle', `${angle + index * 120}deg`);
-        requestAnimationFrame(updateAnimation);
-      };
-
-      button.style.setProperty('--angle', '0deg');
-      requestAnimationFrame(updateAnimation);
-    });
-  }, []);
+  useGradientRotation();
 
   const handleClick = () => {
     if (onClick) {

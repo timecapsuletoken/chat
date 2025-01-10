@@ -6,28 +6,14 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useColorScheme } from '@mui/material/styles';
+import useGradientRotation from '../LandingPage/utils/useEffectForGradientRotation';
 
 export default function ColorModeIconDropdown(props) {
   const { mode, systemMode, setMode } = useColorScheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  React.useEffect(() => {
-    const buttons = document.querySelectorAll('.rotating-gradient-wrapper');
-
-    buttons.forEach((button, index) => {
-      let angle = 0;
-
-      const updateAnimation = () => {
-        angle = (angle + 1) % 360;
-        button.style.setProperty('--angle', `${angle + index * 120}deg`);
-        requestAnimationFrame(updateAnimation);
-      };
-
-      button.style.setProperty('--angle', '0deg');
-      requestAnimationFrame(updateAnimation);
-    });
-  }, []);
+  useGradientRotation('rotating-gradient-wrapper'); // Apply to elements with this class
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -62,18 +48,38 @@ export default function ColorModeIconDropdown(props) {
   }[resolvedMode];
   return (
     <React.Fragment>
-      <IconButton
-        data-screenshot="toggle-mode"
-        onClick={handleClick}
-        disableRipple
-        size="small"
-        aria-controls={open ? 'color-scheme-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        {...props}
+      <Box
+        className="rotating-gradient-wrapper"
+        sx={(theme) => ({
+          padding: '1px', // Space for the gradient border
+          borderRadius: '8px',
+          background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+        })}
       >
-        {icon}
-      </IconButton>
+        <IconButton
+          data-screenshot="toggle-mode"
+          onClick={handleClick}
+          disableRipple
+          size="small"
+          aria-controls={open ? 'color-scheme-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          sx={(theme) => ({
+            borderRadius: '8px',
+            background: `${theme.palette.background.default} !important`,
+            color: theme.palette.text.primary,
+            fontWeight: 'bold',
+            textTransform: 'none',
+            '&:hover': {
+              background: `${theme.palette.action.hover} !important`,
+              borderColor: 'transparent !important',
+            },
+          })}
+          {...props}
+        >
+          {icon}
+        </IconButton>
+      </Box>
       <Menu
         anchorEl={anchorEl}
         id="account-menu"

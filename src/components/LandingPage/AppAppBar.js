@@ -1,19 +1,25 @@
 import * as React from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom'; 
 import { styled, alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import Drawer from '@mui/material/Drawer';
+import { 
+  AppBar, 
+  Toolbar, 
+  Stack, 
+  Container, 
+  Divider, 
+  Box, 
+  MenuItem, 
+  Button, 
+  IconButton, 
+  Typography,
+  Drawer,
+  Avatar
+ } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Sitemark from '../LandingPage/SitemarkIcon';
+import TCALogo from '../../assets/images/logos/logo.png';
 import ColorModeIconDropdown from '../LandingPage/ColorModeIconDropdown';
 import GradientRotatingButton from '../../components/LandingPage/utils/GradientRotatingButton';
 
@@ -114,9 +120,32 @@ export default function AppAppBar() {
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <ColorModeIconDropdown size="medium" />
-            <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-              <MenuIcon /> 
-            </IconButton>
+            <Box
+              className="rotating-gradient-wrapper"
+              sx={(theme) => ({
+                padding: '1px', // Space for the gradient border
+                borderRadius: '8px',
+                background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+              })}
+            >
+              <IconButton
+                aria-label="Menu button" 
+                onClick={toggleDrawer(true)}
+                sx={(theme) => ({
+                  borderRadius: '8px',
+                  background: `${theme.palette.background.default} !important`,
+                  color: theme.palette.text.primary,
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                  '&:hover': {
+                    background: `${theme.palette.action.hover} !important`,
+                    borderColor: 'transparent !important',
+                  },
+                })}
+              >
+                <MenuIcon /> 
+              </IconButton>
+            </Box>
             <Drawer
               anchor="top"
               open={open}
@@ -128,36 +157,127 @@ export default function AppAppBar() {
               }}
             >
               <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
-                <Box
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  spacing={2} // Add spacing between elements
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
+                    width: '100%', // Adjust width as needed
                   }}
                 >
-                  <IconButton onClick={toggleDrawer(false)}>
-                    <CloseRoundedIcon />
-                  </IconButton>
-                </Box>
-
-                <MenuItem onClick={() => handleScrollToSection('features')}>Features</MenuItem>
-                <MenuItem onClick={() => handleScrollToSection('how-it-works')}>How It Works</MenuItem>
-                <MenuItem onClick={() => handleScrollToSection('highlights')}>Highlights</MenuItem>
-                <MenuItem onClick={() => handleScrollToSection('donations')}>Donations</MenuItem>
-                <MenuItem onClick={() => (navigate('/blog'))}>Blog</MenuItem>
-                <MenuItem onClick={() => handleScrollToSection('faq')}>FAQ</MenuItem>
-                <MenuItem component={RouterLink} to="https://www.timecapsuletoken.com/contact">Contact</MenuItem>
-                <Divider sx={{ my: 3 }} />
-                <MenuItem>
-                    <Button 
-                      fullWidth
-                      color="primary" 
-                      variant="contained" 
-                      size="small" 
-                      startIcon={<AccountBalanceWalletIcon />}
-                      onClick={() => navigate('/login')} 
+                  {/* Logo */}
+                  <Box
+                    className="rotating-gradient-wrapper"
+                    sx={(theme) => ({
+                      padding: '1px', // Space for the gradient border
+                      borderRadius: '50%',
+                      background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+                    })}
+                  >
+                    <Box
+                      sx={(theme) => ({
+                        width: '50px', // Example logo size
+                        height: '50px',
+                        borderRadius: '50%',
+                        background: `${theme.palette.background.default}`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      })}
                     >
-                      Connect Wallet
-                    </Button>
+                      {/* Add your logo or image here */}
+                      <Typography variant="h6" sx={{ color: (theme) => theme.palette.text.primary }}>
+                        <Avatar alt="TCA Logo" src={TCALogo} sx={{ width: 35, height: 35 }} />
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Text */}
+                  <Typography
+                    variant="h6"
+                    sx={(theme) => ({
+                      color: theme.palette.text.primary,
+                      fontWeight: 'bold',
+                    })}
+                  >
+                    TCA Chat dApp
+                  </Typography>
+
+                  {/* Close Icon */}
+                  <Box
+                    className="rotating-gradient-wrapper"
+                    sx={(theme) => ({
+                      padding: '1px', // Space for the gradient border
+                      borderRadius: '8px',
+                      background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+                    })}
+                  >
+                    <IconButton
+                      onClick={toggleDrawer(false)}
+                      sx={(theme) => ({
+                        borderRadius: '8px',
+                        background: `${theme.palette.background.default} !important`,
+                        color: theme.palette.text.primary,
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                        '&:hover': {
+                          background: `${theme.palette.action.hover} !important`,
+                          borderColor: 'transparent !important',
+                        },
+                      })}
+                    >
+                      <CloseRoundedIcon /> 
+                    </IconButton>
+                  </Box>
+                </Stack>
+                <Divider sx={{ my: 1 }} />
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                  }}
+                >
+                  <MenuItem onClick={() => handleScrollToSection('/')} sx={{ justifyContent: 'center' }}>Home</MenuItem>
+                  <MenuItem onClick={() => handleScrollToSection('features')} sx={{ justifyContent: 'center' }}>Features</MenuItem>
+                  <MenuItem onClick={() => handleScrollToSection('how-it-works')} sx={{ justifyContent: 'center' }}>How It Works</MenuItem>
+                  <MenuItem onClick={() => handleScrollToSection('highlights')} sx={{ justifyContent: 'center' }}>Highlights</MenuItem>
+                  <MenuItem onClick={() => handleScrollToSection('donations')} sx={{ justifyContent: 'center' }}>Donations</MenuItem>
+                  <MenuItem onClick={() => (navigate('/blog'))} sx={{ justifyContent: 'center' }}>Blog</MenuItem>
+                  <MenuItem onClick={() => handleScrollToSection('faq')} sx={{ justifyContent: 'center' }}>FAQ</MenuItem>
+                  <MenuItem component={RouterLink} to="https://www.timecapsuletoken.com/contact" sx={{ justifyContent: 'center' }}>Contact</MenuItem>
+                </Box>
+                <Divider sx={{ my: 1 }} />
+                <MenuItem>
+                    <Box
+                      className="rotating-gradient-wrapper"
+                      sx={(theme) => ({
+                        width: '100%',
+                        padding: '1px', // Space for the gradient border
+                        borderRadius: '8px',
+                        background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+                      })}
+                    >
+                      <Button
+                        fullWidth
+                        size="small" 
+                        startIcon={<AccountBalanceWalletIcon />}
+                        onClick={() => navigate('/login')} 
+                        sx={(theme) => ({
+                          borderRadius: '8px',
+                          background: `${theme.palette.background.default} !important`,
+                          color: theme.palette.text.primary,
+                          fontWeight: 'bold',
+                          textTransform: 'none',
+                          '&:hover': {
+                            background: `${theme.palette.action.hover} !important`,
+                            borderColor: 'transparent !important',
+                            color: theme.palette.text.primary,
+                          },
+                        })}
+                      >
+                        Connect Wallet
+                      </Button>
+                    </Box>
                 </MenuItem>
               </Box>
             </Drawer>

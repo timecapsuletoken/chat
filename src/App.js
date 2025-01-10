@@ -6,7 +6,6 @@ import './App.css';
 
 const LandingPage = lazy(() => import('./pages/LandingPage/LandingPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
-const LoginNavbar = lazy(() => import('./components/LoginNavbar'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const Blog = lazy(() => import('./pages/LandingPage/Blog'));
@@ -122,12 +121,10 @@ function App() {
             <Route path="/tos" element={<><TermsOfService /></>} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<SingleArticle />} />
-            <Route path="/login" element={
-              <>
-                <LoginNavbar />
-                <LoginPage account={account} connectWallet={(providerType) => connectWallet(providerType, switchToBSC, setAccount)} />
-              </>
-            } />
+            <Route 
+              path="/login"
+              element={account ? <Navigate to="/home" /> : <LoginPage account={account} connectWallet={(providerType) => connectWallet(providerType, switchToBSC, setAccount)}/>}
+            />
             <Route 
               path="/home" 
               element={

@@ -46,7 +46,7 @@ const SettingsModal = ({
               />
               Enable Sound Alerts
               <span>
-              Audio notifications for incoming messages or events. This feature works seamlessly across desktop and mobile browsers. When enabled, a notification sound will play to alert the user if they receive a message or event. The sound will trigger even if the application is in the background on desktop browsers or in the foreground on mobile browsers (subject to browser and OS restrictions). Notifications are designed to respect modern autoplay policies, ensuring compatibility and reliability.
+              Audio notifications for incoming messages or events. This feature works seamlessly across desktop and mobile browsers.
               </span>
             </label>
             <label>

@@ -82,9 +82,9 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
         console.log("Redirecting to login");
       }
       setChats([]); // Clear chats
-      navigate('/login'); // Redirect to login
+      //navigate('/login'); // Redirect to login
     }
-  }, [account, navigate]);
+  }, [account]);
   
   const showSnackBar = (message, severity) => {
     Snackbar.handleShowSnackBar(message, severity);
