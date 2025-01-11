@@ -21,6 +21,12 @@ module.exports = function override(config) {
     }),
   ]);
 
+  // Add React Refresh plugin only in development mode
+  if (process.env.NODE_ENV === 'development') {
+    const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+    config.plugins.push(new ReactRefreshWebpackPlugin());
+  }
+
   // Filter out source-map-loader to avoid related warnings
   config.module.rules = config.module.rules.filter(
     rule => !rule.loader || !rule.loader.includes('source-map-loader')
