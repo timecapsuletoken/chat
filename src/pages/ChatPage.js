@@ -728,7 +728,6 @@ const ChatPage = ({ account, toggleBlockedModal, deleteChat, formatNumber, isSid
                 e.target.value,
                 1000, // Max length
                 /[a-zA-Z0-9@#$%!()* ]/g, // Allowed pattern
-                300, // Throttle delay in ms
                 showSnackBar,
                 setMessage // Callback to update state
               );      
