@@ -25,7 +25,12 @@ module.exports = function override(config) {
   if (process.env.NODE_ENV === 'development') {
     const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
     config.plugins.push(new ReactRefreshWebpackPlugin());
-  }
+  } else {
+    // Explicitly remove ReactRefreshWebpackPlugin from production
+    config.plugins = config.plugins.filter(
+      (plugin) => plugin.constructor.name !== 'ReactRefreshWebpackPlugin'
+    );
+  }  
 
   // Filter out source-map-loader to avoid related warnings
   config.module.rules = config.module.rules.filter(
