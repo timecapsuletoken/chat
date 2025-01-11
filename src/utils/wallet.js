@@ -121,7 +121,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
        // Initialize the Coinbase Wallet SDK
        const sdk = createCoinbaseWalletSDK({
         appName: 'TCA Chat dApp',
-        appLogoUrl: '/assets/images/logo.png', // Replace with your actual logo URL
+        appLogoUrl: `https://${process.env.REACT_APP_BASE_DOMAIN}/assets/images/logo.png`, // Replace with your actual logo URL
         appChainIds: [56], // Binance Smart Chain ID
         preference: {
           options: 'eoaOnly', // EOA connections only
@@ -227,7 +227,7 @@ export const switchWallet = async (providerType, switchToBSC, setAccount) => {
       
       const sdk = createCoinbaseWalletSDK({
         appName: 'TCA Chat dApp',
-        appLogoUrl: 'https://example.com/assets/images/logo.png', // Replace with your actual logo URL
+        appLogoUrl: `https://${process.env.REACT_APP_BASE_DOMAIN}/assets/images/logo.png`, // Replace with your actual logo URL
         appChainIds: [56], // Binance Smart Chain ID
         preference: {
           options: 'eoaOnly', // EOA connections only
