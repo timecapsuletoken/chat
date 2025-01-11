@@ -523,7 +523,7 @@ const HomePage = ({ account, disconnectWallet, switchAccount, switchToBSC }) => 
           {/* Meta Tags */}
           <HelmetProvider>
           <Helmet>
-            <title>Home - TimeCapsule Chat</title>
+            <title>TimeCapsule Chat - dApp</title>
             <meta name="description" content="Welcome to TimeCapsule Chat, your gateway to secure decentralized communication. Connect, chat, and explore the future of messaging." />
             <meta name="keywords" content="TimeCapsule Chat, decentralized communication, Web3 messaging, secure chat" />
             <meta name="author" content="TimeCapsule Team" />            
