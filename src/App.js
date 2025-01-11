@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { connectWallet } from './utils/wallet';
 
 import './App.css';
+import Preloader from './components/LandingPage/Preloader'; // Import your spinner
 
 const NotFoundPage  = lazy(() => import('./pages/NotFoundPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage/LandingPage'));
@@ -111,7 +112,7 @@ function App() {
 
   return (
       <div className="App">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Preloader />}>
           <Routes>
             <Route path="/" element={<><LandingPage /></>} />
             <Route path="/cookie-policy" element={<><CookiePolicy /></>} />
