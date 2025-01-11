@@ -148,23 +148,31 @@ export default function SingleArticle() {
             <Box sx={{ display: 'flex', gap: 2 }}>
               <IconButton
                 aria-label="share on Facebook"
-                onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://myblog.com/blog/${slug}`, '_blank')}
+                onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=https://${process.env.REACT_APP_BASE_DOMAIN}/blog/${slug}`, '_blank')}
               >
                 <FacebookIcon />
               </IconButton>
               <IconButton
                 aria-label="share on Twitter"
-                onClick={() => window.open(`https://twitter.com/intent/tweet?url=https://myblog.com/blog/${slug}&text=${article.title}`, '_blank')}
+                onClick={() => window.open(`https://twitter.com/intent/tweet?url=https://${process.env.REACT_APP_BASE_DOMAIN}/blog/${slug}&text=${article.title}`, '_blank')}
               >
                 <TwitterIcon />
               </IconButton>
               <IconButton
                 aria-label="share on LinkedIn"
-                onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=https://myblog.com/blog/${slug}&title=${article.title}&summary=${article.description}`, '_blank')}
+                onClick={() => window.open(`https://www.linkedin.com/shareArticle?mini=true&url=https://${process.env.REACT_APP_BASE_DOMAIN}/blog/${slug}&title=${article.title}&summary=${article.description}`, '_blank')}
               >
                 <LinkedInIcon />
               </IconButton>
-              <IconButton aria-label="share">
+              <IconButton
+                aria-label="share on Reddit"
+                onClick={() =>
+                  window.open(
+                    `https://reddit.com/submit?url=https://${process.env.REACT_APP_BASE_DOMAIN}/blog/${slug}&title=${article.title}`,
+                    '_blank'
+                  )
+                }
+              >
                 <RedditIcon />
               </IconButton>
             </Box>

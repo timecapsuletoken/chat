@@ -24,7 +24,37 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="https://www.timecapsuletoken.com/">
+      <Link
+        href="https://www.timecapsuletoken.com/"
+        sx={{
+          background: `linear-gradient(90deg, #a001f2, #1ccad8, #a001f2)`,
+          backgroundSize: '200% 200%', // Double the size for sliding effect
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          textDecoration: 'none', // Optional: Remove underline
+          animation: 'gradient-slide 3s linear infinite', // Animation applied here
+          '@keyframes gradient-slide': {
+            '0%': {
+              backgroundPosition: '0% 50%',
+            },
+            '25%': {
+              backgroundPosition: '50% 50%',
+            },
+            '50%': {
+              backgroundPosition: '100% 50%',
+            },
+            '75%': {
+              backgroundPosition: '50% 50%',
+            },
+            '100%': {
+              backgroundPosition: '0% 50%',
+            },
+          },
+          '&:hover': {
+            textDecoration: 'underline', // Optional: Add underline on hover
+          },
+        }}
+      >
         TimeCapsule
       </Link>
       &nbsp;
@@ -45,7 +75,7 @@ const bouncingImages = [
 export default function Footer() {
   const footerRef = React.useRef(null);
   const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 });
-
+  
   // Capture the footer dimensions
   React.useEffect(() => {
     if (footerRef.current) {
@@ -140,7 +170,7 @@ export default function Footer() {
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
               Experience seamless and secure communication powered by blockchain technology. Stay connected, stay private
             </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, fontWeight: 'bold' }}>Secure. Fast. Decentralized.</Typography>
+            <Typography variant="body2" sx={{ color: 'text.primary', mb: 1, fontWeight: 'bold' }}>Fast. Free. Decentralized.</Typography>
             <Stack direction="row" spacing={1} useFlexGap>
               <GradientRotatingButton
                 text="Go Chatting now"
@@ -172,6 +202,9 @@ export default function Footer() {
           </Link>
           <Link color="text.secondary" variant="body2" href="/#faq">
             FAQs
+          </Link>
+          <Link color="text.secondary" variant="body2" href="/blog">
+            Blog
           </Link>
         </Box>
         <Box
@@ -250,48 +283,125 @@ export default function Footer() {
           direction="row"
           spacing={1}
           useFlexGap
+          height='50%'
           sx={{ justifyContent: 'left', color: 'text.secondary' }}
         > 
-          <IconButton
-            color="inherit"
-            target="_blank"
-            size="small"
-            href="https://bscscan.com/token/0x31aaB810b51f499340FC1e1B08716d2bC92C7A56"
-            aria-label="BSCSCAN"
-            sx={{ alignSelf: 'center' }}
+          <Box
+            className="rotating-gradient-wrapper"
+            sx={(theme) => ({
+              width: '100%',
+              height: '100%',
+              padding: '1px',
+              borderRadius: '8px',
+              background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+            })}
           >
-            <RiBnbFill />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            target="_blank"
-            size="small"
-            href="https://www.instagram.com/tcacoin/"
-            aria-label="Instagram"
-            sx={{ alignSelf: 'center' }}
+            <IconButton
+              target="_blank"
+              href="https://bscscan.com/token/0x31aaB810b51f499340FC1e1B08716d2bC92C7A56"
+              aria-label="BSCSCAN"
+              sx={(theme) => ({
+                width: '100%',
+                height: '100%',
+                borderRadius: '8px',
+                background: `${theme.palette.background.default} !important`,
+                color: theme.palette.text.primary,
+                '&:hover': {
+                  background: `${theme.palette.action.hover} !important`,
+                  borderColor: 'transparent !important',
+                },
+              })}
+            >
+              <RiBnbFill /> 
+            </IconButton>
+          </Box>
+          <Box
+            className="rotating-gradient-wrapper"
+            sx={(theme) => ({
+              width: '100%',
+              height: '100%',
+              padding: '1px',
+              borderRadius: '8px',
+              background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+            })}
           >
-            <InstagramIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            target="_blank"
-            size="small"
-            href="https://x.com/TCACoin"
-            aria-label="X"
-            sx={{ alignSelf: 'center' }}
+            <IconButton
+              target="_blank"
+              href="https://www.instagram.com/tcacoin/"
+              aria-label="Instagram"
+              sx={(theme) => ({
+                width: '100%',
+                height: '100%',
+                borderRadius: '8px',
+                background: `${theme.palette.background.default} !important`,
+                color: theme.palette.text.primary,
+                '&:hover': {
+                  background: `${theme.palette.action.hover} !important`,
+                  borderColor: 'transparent !important',
+                },
+              })}
+            >
+              <InstagramIcon /> 
+            </IconButton>
+          </Box>
+          <Box
+            className="rotating-gradient-wrapper"
+            sx={(theme) => ({
+              width: '100%',
+              height: '100%',
+              padding: '1px',
+              borderRadius: '8px',
+              background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+            })}
           >
-            <TwitterIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            target="_blank"
-            size="small"
-            href="https://discord.gg/wBkDaDvEgv"
-            aria-label="Discord"
-            sx={{ alignSelf: 'center' }}
+            <IconButton
+              target="_blank"
+              href="https://x.com/TCACoin"
+              aria-label="X"
+              sx={(theme) => ({
+                width: '100%',
+                height: '100%',
+                borderRadius: '8px',
+                background: `${theme.palette.background.default} !important`,
+                color: theme.palette.text.primary,
+                '&:hover': {
+                  background: `${theme.palette.action.hover} !important`,
+                  borderColor: 'transparent !important',
+                },
+              })}
+            >
+              <TwitterIcon /> 
+            </IconButton>
+          </Box>
+          <Box
+            className="rotating-gradient-wrapper"
+            sx={(theme) => ({
+              width: '100%',
+              height: '100%',
+              padding: '1px',
+              borderRadius: '8px',
+              background: `linear-gradient(var(--angle, 0deg), #07e6f5, ${theme.palette.primary.main})`,
+            })}
           >
-            <FaDiscord />
-          </IconButton>
+            <IconButton
+              target="_blank"
+              href="https://discord.gg/wBkDaDvEgv"
+              aria-label="Discord"
+              sx={(theme) => ({
+                width: '100%',
+                height: '100%',
+                borderRadius: '8px',
+                background: `${theme.palette.background.default} !important`,
+                color: theme.palette.text.primary,
+                '&:hover': {
+                  background: `${theme.palette.action.hover} !important`,
+                  borderColor: 'transparent !important',
+                },
+              })}
+            >
+              <FaDiscord /> 
+            </IconButton>
+          </Box>
         </Stack>
       </Box>
     </Container>

@@ -17,6 +17,8 @@ import Divider from '@mui/material/Divider';
 import SendIcon from '@mui/icons-material/Send';
 import emailjs from 'emailjs-com';
 import featureShape2 from '../../assets/images/LandingPage/objects/bnbchain.svg';
+import Snackbar from '../../utils/Snackbar';
+import { secureInputHandler } from '../../utils/inputSanitizer';
 
 // Define the orbiting animation
 const orbitAnimation = keyframes`
@@ -64,7 +66,6 @@ export default function FeedbackSection() {
     file: null,
   });
   const [loading, setLoading] = React.useState(false);
-  const [successMessage, setSuccessMessage] = React.useState('');
 
   React.useEffect(() => {
     const buttons = document.querySelectorAll('.rotating-gradient-wrapper');
@@ -83,15 +84,54 @@ export default function FeedbackSection() {
     });
   }, []);
 
+  const showSnackBar = (message, severity) => {
+    Snackbar.handleShowSnackBar(message, severity);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  
+    // Apply the secure input handler logic
+    const sanitizedValue = secureInputHandler(
+      value,
+      12, // Max length
+      /[a-zA-Z0-9 ]/g, // Allowed pattern
+      500, // Throttle delay in ms
+      showSnackBar
+    );
+  
+    // Update the state with the sanitized value
+    setFormData((prev) => ({ ...prev, [name]: sanitizedValue }));
+  };  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setSuccessMessage('');
+
+    // Validation for required fields
+    if (!formData.name.trim()) {
+      setLoading(false);
+      showSnackBar('Name cannot be empty.', 'warning');
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setLoading(false);
+      showSnackBar('Email cannot be empty.', 'warning');
+      return;
+    }
+
+    if (!formData.message.trim()) {
+      setLoading(false);
+      showSnackBar('Message cannot be empty.', 'warning');
+      return;
+    }
+
+    if (!feedbackType.trim()) {
+      setLoading(false);
+      showSnackBar('Feedback type cannot be empty.', 'warning');
+      return;
+    }
 
     const serviceID = 'service_ladobfs';
     const templateID = 'template_lu95uf3';
@@ -108,13 +148,13 @@ export default function FeedbackSection() {
 
     try {
       await emailjs.send(serviceID, templateID, templateParams, userID);
-      setSuccessMessage('Thank you for your feedback!');
+      showSnackBar('Thank you for your feedback!','success');
       setFormData({ name: '', email: '', message: '', fileUrl: '' });
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error sending email:', error.text);
       }
-      setSuccessMessage('Failed to send feedback. Please try again later.');
+      showSnackBar('Failed to send feedback. Please try again later','error');
     } finally {
       setLoading(false);
     }
@@ -193,7 +233,10 @@ export default function FeedbackSection() {
                       name="name"
                       fullWidth
                       required
-                      onChange={handleInputChange}
+                      onChange={handleInputChange}      
+                      inputProps={{
+                        maxLength: 12,
+                      }} 
                       value={formData.name}
                       label="Your Name" 
                       variant="filled" 
@@ -259,7 +302,19 @@ export default function FeedbackSection() {
                       labelId="demo-simple-select-filled-label"
                       id="demo-simple-select-filled"
                       value={feedbackType}
-                      onChange={(e) => setFeedbackType(e.target.value)}
+                      onChange={(e) => {
+                        secureInputHandler(
+                          e.target.value,
+                          12, // Max length
+                          /[a-zA-Z0-9 ]/g, // Allowed pattern
+                          500, // Throttle delay in ms
+                          showSnackBar,
+                          setFeedbackType // Callback to update state
+                        );      
+                      }}      
+                      inputProps={{
+                        maxLength: 12,
+                      }}
                     >
                       {feedbackTypes.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -348,15 +403,6 @@ export default function FeedbackSection() {
                       </Button>
                     </Box>
                   </CardActions>
-                  {successMessage && (
-                  <Typography
-                      variant="body2"
-                      align="center"
-                      sx={{ mt: 2, color: loading ? 'text.disabled' : 'success.main' }}
-                  >
-                      {successMessage}
-                  </Typography>
-                  )}
               </Card>
             </Grid>
       </Grid>
