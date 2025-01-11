@@ -22,10 +22,12 @@
   }
   
   .beta-tag {
-    background-color: #000;
-    font-size: 0.9em;
-    padding: 3px 5px;
-    border-radius: 3px;
+    background: linear-gradient(270deg, #a001f2, #1ccad8);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #fff;
+    font-weight: bold;
     margin-left: 5px;
   }
   

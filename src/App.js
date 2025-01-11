@@ -4,6 +4,7 @@ import { connectWallet } from './utils/wallet';
 
 import './App.css';
 
+const NotFoundPage  = lazy(() => import('./pages/NotFoundPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage/LandingPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -141,6 +142,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </div>
