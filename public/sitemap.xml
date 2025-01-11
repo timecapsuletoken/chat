@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Static Pages -->
+  <url>
+    <loc>https://timecapsule.chat/</loc>
+    <priority>1.0</priority>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/contact</loc>
+    <priority>0.6</priority>
+    <changefreq>yearly</changefreq>
+  </url>
+
+  <!-- Blog Articles -->
+  <url>
+    <loc>https://timecapsule.chat/blog/secure-decentralized-messaging-the-power-of-timecapsule-chat</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/wallet-to-wallet-communication-redefining-messaging</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/integrating-metamask-and-coinbase-wallets-in-timecapsule-chat</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/real-time-messaging-with-gun-js</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/end-to-end-encryption-how-timecapsule-chat-protects-your-privacy</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/exploring-timecapsule-chat-unique-features</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/a-beginners-guide-to-using-binance-smart-chain-for-web3-apps</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://timecapsule.chat/blog/timecapsule-chat-the-future-of-decentralized-communication</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+</urlset>

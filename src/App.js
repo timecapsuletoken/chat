@@ -112,7 +112,7 @@ function App() {
 
   return (
       <div className="App">
-        <Suspense fallback={<Preloader />}>
+        <Suspense fallback={<Preloader />} >
           <Routes>
             <Route path="/" element={<><LandingPage /></>} />
             <Route path="/cookie-policy" element={<><CookiePolicy /></>} />
