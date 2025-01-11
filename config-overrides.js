@@ -21,6 +21,14 @@ module.exports = function override(config) {
     }),
   ]);
 
+  if (process.env.NODE_ENV === 'production') {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'react-refresh/runtime.js': false,
+      'react-refresh': false,
+    };
+  }  
+
   // Add React Refresh plugin only in development mode
   if (process.env.NODE_ENV === 'development') {
     const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
