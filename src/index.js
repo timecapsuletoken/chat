@@ -6,6 +6,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Redirect HTTP to HTTPS in production
+if (window.location.protocol !== 'https:' && process.env.NODE_ENV === 'production') {
+  window.location.href = `https:${window.location.href.substring(window.location.protocol.length)}`;
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
