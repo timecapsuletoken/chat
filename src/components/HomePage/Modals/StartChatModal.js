@@ -125,7 +125,6 @@ const StartChatModal = ({
                 e.target.value,
                 42, // Max length
                 /[a-zA-Z0-9 ]/g, // Allowed pattern
-                500, // Throttle delay in ms
                 showSnackBar,
                 setChatAddress // Callback to update state
               );      
@@ -189,7 +188,6 @@ const StartChatModal = ({
                   e.target.value,
                   6, // Max length
                   /[a-zA-Z0-9 ]/g, // Allowed pattern
-                  500, // Throttle delay in ms
                   showSnackBar,
                   setNickname // Callback to update state
                 );      

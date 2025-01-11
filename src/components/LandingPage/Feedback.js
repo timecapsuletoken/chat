@@ -89,14 +89,14 @@ export default function FeedbackSection() {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-  
+    const { name, value, dataset } = e.target;
+    const maxLength = parseInt(dataset.maxlength, 10) || 12; // Default to 12 if not provided
+
     // Apply the secure input handler logic
     const sanitizedValue = secureInputHandler(
       value,
-      12, // Max length
+      maxLength, // Max length
       /[a-zA-Z0-9 ]/g, // Allowed pattern
-      500, // Throttle delay in ms
       showSnackBar
     );
   
@@ -307,7 +307,6 @@ export default function FeedbackSection() {
                           e.target.value,
                           12, // Max length
                           /[a-zA-Z0-9 ]/g, // Allowed pattern
-                          500, // Throttle delay in ms
                           showSnackBar,
                           setFeedbackType // Callback to update state
                         );      
@@ -334,6 +333,7 @@ export default function FeedbackSection() {
                     value={formData.message}
                     variant="filled"
                     onChange={handleInputChange}
+                    inputProps={{ 'data-maxlength': '2000' }} // Place `data-maxlength` here
                     sx={{
                       marginBottom: '16px',
                       '& .MuiFilledInput-root': {
@@ -354,6 +354,7 @@ export default function FeedbackSection() {
                     name="fileUrl"
                     fullWidth
                     onChange={handleInputChange}
+                    inputProps={{ 'data-maxlength': '100' }} // Place `data-maxlength` here
                     value={formData.fileUrl}
                     label="Attachment URL" 
                     variant="filled" 

@@ -369,7 +369,6 @@ const SidebarAccount = ({ account, switchAccount, providerType, switchToBSC, nic
                 e.target.value,
                 6, // Max length
                 /[a-zA-Z0-9 ]/g, // Allowed pattern
-                0, // Throttle delay in ms
                 showSnackBar,
                 setNewNickname // Callback to update state
               );      

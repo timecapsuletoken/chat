@@ -110,7 +110,6 @@ const BlockedModal = ({
                 e.target.value,
                 42, // Max length
                 /[a-zA-Z0-9 ]/g, // Allowed pattern
-                500, // No throttling
                 showSnackBar
               );
           
