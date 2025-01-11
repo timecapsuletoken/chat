@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Helmet, HelmetProvider } from 'react-helmet-async'; // Import Helmet and HelmetProvider
+import { Helmet, HelmetProvider } from 'react-helmet-async'; 
 import { useInView } from 'react-intersection-observer';
 import Skeleton from '@mui/material/Skeleton';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 import Grid2 from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import AppTheme from '../../components/LandingPage/AppTheme';
-import { useGradientRotadingEffect } from '../../components/LandingPage/utils/useGradientRotadingEffect'; // Import the custom hook
+import { useGradientRotadingEffect } from '../../components/LandingPage/utils/useGradientRotadingEffect';
 
 const AppAppBar = React.lazy(() => import('../../components/LandingPage/AppAppBar'));
 const Hero = React.lazy(() => import('../../components/LandingPage/Hero'));
@@ -30,7 +30,7 @@ const LazyLoadComponent = ({ Component, SkeletonComponent }) => {
     if (!devMode && inView)  {
       const timer = setTimeout(() => {
         setLoading(false);
-      }, 2000); // Delay of 2 seconds
+      }, 1000); // Skeleton Delay of 1 seconds
       return () => clearTimeout(timer);
     }
   }, [inView, devMode]);
@@ -47,6 +47,37 @@ const LazyLoadComponent = ({ Component, SkeletonComponent }) => {
     </div>
   );
 };
+
+const HeroSkeleton = (
+  <Box
+    sx={{
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column', // Stack grids vertically
+      justifyContent: 'center',
+      alignItems: 'center',
+      p: 2,
+      mt: 20,
+      mb: 5,
+    }}
+  >
+    <Grid2 container rowSpacing={3} direction="row" columnSpacing={{ xs: 4, sm: 8, md: 0 }} sx={{ maxWidth: '100%' }}>
+
+      <Skeleton
+        variant="rectangular"
+        animation="wave"
+        sx={{ 
+          mb: 2,
+          borderRadius: 2,
+          width: { xs: '45vh', sm: '80vh', md: '125vh' },
+          height: { xs: '25vh', sm: '50vh', md: '70vh' },
+        }}
+      />
+
+    </Grid2>
+
+  </Box>
+);
 
 const LogoCollectionSkeleton = (
   <Box
@@ -726,7 +757,7 @@ export default function MarketingPage(props) {
         </Helmet>
         <CssBaseline enableColorScheme />
         <AppAppBar />
-        <Hero />
+        <LazyLoadComponent Component={Hero} SkeletonComponent={HeroSkeleton} />
         <div>
           <LazyLoadComponent Component={LogoCollection} SkeletonComponent={LogoCollectionSkeleton} />
           <LazyLoadComponent Component={Features} SkeletonComponent={FeaturesSkeleton} />
