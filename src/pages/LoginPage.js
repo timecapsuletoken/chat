@@ -14,7 +14,7 @@ import '../assets/css/LoginPage.css';
 
 const LoginPage = ({ connectWallet, account }) => {
   //const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {

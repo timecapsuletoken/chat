@@ -7,7 +7,6 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
   try {
     
     if (providerType === 'MetaMask') {
-    
       // Initialize MetaMask SDK
       const MMSDK = new MetaMaskSDK({
         appName: 'TCA Chat',
@@ -31,7 +30,9 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
 
       try {
         if (isConnecting) {
-          console.log("Already connecting. Skipping redundant request.");
+          if (process.env.NODE_ENV !== 'production') {
+            console.log("Already connecting. Skipping redundant request.");
+          }
           return;
         }
 
@@ -44,9 +45,13 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
               const newChecksumAddress = ethers.utils.getAddress(accounts[0]);
               setAccount(newChecksumAddress);
               localStorage.setItem('connectedAccount', newChecksumAddress);
-              console.log('Account switched:', newChecksumAddress);
+              if (process.env.NODE_ENV !== 'production') {
+                console.log('Account switched:', newChecksumAddress);
+              }
             } else {
-              console.log('No accounts connected.');
+              if (process.env.NODE_ENV !== 'production') {
+                console.log('No accounts connected.');
+              }
             }
           };
 
@@ -81,13 +86,14 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         localStorage.setItem('connectedAccount', checksumAddress);
         localStorage.setItem('providerType', providerType);
 
-        console.log('MetaMask connected:', checksumAddress);
 
         // Check and switch to Binance Smart Chain if needed
         const provider = new ethers.providers.Web3Provider(ethereum);
         const chainId = await provider.send('eth_chainId', []);
         if (chainId !== '0x38') {
-          console.log('Switching to Binance Smart Chain...');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Switching to Binance Smart Chain...');
+          }
           await switchToBSC();
 
           const newChainId = await provider.send('eth_chainId', []);
@@ -97,9 +103,13 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         }
       } catch (error) {
         if (error.code === 4001) {
-          console.log('User rejected the connection request.');
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('User rejected the connection request.');
+          }
         } else {
-          console.error('Error connecting to MetaMask:', error);
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('Error connecting to MetaMask:', error);
+          }
         }
       } finally {
         // Always reset the flag, even if an error occurs
@@ -107,7 +117,6 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
       }
 
     } else if (providerType === 'CoinbaseWallet') {
-
        // Initialize the Coinbase Wallet SDK
        const sdk = createCoinbaseWalletSDK({
         appName: 'TCA Chat dApp',
@@ -139,6 +148,7 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         // Save account information
         setAccount(checksumAddress);
         localStorage.setItem('providerType', 'CoinbaseWallet');
+        await switchToBSC();
         if (process.env.NODE_ENV !== 'production') {
           console.log('Provider:', providerType);
         }
