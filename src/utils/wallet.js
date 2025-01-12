@@ -5,28 +5,8 @@ import MetaMaskSDK from '@metamask/sdk';
 
 export const connectWallet = async (providerType, switchToBSC, setAccount) => {
   try {
-
-    const handleAppFocus = async (ethereum, setAccount) => {
-      if (document.visibilityState === 'visible') {
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-        if (accounts && accounts.length > 0) {
-          const checksumAddress = ethers.utils.getAddress(accounts[0]);
-          setAccount(checksumAddress);
-          localStorage.setItem('connectedAccount', checksumAddress);
-          localStorage.setItem('providerType', providerType);
-        }
-      }
-    };
     
     if (providerType === 'MetaMask') {
-
-      const visibilityHandler = () => handleAppFocus(ethereum, setAccount);
-      document.addEventListener('visibilitychange', visibilityHandler);
-    
-      // Ensure cleanup after a successful connection
-      const cleanupListener = () => {
-        document.removeEventListener('visibilitychange', visibilityHandler);
-      };
     
       // Initialize MetaMask SDK
       const MMSDK = new MetaMaskSDK({
@@ -46,76 +26,86 @@ export const connectWallet = async (providerType, switchToBSC, setAccount) => {
         return;
       }
 
-      // Request account access
-      const permissions = await ethereum.request({
-        method: 'wallet_requestPermissions',
-        params: [{ eth_accounts: {} }],
-      });
+      let isConnecting = false; // Prevent redundant calls
+      let isListenerAdded = false; // Track if the accountsChanged listener is already added
 
-      const accountsPermission = permissions.find(
-        (permission) => permission.parentCapability === 'eth_accounts'
-      );
+      try {
+        if (isConnecting) {
+          console.log("Already connecting. Skipping redundant request.");
+          return;
+        }
 
-      if (accountsPermission) {
-        const checkConnection = async (ethereum, setAccount, retryCount = 3) => {
-          for (let i = 0; i < retryCount; i++) {
-            const accounts = await ethereum.request({ method: 'eth_accounts' });
+        isConnecting = true;
+
+        // Add the listener before requesting permissions to capture account changes during the process
+        if (!isListenerAdded) {
+          const handleAccountsChanged = async (accounts) => {
             if (accounts && accounts.length > 0) {
-              const checksumAddress = ethers.utils.getAddress(accounts[0]);
-              setAccount(checksumAddress);
-              localStorage.setItem('connectedAccount', checksumAddress);
-              localStorage.setItem('providerType', providerType);
-              return true;
+              const newChecksumAddress = ethers.utils.getAddress(accounts[0]);
+              setAccount(newChecksumAddress);
+              localStorage.setItem('connectedAccount', newChecksumAddress);
+              console.log('Account switched:', newChecksumAddress);
+            } else {
+              console.log('No accounts connected.');
             }
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
-          }
-          return false;
-        };
+          };
 
-        const connectionSuccess = await checkConnection(ethereum, setAccount);
-        if (!connectionSuccess) {
-          throw new Error('Failed to finalize connection. Please try again.');
+          ethereum.on('accountsChanged', handleAccountsChanged);
+          isListenerAdded = true;
         }
-      
-        if (connectionSuccess && connectionSuccess.length > 0) {
-          if (process.env.NODE_ENV !== 'production') {
-            console.log('MetaMask connected:', connectionSuccess[0]);
-          }
-          const checksumAddress = ethers.utils.getAddress(connectionSuccess[0]); // Convert to checksum format
-          setAccount(checksumAddress);
-          localStorage.setItem('providerType', providerType);
-          cleanupListener(); // Remove the listener after connection is complete
 
-          // Check the current chain and switch to Binance Smart Chain if necessary
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const chainId = await provider.send('eth_chainId', []);
-          if (chainId !== '0x38') {
-            if (process.env.NODE_ENV !== 'production') {
-              console.log('Not on Binance Smart Chain. Attempting to switch...');
-            }
-            // Force Binance Smart Chain connection
-            await switchToBSC();
+        // Request account permissions
+        const permissions = await ethereum.request({
+          method: 'wallet_requestPermissions',
+          params: [{ eth_accounts: {} }],
+        });
 
-            // Verify the chain switch
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const chainId = await provider.send('eth_chainId', []);
-            if (chainId !== '0x38') {
-              cleanupListener(); // Ensure listener is removed even if an error occurs
-              throw new Error('Failed to switch to Binance Smart Chain.');
-            }
+        // Verify if 'eth_accounts' permission is granted
+        const accountsPermission = permissions.find(
+          (permission) => permission.parentCapability === 'eth_accounts'
+        );
+
+        if (!accountsPermission) {
+          throw new Error('eth_accounts permission not granted.');
+        }
+
+        // Fetch accounts after permission is granted
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+        if (!accounts || accounts.length === 0) {
+          throw new Error('No accounts found. Please log in to MetaMask.');
+        }
+
+        const checksumAddress = ethers.utils.getAddress(accounts[0]);
+        setAccount(checksumAddress);
+        localStorage.setItem('connectedAccount', checksumAddress);
+        localStorage.setItem('providerType', providerType);
+
+        console.log('MetaMask connected:', checksumAddress);
+
+        // Check and switch to Binance Smart Chain if needed
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const chainId = await provider.send('eth_chainId', []);
+        if (chainId !== '0x38') {
+          console.log('Switching to Binance Smart Chain...');
+          await switchToBSC();
+
+          const newChainId = await provider.send('eth_chainId', []);
+          if (newChainId !== '0x38') {
+            throw new Error('Failed to switch to Binance Smart Chain.');
           }
+        }
+      } catch (error) {
+        if (error.code === 4001) {
+          console.log('User rejected the connection request.');
         } else {
-          if (process.env.NODE_ENV !== 'production') {
-            console.error('No accounts found. Please log in to MetaMask.');
-          }
-          cleanupListener(); // Ensure listener is removed even if an error occurs
+          console.error('Error connecting to MetaMask:', error);
         }
-      } else {
-        if (process.env.NODE_ENV !== 'production') {
-          console.error('eth_accounts permission not granted.');
-        }
-        cleanupListener(); // Ensure listener is removed even if an error occurs
+      } finally {
+        // Always reset the flag, even if an error occurs
+        isConnecting = false;
       }
+
     } else if (providerType === 'CoinbaseWallet') {
 
        // Initialize the Coinbase Wallet SDK
