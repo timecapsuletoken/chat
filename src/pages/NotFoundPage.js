@@ -13,12 +13,12 @@ import TCALogo from '../assets/images/logos/logo.png';
 import NotFoundVid from '../assets/videos/404Page.mp4';
 import LoginIcon from '@mui/icons-material/Login';
 import HomeIcon from '@mui/icons-material/Home';
-import useGradientRotation from '../components/LandingPage/utils/useEffectForGradientRotation'; // Import the custom hook
+import useGradientRotation from '../components/LandingPage/utils/useEffectForGradientRotation'; 
 
 const customTheme = extendTheme({ defaultColorScheme: 'dark' });
 
 export default function JoySignInSideTemplate() {
-    useGradientRotation('rotating-gradient-wrapper'); // Apply to elements with this class
+    useGradientRotation('rotating-gradient-wrapper');
 
   return (
     <CssVarsProvider theme={customTheme} disableTransitionOnChange>
@@ -41,9 +41,9 @@ export default function JoySignInSideTemplate() {
           display: 'flex',
           justifyContent: 'flex-end',
           backdropFilter: 'blur(12px)',
-          backgroundColor: 'rgba(255 255 255 / 0.2)',
+          backgroundColor: '#1c1c1c !important',
           [theme.getColorSchemeSelector('dark')]: {
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: '#33333',
           },
         })}
       >
@@ -72,7 +72,7 @@ export default function JoySignInSideTemplate() {
                     }}
                 />
               </Link>
-              <Typography level="title-lg">TCA Chat dApp</Typography>
+              <Typography level="title-lg" sx={{ color: 'white' }}>TCA Chat dApp</Typography>
             </Box>
             <Typography level="title-lg">
                 <Box
@@ -121,20 +121,14 @@ export default function JoySignInSideTemplate() {
             }}
             >
             <Stack sx={{ gap: 4, mb: 2 }}>
-                <Typography component="h1" level="h3" sx={{ fontSize: '3rem', fontWeight: 'bold' }}>
+                <Typography component="h1" level="h3" sx={{ fontSize: '3rem', fontWeight: 'bold', color: 'white' }}>
                 Are you lost?
                 </Typography>
-                <Typography level="body-md" sx={{ color: 'text.secondary' }}>
+                <Typography level="body-md" sx={{ color: '#eee' }}>
                 Oops! The page you're looking for doesn't exist.
                 </Typography>
             </Stack>
-            <Divider
-                sx={(theme) => ({
-                [theme.getColorSchemeSelector('light')]: {
-                    color: { xs: '#FFF', md: 'text.tertiary' },
-                },
-                })}
-            />
+            <Divider sx={{ borderColor: 'white !important', borderWidth: '1px' }} />
             <Stack sx={{ gap: 2, mt: 4 }}>
                 <Box
                     className="rotating-gradient-wrapper"
